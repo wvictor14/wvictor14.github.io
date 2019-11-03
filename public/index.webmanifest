@@ -2,8 +2,8 @@
   "name": "Victor Yuan",
   "short_name": "Victor Yuan",
   "lang": "en-us",
-  "theme_color": "#EAF04E",
-  "background_color": "#EAF04E",
+  "theme_color": "#A37462",
+  "background_color": "#A37462",
   "icons": [{
     "src": "../img/icon-192.png",
     "sizes": "192x192",

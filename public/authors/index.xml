@@ -5,7 +5,7 @@
     <link>/authors/</link>
       <atom:link href="/authors/index.xml" rel="self" type="application/rss+xml" />
     <description>Authors</description>
-    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Sun, 07 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><lastBuildDate>Fri, 09 Aug 2019 00:00:00 +0000</lastBuildDate>
     <image>
       <url>/img/icon-192.png</url>
       <title>Authors</title>
@@ -13,20 +13,84 @@
     </image>
     
     <item>
-      <title></title>
-      <link>/authors/admin/</link>
-      <pubDate>Sun, 07 Apr 2019 00:00:00 +0000</pubDate>
-      <guid>/authors/admin/</guid>
-      <description>&lt;p&gt;I am a &lt;a href=&#34;https://robinsonresearch.ca/&#34; target=&#34;_blank&#34;&gt;PhD student in Professor Wendy Robinson&amp;rsquo;s lab&lt;/a&gt; at the University of British Columbia in the Genome Sciences and Technology program. My research interests include genomic analysis of genetic, epigenetic, and transcriptomic data related to placental biology. Outside of my research, I enjoy rock climbing and taking care of my three-legged dog, &lt;a href=&#34;blank&#34; target=&#34;_blank&#34;&gt;Sandy&lt;/a&gt;.&lt;/p&gt;
-</description>
+      <title>**Yuan, Victor**</title>
+      <link>/authors/yuan-victor/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/yuan-victor/</guid>
+      <description></description>
     </item>
     
     <item>
-      <title>Robert Ford</title>
-      <link>/authors/robert-ford/</link>
-      <pubDate>Tue, 01 Sep 2015 00:00:00 +0000</pubDate>
-      <guid>/authors/robert-ford/</guid>
+      <title>Binder, Alexandra M</title>
+      <link>/authors/binder-alexandra-m/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/binder-alexandra-m/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title>Cox, Brian</title>
+      <link>/authors/cox-brian/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/cox-brian/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Del Gobbo, Giulia F</title>
+      <link>/authors/del-gobbo-giulia-f/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/del-gobbo-giulia-f/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Marsit, Carmen</title>
+      <link>/authors/marsit-carmen/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/marsit-carmen/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Michels, Karin B</title>
+      <link>/authors/michels-karin-b/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/michels-karin-b/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mostafavi, Sara</title>
+      <link>/authors/mostafavi-sara/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/mostafavi-sara/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Price, E Magda</title>
+      <link>/authors/price-e-magda/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/price-e-magda/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Robinson, Wendy P</title>
+      <link>/authors/robinson-wendy-p/</link>
+      <pubDate>Fri, 09 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>/authors/robinson-wendy-p/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/authors/admin/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/authors/admin/</guid>
+      <description>&lt;p&gt;I am a &lt;a href=&#34;https://robinsonresearch.ca/&#34; target=&#34;_blank&#34;&gt;PhD student under Professor Wendy Robinson&lt;/a&gt; at the University of British Columbia in the Genome Sciences and Technology program. My research interests include genomic analysis of genetic, epigenetic, and transcriptomic data related to placental biology. Outside of my research, I enjoy rock climbing with my girlfriend and taking care of my three-legged dog, &lt;a href=&#34;blank&#34; target=&#34;_blank&#34;&gt;Sandy&lt;/a&gt;.&lt;/p&gt;
+</description>
     </item>
     
   </channel>

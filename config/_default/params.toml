@@ -11,7 +11,7 @@
 #   Browse user installed themes in `data/themes/`
 # Color theme.
 #   Choose from `default`, `ocean`, `forest`, `coffee`, `dark`, or `1950s`.
-theme = "apogee"
+theme = "coffee_custom"
 
 # Enable users to switch between day and night mode?
 day_night = true
