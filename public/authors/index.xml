@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Authors | Academic</title>
+    <title>Authors | Victor Yuan</title>
     <link>/authors/</link>
       <atom:link href="/authors/index.xml" rel="self" type="application/rss+xml" />
     <description>Authors</description>
@@ -17,9 +17,7 @@
       <link>/authors/admin/</link>
       <pubDate>Sun, 07 Apr 2019 00:00:00 +0000</pubDate>
       <guid>/authors/admin/</guid>
-      <description>&lt;p&gt;Nelson Bighetti is a professor of artificial intelligence at the Stanford AI Lab. His research interests include distributed robotics, mobile computing and programmable matter. He leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.&lt;/p&gt;
-
-&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.&lt;/p&gt;
+      <description>&lt;p&gt;I am a &lt;a href=&#34;https://robinsonresearch.ca/&#34; target=&#34;_blank&#34;&gt;PhD student in Professor Wendy Robinson&amp;rsquo;s lab&lt;/a&gt; at the University of British Columbia in the Genome Sciences and Technology program. My research interests include genomic analysis of genetic, epigenetic, and transcriptomic data related to placental biology. Outside of my research, I enjoy rock climbing and taking care of my three-legged dog, &lt;a href=&#34;blank&#34; target=&#34;_blank&#34;&gt;Sandy&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
