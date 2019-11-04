@@ -53,7 +53,7 @@ url_project = ""
 url_slides = ""
 url_video = ""
 url_poster = ""
-url_source = ""
+url_source = "https://epigeneticsandchromatin.biomedcentral.com/articles/10.1186/s13072-019-0296-3"
 
 # Custom links (optional).
 #   Uncomment line below to enable. For multiple links, use the form `[{...}, {...}, {...}]`.

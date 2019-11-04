@@ -6,10 +6,10 @@ education:
   courses:
   - course: PhD in Genome Sciences and Technology
     institution: University of British Columbia
-    year: 2016-Present
+    year: In Progress
   - course: BSc in Cell and Molecular Biology
     institution: Concordia University
-    year: 2011-2016
+    year: 2016
 email: "vyuan@bcchr.ca"
 interests:
 - Placental genomics
