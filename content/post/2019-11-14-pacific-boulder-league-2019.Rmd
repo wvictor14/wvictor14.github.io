@@ -45,15 +45,16 @@ library(janitor)
 library(ggbeeswarm)
 library(ggridges)
 library(readxl)
-theme_set(theme_bw())
+fontsize <- 16
+theme_set(theme_bw(base_size = fontsize))
 
 b <- 0.1
 e <- 0.8
 
-pbl_all <- read_csv(here::here('outs', 'pbl_clean.csv')) %>%
+pbl_all <- read_csv('pbl_clean.csv') %>%
   mutate(gym = fct_relevel(gym, c('North Shore', 'Surrey', 'Vancouver')))
 
-pbl_2018 <- read_excel(here::here('Hive PBL 2018.xlsx'))
+pbl_2018 <- read_excel('Hive PBL 2018.xlsx')
 ```
 
 # How the league works
@@ -101,7 +102,7 @@ Last year, Yvonne (also a big nerd) kept track of all the team's scores from the
 
 Most of this increase in number of teams occured in the Vancouver gym (14 -> 24). Surrey actually had more teams participating than North Shore (8 versus 7), which is surprising, given that Surrey only opened earlier this year. 
 
-```{r, warning = FALSE, fig.height = 2.5, fig.width = 2.5}
+```{r, warning = FALSE}
 pbl_all %>%
   filter(week == '1') %>%
   count(gym) %>%
@@ -116,6 +117,7 @@ pbl_all %>%
                         guide = guide_legend(override.aes = list(size = 4))) +
   scale_x_continuous(breaks = c(2018, 2019), labels = scales::number) +
   facet_grid(cols = vars(gym), scales = 'free_x', space = 'free') +
+  theme_bw(base_size = fontsize + 2) +
   theme(panel.border = element_blank(),
         panel.grid = element_blank(),
         strip.background = element_blank(),
@@ -206,39 +208,37 @@ With any kind of team event that requires regular attendance over a long period 
 2. A maximum of one team member can be absent for a given week, without any penalization on their scores
 
 However, even with these accomodations, **some teams did not participate every week:**
-
-```{r, fig.height = 7.5, fig.width = 5, fig.cap="Note: I interpret that when a team did not hand in their score, they simply were unable to get enough team members to meet at the same time that week."}
+```{r, fig.height = 10, fig.width = 6.5, fig.cap="Note: I interpret that when a team did not hand in their score, they simply were unable to get enough team members to meet at the same time that week."}
 pbl_all %>%
   mutate(missing = is.na(score)) %>% 
   ggplot(aes(x = week, y = team_name, fill = missing)) +
-    geom_tile(colour = '#ffffff') +
-    scale_y_discrete(expand = c(0,0), position = 'right') +
-    scale_x_discrete(expand = c(0,0), position = 'top') +
-    scale_fill_manual(values = c('TRUE' = '#88C837', 'FALSE' = '#00748B'),
-                      labels = c('Yes', 'No'),
-                      guide = guide_legend(override.aes = list(size = 1))) +
-    facet_grid(gym~., scales = 'free', space= 'free', switch = 'y') +
-    theme_bw() +
-    labs(fill = 'Handed in a\nscore card?', y = '', x = '') +
-    theme(axis.ticks = element_blank(),
-          axis.text.x = element_text(hjust =0, vjust = 2),
-          axis.title.x = element_text(hjust = 0, size = 10),
-          strip.background = element_blank(),
-          strip.placement = "outside",
-          strip.text.y = element_text(face = 'bold', angle = 180,
-                                      vjust = 1.0,
-                                      hjust = 1),
-          legend.position = 'left',
-          legend.justification = 'top')
+  geom_tile(colour = '#ffffff') +
+  scale_y_discrete(expand = c(0,0), position = 'right') +
+  scale_x_discrete(expand = c(0,0), position = 'top') +
+  scale_fill_manual(values = c('TRUE' = '#88C837', 'FALSE' = '#00748B'),
+                    labels = c('Yes', 'No'),
+                    guide = guide_legend(override.aes = list(size = 1))) +
+  facet_grid(gym~., scales = 'free', space= 'free', switch = 'y') +
+  labs(fill = 'Handed in a\nscore card?', y = '', x = '') +
+  theme_bw(base_size = fontsize-2) +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(hjust =0, vjust = 2),
+        axis.title.x = element_text(hjust = 0, size = 10),
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        strip.text.y = element_text(face = 'bold', angle = 180,
+                                    vjust = 1.0,
+                                    hjust = 1),
+        legend.position = 'left',
+        legend.justification = 'top')
 ```
 
-One week stands out in the above: **For the Hive finals week, 13 out of 39 teams (33%) teams did not hand in their score card**. This is much lower than the week 1-5 average attendance (>95%). This significant drop in attendance is likely because many participants were simply not free at the peculiar time of the Hive Finals event, which was held on a Friday, at 6PM[^5][^6]. 
+One week stands out in the above: **For the Hive finals week, 13 out of 39 teams (33%) teams did not hand in their score card**. This is much lower than the week 1-5 average attendance (>95%). This significant drop in attendance is likely because many participants were simply not free at the peculiar time of the Hive Finals event, which was held on a Friday, at 6PM[^5] [^6]. 
 
 Some other observations:
 
 - Team *Vol. U & Me* dropped out after the first week
 - *Veloci-rock-tors* and *One Hex Flex* were the only other teams that missed non-finals weeks.
-
 
 # Were some weeks harder than others? {.tabset}
 
@@ -293,7 +293,7 @@ plot_center <- function(data, gym, loli_size = 0.35, xlim, thresh = 1) {
         facet_grid(rows = vars(week), 
                    scales = 'free',
                    switch = 'y') +
-        theme_bw() +
+        theme_bw(base_size = fontsize+2) +
         theme(panel.grid.major.y = element_blank(),
               panel.grid.minor = element_blank(),
               panel.border = element_blank(),
@@ -316,7 +316,7 @@ plot_center <- function(data, gym, loli_size = 0.35, xlim, thresh = 1) {
              x= '', 
              color = '', 
              title = 'Relative weekly performance for each team',
-             subtitle = 'Percentage of teams that performed worst or better than their  average weekly performance')
+             subtitle = '')
     }
 }
 
@@ -365,8 +365,8 @@ plot_center_bar <- function(data) {
     }
 }
 
-fh <- 6
-fw <- 5
+fh <- 8.5
+fw <- 7.5
 ```
 
 ```{r, fig.width = fw, fig.height = fh}
@@ -454,6 +454,7 @@ rank_plot <- function(data) {
       scale_x_continuous(expand = c(0.7,0.3), breaks = 1:6,
                          labels = c(1:5, 'Finals')) +
       scale_color_viridis_d() +
+      theme_bw(base_size = fontsize + 1) +
       theme(panel.grid.major.y = element_blank(),
             panel.grid.minor.y = element_blank(),
             panel.grid.minor.x = element_blank(),
