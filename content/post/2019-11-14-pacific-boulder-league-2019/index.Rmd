@@ -5,21 +5,24 @@ date: '2019-11-14'
 slug: pacific-boulder-league-2019
 categories:
   - R
-  - Personal
+  - Analysis
+  - Climbing
 tags:
+  - R
   - Analysis
   - Climbing
 subtitle: ''
-summary: ''
+summary: 'An analysis of Pacific Boulder League, an amateur climbing competition held in Vancouver and surrounding cities.'
 authors: []
 lastmod: '2019-11-14T22:35:49-08:00'
 featured: no
 image:
-  featuredImage: "featured.PNG"
   caption: ''
-  focal_point: ''
-  preview_only: no
+  focal_point: 'Center'
+  preview_only: true
 projects: []
+share: true
+commentable: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -54,21 +57,17 @@ theme_set(theme_bw(base_size = fontsize))
 b <- 0.1
 e <- 0.8
 
-pbl_all <- read_csv(here::here('content',
-                               'post', 
-                               '2019-11-14-pacific-boulder-league-2019_files',
-                               'pbl_clean.csv')) %>%
+pbl_all <- read_csv(
+                               'pbl_clean.csv') %>%
   mutate(gym = fct_relevel(gym, c('North Shore', 'Surrey', 'Vancouver')))
 
-pbl_2018 <- read_excel(here::here('content', 
-                                  'post', 
-                                  '2019-11-14-pacific-boulder-league-2019_files',
-                                  'Hive PBL 2018.xlsx'))
+pbl_2018 <- read_excel(
+                                  'Hive PBL 2018.xlsx')
 ```
 
 # How the league works
 
-Pacific Boulder League is a friendly team-based bouldering competition that includes several participating gyms in Vancouver and nearby cities. Each gym holds their own competition for the first 3-5 weeks, where teams compete internally. Then the top teams from each gym goes to a grand finals event (Nov 20th) at Project Climbing Cloverdale.
+Pacific Boulder League is a friendly team-based bouldering competition that includes several participating gyms in Vancouver and nearby cities. Each gym holds their own competition for the first 3-5 weeks, where teams compete internally. Then the top teams from each gym goes to a grand finals event (Nov 16th) at Project Climbing Cloverdale.
 
 We participated at the Hive, which owns 3 gyms that all participated. The Hive competition was organized like this:
 
@@ -564,4 +563,4 @@ Overall, this PBL season has been a lot of fun. I was really impressed with the 
 [^7]: p-value > 0.05, linear modelling.
 [^8]: *Batch effects*, but for bouldering. 
 [^9]: Adapted ranking plot that I made for [#TidyTuesday](https://twitter.com/victor2wy/status/1141220359305232385)
-[^10]: Except the budy problems. Those were terrible.
+[^10]: Except the buddy problems. Those were terrible.
