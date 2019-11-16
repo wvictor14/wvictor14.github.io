@@ -19,6 +19,8 @@ image:
   focal_point: ''
   preview_only: no
 projects: []
+editor_options: 
+  chunk_output_type: console
 ---
 ![](/post/2019-11-14-pacific-boulder-league-2019_files/PBL_2019_banner.png)
 
@@ -51,10 +53,16 @@ theme_set(theme_bw(base_size = fontsize))
 b <- 0.1
 e <- 0.8
 
-pbl_all <- read_csv('pbl_clean.csv') %>%
+pbl_all <- read_csv(here::here('content',
+                               'post', 
+                               '2019-11-14-pacific-boulder-league-2019_files',
+                               'pbl_clean.csv')) %>%
   mutate(gym = fct_relevel(gym, c('North Shore', 'Surrey', 'Vancouver')))
 
-pbl_2018 <- read_excel('Hive PBL 2018.xlsx')
+pbl_2018 <- read_excel(here::here('content', 
+                                  'post', 
+                                  '2019-11-14-pacific-boulder-league-2019_files',
+                                  'Hive PBL 2018.xlsx'))
 ```
 
 # How the league works
@@ -92,7 +100,8 @@ It's more relevant and interesting for us Hive climbers what the equivalent hex 
 The Hex Grading System is unique to the Hive gyms (many climbing gyms use there own system nowadays). Here is how the hex grades translate to the more standard V-grade system: 
 
 #### Hex Grading System: 
-![](/post/2019-11-14-pacific-boulder-league-2019_files/Hive_grades.PNG)
+![](/post/2019-11-14-pacific-boulder-league-2019_files/Hive_grades_1.PNG)
+![](/post/2019-11-14-pacific-boulder-league-2019_files/Hive_grades_2.PNG)
 
 # 2019 versus 2018 
 
@@ -262,65 +271,6 @@ pbl_all_center <- pbl_all %>%
 colors <- setNames(viridisLite::viridis(begin = b, end = e, n = 3, direction = 1),
                    levels(pbl_all$gym))
 
-plot_center <- function(data, gym, loli_size = 0.35, xlim, thresh = 1) {
-  
-  data %>% 
-    filter(gym == gym) %>%{
-      ggplot(data = ., aes(x = order)) +
-        
-      
-        # lolipops
-        geom_bar(aes(#ymax = score_centered, 
-                            y = score_centered, 
-                            fill = gym), 
-                 #         ymin = 0, size = loli_size,
-                 stat = 'identity') +
-        
-        # 0 line
-        geom_hline(yintercept = 0, 
-                   size = 1, 
-                   color = 'black') +
-        
-        # highlight teams with really large deviations
-        ggrepel::geom_text_repel(data = . %>% 
-                                   filter(abs(score_centered)/5 > thresh),
-                                 aes(label = team_name, y = score_centered),
-                                 color = 'black', 
-                                 nudge_x = -7,
-                                 direction = 'x') +
-    
-        # week labels
-        facet_grid(rows = vars(week), 
-                   scales = 'free',
-                   switch = 'y') +
-        theme_bw(base_size = fontsize+2) +
-        theme(panel.grid.major.y = element_blank(),
-              panel.grid.minor = element_blank(),
-              panel.border = element_blank(),
-              panel.spacing = unit(0.1, 'cm'),
-              
-              legend.position = '',
-              axis.text.y = element_blank(),
-              axis.ticks = element_blank(),
-              strip.background = element_blank(),
-              strip.text.y = element_text(vjust = 1,
-                                          hjust = 1,
-                                          angle = 180, face = 'bold')) +
-        scale_fill_manual(values = colors[unique(.$gym)]) +
-        scale_y_continuous(labels = function(x)x/5,
-                           position = 'right',
-                           breaks = seq(-1.5, 1.5, by = 0.5)*5) +
-        scale_x_reverse(expand = c(0.2, 0.2)) +
-        coord_flip(ylim = xlim*5) +
-        labs(y = 'Hex points', 
-             x= '', 
-             color = '', 
-             title = 'Relative weekly performance for each team',
-             subtitle = '')
-    }
-}
-
-
 plot_center_bar <- function(data) {
   data %>% 
     group_by(gym, week) %>%
@@ -374,7 +324,7 @@ pbl_all_center %>%
 #  filter(gym == 'Vancouver') %>%
   plot_center_bar()
 
-fh <- 7
+fh <- 8
 fw <- 9
 ```
 
@@ -389,43 +339,104 @@ If more teams performed better than average for a given week, that means that th
 
 **Here (below plot) is a closer look at all teams relative weekly performance.** The above percentages were calculated by simply counting the number of teams on either side of the 0 line. But with the below graph, we can see how much each team performed better/worst than their average, in terms of hex points. We can see that the performance almost never deviates that dramatically from the average (0 line).
 
-**But! Some teams had very dramatic swings in performance**. For example, team *Generic Bouldering Team Name*, performed much worse in their 5th week. This is because this team  had some members that suffered from injuries and had to drop out unfortunately.
-
-## Vancouver
-
 ```{r, fig.width = fw, fig.height = fh}
+plot_center <- function(data, gym, loli_size = 0.35, xlim, thresh = 1) {
+  
+  data %>% 
+    filter(gym == gym) %>%{
+      ggplot(data = ., aes(x = order)) +
+        
+      
+        # lolipops
+        geom_bar(aes(#ymax = score_centered, 
+                            y = score_centered, 
+                            fill = gym), 
+                 #         ymin = 0, size = loli_size,
+                 stat = 'identity') +
+        
+        # 0 line
+        geom_hline(yintercept = 0, 
+                   size = 1, 
+                   color = 'black') +
+        
+        # highlight teams with really large deviations
+        ggrepel::geom_text_repel(data = . %>% 
+                                   filter(abs(score_centered)/5 > thresh),
+                                 aes(label = team_name, y = score_centered),
+                                 color = 'black', 
+                                 nudge_x = -7,
+                                 direction = 'x',
+                                 size = 4) +
+    
+        # week labels
+        facet_grid(rows = vars(week), 
+                   scales = 'free',
+                   switch = 'y') +
+        theme_bw(base_size = fontsize) +
+        theme(panel.grid.major.y = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.border = element_blank(),
+              panel.spacing = unit(0.1, 'cm'),
+              
+              legend.position = '',
+              axis.text.y = element_blank(),
+              axis.ticks = element_blank(),
+              strip.background = element_blank(),
+              strip.text.y = element_text(vjust = 1,
+                                          hjust = 1,
+                                          angle = 180, face = 'bold')) +
+        scale_fill_manual(values = colors[unique(.$gym)]) +
+        scale_y_continuous(labels = function(x)x/5,
+                           position = 'right',
+                           breaks = seq(-1.5, 1.5, by = 0.5)*5) +
+        scale_x_reverse(expand = c(0.2, 0.2)) +
+        coord_flip(ylim = xlim*5) +
+        labs(y = 'Hex points', 
+             x= '', 
+             color = '', 
+             title = 'Relative weekly performance for each team',
+             subtitle = '')
+    }
+}
+
+
 pbl_all_center %>%
   filter(gym == 'Vancouver') %>%
-  plot_center(gym = 'Vancouver', loli_size = 0.2, xlim = c(-2, 2),
-              thresh = 0.75)
+  plot_center(gym = 'Vancouver', loli_size = 0.2, xlim = c(-1.5, 1.5),
+              thresh = 0.75) +
+  labs(subtitle = 'Vancouver')
 ```
 
-## North Shore
+Some teams had very dramatic swings in performance. For example, team *Generic Bouldering Team Name*, performed much worse in their 5th week. This is because this team  had some members that suffered from injuries and had to drop out unfortunately.
+
+Here are the teams from North Shore and Surrey:
 
 ```{r, fig.width = fw, fig.height = fh}
 pbl_all_center %>%
   filter(gym == 'North Shore') %>%
-  plot_center(gym = 'North Shore', loli_size = 0.7, xlim = c(-1.5, 1.5),
-              thresh = 0.35)
+  plot_center(gym = 'North Shore', loli_size = 0.7, xlim = c(-1, 1),
+              thresh = 0.4)+
+  labs(subtitle = 'North Shore', title = '')
 ```
-
-## Surrey
 
 ```{r, fig.width = fw, fig.height = fh}
 pbl_all_center %>%
   filter(gym == 'Surrey') %>%
-  plot_center(gym = 'Surrey', loli_size = 0.7, xlim = c(-1.4, 1.4),
-              thresh = 0.4)
+  plot_center(gym = 'Surrey', loli_size = 0.7, xlim = c(-1, 1),
+              thresh = 0.4)+
+  labs(subtitle = 'Surrey', title = '')
 ```
+
+Teams from North Shore and Surrey showed less variability in their scores compared to Vancouver. There were less teams that performed +/- 0.5 away from their average, but this could be explained in part by that there were less teams at these gyms.
 
 # How did teams compare before and after finals {.tabset}
 
-The PBL Hive Finals had an interesting format, where scores for that week counted double and special *team problems* for bonus points were created. Scores from finals were then added on to the previous 5 weeks of scores to determine a final ranking/placement. The idea with these special rules was to allow teams an opportunity to drastically improve their ranking by performing better at finals than any other week. 
+The PBL Hive Finals had an interesting format, where scores for that week *counted for double points* and special *team problems for bonus points* were created. Scores from finals were then added on to the previous 5 weeks of scores to determine a final ranking/placement. The idea with these special rules was to allow teams an opportunity to drastically improve their ranking by performing better at finals than any other week. 
 
 **Did the ranking (e.g. 1st, 2nd, 3rd) of teams significantly change after finals?**
 
 ```{r}
-rank_plot <- function(data) {
+rank_plot <- function(data, expand = 1.5) {
   data %>% 
     
     # remove missing scores
@@ -438,20 +449,21 @@ rank_plot <- function(data) {
       
       # basics
       geom_line(aes(group = team_name),size = 1.75, alpha = 0.5) +
-      geom_point(size = 7) +
-      geom_text(aes(label = rank_weekly_cum), color = 'white', size = 3) +
+      geom_point(size = 8) +
+      geom_text(aes(label = rank_weekly_cum), color = 'white', size = 3.5) +
       
       
       # labels for left and right of lines
       geom_text(data =  . %>% filter(week == 1),
-                aes(label = team_name, x = min(.$week)-0.5, color = team_name) , 
-                hjust = 'right', nudge_x = 0.1, size = 4) +
+                aes(label = team_name, x = min(.$week)-0.6, color = team_name) , 
+                hjust = 'right', nudge_x = 0.1, size = 5) +
       geom_text(data =  . %>% filter(week == 6),
-                aes(label = team_name, x = max(.$week)-0.5, color = team_name) , 
-                hjust = 'left', nudge_x = 0.85, size = 4) +
+                aes(label = team_name, x = max(.$week)-0.6, color = team_name) , 
+                hjust = 'left', nudge_x = 1, size = 5) +
+        
       theme_bw(base_size = 12)+
       scale_y_reverse(breaks = 1:max(.$rank_weekly_cum)) +
-      scale_x_continuous(expand = c(0.7,0.3), breaks = 1:6,
+      scale_x_continuous(expand = c(expand,0.4), breaks = 1:6,
                          labels = c(1:5, 'Finals')) +
       scale_color_viridis_d() +
       theme_bw(base_size = fontsize + 1) +
@@ -478,21 +490,27 @@ rank_data <- pbl_all %>%
   select(team_name, week, rank_weekly_cum) %>%
   group_by(team_name) 
 
-fh <- 7.5
+fh <- 10
 fw <- 9
 ```
   
-Here is the change in weekly ranking for the teams that ended in the top 10 after finals. Click on the other tabs to view other teams[^9].
+Here is the change in weekly ranking for the teams that ended in the top 10 after finals[^9]. Scroll down to see other teams.
 
-## Top 10
+## Teams that placed in the top 10 
 
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
   filter(any(week == 6 & rank_weekly_cum %in% 1:10)) %>%
-  rank_plot()
+  rank_plot(expand = 0.8)
 ```
 
-## 11-20
+There's some really interesting things going on here:
+
+* The top 3 teams were really consistently in the lead the entire competition
+* There's some more variation in rankings in the top 4-10 teams:
+  - Teams *Jako* and *Crimp My Ride* had rough starts (bottom 60%) but dramatically overtook other teams by the end of the competition.
+  
+## Teams that placed 11-20
 
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
@@ -500,34 +518,30 @@ rank_data %>%
   rank_plot()
 ```
 
+
+* *Generic Bouldering Team Name* started off in 2nd place, was in 5th place before finals, and then ended up placing 17th after finals
+* *Jugs Not Drugs* started in 34th position (4th last), crawled to  26th position before finals, and ended up in 19th after finals.
+
 ## 21-30
 
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
   filter(any(week == 6 & rank_weekly_cum %in% 21:30)) %>%
-  rank_plot()
+  rank_plot(expand = 1.2)
 ```
+
+* **Teams that ended up placing in the middle (ranks 21-30), often showed dramatic changes in both directions to their ranking after the final.**
 
 ## 31-37
 
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
   filter(any(week == 6 & rank_weekly_cum %in% 31:37)) %>%
-  rank_plot()
+  rank_plot(expand = 0.8)
 
 ```
 
-#
-
-There's some really interesting things going on here:
-
-* The top 3 teams were really consistently in the lead the entire competition
-* There's some more variation in rankings in the top 4-10 teams:
-  - Teams *Jako* and *Crimp My Ride* had rough starts (bottom 60%) but dramatically overtook other teams by the end of the competition.
-* *Generic Bouldering Team Name* started off in 2nd place, was in 5th place before finals, and then ended up placing 17th after finals.
-* *Jugs Not Drugs* started in 34th position (4th last), crawled to  26th position before finals, and ended up in 19th after finals.
 * Many other teams (*Soft Rock, Aaron Lacovitti, Our Beta is no-guchi, One Hex Flex*) seemed to be doing well before finals, before dropping dramatically post-finals. These were likely teams that did not participate in the finals. 
-* **Teams that ended up placing in the middle (ranks 21-30), often showed dramatic changes in both directions to their ranking after the final.**
 
 Many teams did in fact improve their ranking after finals, but many teams also dropped rankings too. Personally, I really liked *most*[^10] the format of the finals. I think giving teams a chance to catch up makes it more interesting. It was just unfortunate timing for many.
 
