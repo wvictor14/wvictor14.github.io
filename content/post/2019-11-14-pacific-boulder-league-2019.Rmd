@@ -527,7 +527,7 @@ rank_data %>%
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
   filter(any(week == 6 & rank_weekly_cum %in% 21:30)) %>%
-  rank_plot(expand = 1.2)
+  rank_plot(expand = 1)
 ```
 
 * **Teams that ended up placing in the middle (ranks 21-30), often showed dramatic changes in both directions to their ranking after the final.**
@@ -537,7 +537,7 @@ rank_data %>%
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
   filter(any(week == 6 & rank_weekly_cum %in% 31:37)) %>%
-  rank_plot(expand = 0.8)
+  rank_plot(expand = 0.5)
 
 ```
 
