@@ -121,7 +121,7 @@ pbl_all %>%
                        year = 2018)) %>%
   ggplot(aes(x = year, y = n, fill = gym)) +
   geom_bar(stat = 'identity', show.legend = FALSE) +
-  geom_text(aes(label =n, group = gym, y = n-2), color = 'white', size = 6) +
+  geom_text(aes(label =n, group = gym, y = n-2), color = 'white', size = 8) +
   scale_fill_viridis_d(begin = b, end = e, direction = 1,
                         guide = guide_legend(override.aes = list(size = 4))) +
   scale_x_continuous(breaks = c(2018, 2019), labels = scales::number) +
@@ -162,7 +162,7 @@ pbl_year %>%
   mutate(gym = fct_relevel(gym, c('Vancouver', 'Surrey', 'North Shore'))) %>%
   ggplot() +
   geom_density_ridges(aes(y = gym, x = score_hex, fill = gym), 
-                      color = NA,alpha = 0.75,
+                      color = NA,alpha = 1,
                       panel_scaling = FALSE) +
   scale_fill_viridis_d(begin = b, end = e, direction = -1,
                         guide = guide_legend(override.aes = list(alpha = 1,
@@ -229,7 +229,7 @@ pbl_all %>%
                     guide = guide_legend(override.aes = list(size = 1))) +
   facet_grid(gym~., scales = 'free', space= 'free', switch = 'y') +
   labs(fill = 'Handed in a\nscore card?', y = '', x = '') +
-  theme_bw(base_size = fontsize-2) +
+  theme_bw(base_size = fontsize) +
   theme(axis.ticks = element_blank(),
         axis.text.x = element_text(hjust =0, vjust = 2),
         axis.title.x = element_text(hjust = 0, size = 10),
@@ -291,6 +291,7 @@ plot_center_bar <- function(data) {
                  width = 1, 
                  color = 'white') +
         geom_text(data = filter(., direction == 'pos'),
+                  size = 8,
                   aes(y = p, label = scales::percent(p, accuracy = 1)),
                   nudge_y = +0.1,
                   color = 'black') +
@@ -366,13 +367,13 @@ plot_center <- function(data, gym, loli_size = 0.35, xlim, thresh = 1) {
                                  color = 'black', 
                                  nudge_x = -7,
                                  direction = 'x',
-                                 size = 4) +
+                                 size = 6) +
     
         # week labels
         facet_grid(rows = vars(week), 
                    scales = 'free',
                    switch = 'y') +
-        theme_bw(base_size = fontsize) +
+        theme_bw(base_size = fontsize+2) +
         theme(panel.grid.major.y = element_blank(),
               panel.grid.minor = element_blank(),
               panel.border = element_blank(),
@@ -501,7 +502,7 @@ Here is the change in weekly ranking for the teams that ended in the top 10 afte
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
   filter(any(week == 6 & rank_weekly_cum %in% 1:10)) %>%
-  rank_plot(expand = 0.8)
+  rank_plot(expand = 0.5)
 ```
 
 There's some really interesting things going on here:
@@ -522,7 +523,7 @@ rank_data %>%
 * *Generic Bouldering Team Name* started off in 2nd place, was in 5th place before finals, and then ended up placing 17th after finals
 * *Jugs Not Drugs* started in 34th position (4th last), crawled to  26th position before finals, and ended up in 19th after finals.
 
-## 21-30
+## Teams that placed 21-30
 
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
@@ -532,7 +533,7 @@ rank_data %>%
 
 * **Teams that ended up placing in the middle (ranks 21-30), often showed dramatic changes in both directions to their ranking after the final.**
 
-## 31-37
+## Teams that placed 31-37
 
 ```{r, fig.height=fh, fig.width=fw}
 rank_data %>%
