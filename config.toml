@@ -15,6 +15,8 @@ baseurl = "https://wvictor14.rbind.io/"
 # To display a copyright symbol, type `&copy;`. For current year, type `{year}`.
 copyright = ""
 
+google_analytics = "UA-152663168-1"
+  
 ############################
 ## Advanced options below ##
 ############################
@@ -66,4 +68,3 @@ ignoreFiles = ["\\.ipynb$", ".ipynb_checkpoints$", "\\.Rmd$", "\\.Rmarkdown$", "
   category = "categories"
   publication_type = "publication_types"
   author = "authors"
-  
