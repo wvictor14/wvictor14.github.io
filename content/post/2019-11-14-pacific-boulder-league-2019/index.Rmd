@@ -29,7 +29,7 @@ editor_options:
 ---
 ![](/post/2019-11-14-pacific-boulder-league-2019_files/PBL_2019_banner.png)
 
-After a fun 5 weeks, the second season of the **Pacific Boulder League (PBL)** is nearing its end. Three Fridays ago (November 1st) was the Hive Finals for the 3 participating Hive gyms (Vancouver, North Shore, and the newly-opened Surrey location). 
+After a fun month and a half, the second season of the **Pacific Boulder League (PBL)** has ende. Three Fridays ago (November 1st) was the Hive Finals for the 3 participating Hive gyms (Vancouver, North Shore, and the newly-opened Surrey location). 
 
 This year I participated as part of team Bishi Bashi with Yvonne and 3 others [^1].  Being a big nerd, I decided to take a closer look at the competition scores, which were released on the [Hive's Facebook page](https://www.facebook.com/1809792565734658/posts/2463567067023868/).
 
@@ -341,7 +341,7 @@ pbl_year %>%
 
 **Did teams perform better this year compared to last?**
 
-On average, yes... teams this year reported lower scores (average 2019 weekly hex score = 3.09) compared to last year (3.23), **but this decrease in performance was not statistically significant (p<0.05)[^6].** 
+On average, no... teams this year reported lower scores (average 2019 weekly hex score = 3.09) compared to last year (3.23), **but this decrease in performance was not statistically significant (p<0.05)[^6].** 
 
 So, **the increase in attendance this year was not because of mainly new climbers deciding to join. Teams that joined this year consisted of climbers with varied skill level.** 
 
@@ -353,7 +353,7 @@ I definitely thought the second and third week of PBL was really easy for our te
 
 Before we can tackle that question, we first have to make an assumption: climbers skill levels stay constant throughout the competition. But I think this is a reasonable assumption, because 6 weeks is a short amount of time to make noticeable improvements in climbing ability.
 
-Given the above assumption, we can attribute the observed variation in weekly team scores can be primarily attributed to variation in route setting difficulty (i.e. how difficult the problems are graded/rated by the organizers)[]
+Given the above assumption, we can attribute the observed variation in weekly team scores can be primarily attributed to variation in route setting difficulty (i.e. how difficult the problems are graded/rated by the organizers)[^variation]
 
 
 If more teams performed better than average for a given week, that means that the boulders that were set that week were easier. If more teams performed worse, then boulders were harder that week.
@@ -439,7 +439,7 @@ fw <- 9
 * At Surrey, the first two weeks were harder than the last 3 weeks (25-38% vs 62-75%).
 * At North Shore, the first and last weeks were harder than the middle 3 (29% vs 57%).
 
-**If would be interesting to further break this down by grade.** Our team found week 2 easy, but only 35% of Vancouver teams performed better than their average that week. This is likely because our team climbed at a different grade range than most other teams. Problems that we were trying that week might have been easier, but at the same time, problems in other grade ranges could have been much harder.
+**It would be interesting to further break this down by grade.** Our team found week 2 easy, but only 35% of Vancouver teams performed better than their average that week. This is likely because our team climbed at a different grade range than most other teams. Problems that we were trying that week might have been easier, but at the same time, problems in other grade ranges could have been much harder.
 
 # Conclusion
 
@@ -449,10 +449,16 @@ That's it for now! I looked at this data in a couple of other ways, but I wanted
 
 # Footnotes
 
+```{r}
+blogdown::shortcode('tweet', '1141220359305232385')
+```
+
+
+[^variation]: Of course, there are many factors that can affect *individual* teams' weekly performance (e.g. injuries, absences). But, not many factors can explain large systematic changes in performance across *all* teams.
 [^1]: We had new team members this year (Me, and Robbie C). Unfortunately Dan B. betrayed us this year and joined another's team (just kidding, Dan `r emo::ji("smile")`).
 [^2]: Some teams had only a few members that were present at the finals.
 [^3]: This was certainly the most busiest day of the year for me. I had to attend Medical Genetics Research Day at UBC all day until ~6PM. Then I had to drive home to feed Sandy. I didn't actually even get to the finals until around 8PM. Oh and also it was my birthday `r emo::ji('birthday')`!
 [^4]: Yvonne only kept track of Vancouver scores from 2018. The North Shore had teams as well. The Surrey gym did not exist last year.
 [^5]: Last year I did not participate because of a chronic finger injury, which I'm happy to report has almost fully healed (continuing)
 [^6]: p-value > 0.05, linear modelling.
-[^7]: Adapted ranking plot that I made for [#TidyTuesday](https://twitter.com/victor2wy/status/1141220359305232385)
+[^7]: Adapted ranking plot that I made for [#TidyTuesday (tweet above)](https://twitter.com/victor2wy/status/1141220359305232385)
