@@ -10,7 +10,7 @@ education:
   - course: BSc in Cell and Molecular Biology
     institution: Concordia University
     year: 2016
-email: "vyuan@bcchr.ca"
+email: "victor.2wy@gmail.com"
 interests:
 - Placental genomics
 - Epigenetics
@@ -24,7 +24,7 @@ role: PhD student
 social:
 - icon: envelope
   icon_pack: fas
-  link: 'mailto:victor.2wy@gmail.com'
+  link: '#contact'
 - icon: twitter
   icon_pack: fab
   link: https://twitter.com/wvictor14
