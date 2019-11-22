@@ -23,7 +23,7 @@ image:
 projects: []
 share: true
 commentable: true
-draft: true
+draft: false
 editor_options: 
   chunk_output_type: console
 ---
