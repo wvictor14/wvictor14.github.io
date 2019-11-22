@@ -87,7 +87,7 @@ edit_page = {repo_url = "https://github.com/gcushen/hugo-academic", repo_branch 
 ############################
 
 # Enter contact details (optional). To hide a field, clear it to "".
-email = "vyuan@bcchr.ca"
+email = "victor.2wy@gmail.ca"
 phone = ""
 
 # Address
@@ -245,9 +245,3 @@ plugins_js  = []
   api_key = ""
   zoom = 15
 
-############################
-## Marketing
-############################
-[marketing]
-  google_analytics = ""
-  google_tag_manager = ""
