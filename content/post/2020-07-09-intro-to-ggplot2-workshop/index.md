@@ -11,7 +11,7 @@ address:
   region:
   postcode:
   country:
-summary: See slides [here](/slides/intro-to-ggplot2.html)
+summary: A beginner ggplot2 workshop I hosted for the Trainee Omics Group at BC Children's Research Institute. See slides [here](/slides/intro-to-ggplot2.html)
 abstract: See slides [here](/slides/intro-to-ggplot2.html)
 
 # Talk start and end times.
@@ -68,4 +68,4 @@ slides: ""
 projects: []
 ---
 
-See slides [here](/slides/intro-to-ggplot2.html)
+A beginner ggplot2 workshop I hosted for the Trainee Omics Group at BC Children's Research Institute. The first time creating a xaringan presentation. See slides [here](/slides/intro-to-ggplot2.html). The code / `.rmd` file can be found [here]()
