@@ -40,4 +40,4 @@ user_groups:
 - Visitors
 ---
 
-I am a [PhD student under Professor Wendy Robinson](https://robinsonresearch.ca/) at the University of British Columbia in the Genome Sciences and Technology program. My research interests include genomic analysis of genetic, epigenetic, and transcriptomic data related to placental biology. [ggplot2 workshop](slides/intro-to-ggplot2.html) 
+I am a [PhD student under Professor Wendy Robinson](https://robinsonresearch.ca/) at the University of British Columbia in the Genome Sciences and Technology program. My research interests include genomic analysis of genetic, epigenetic, and transcriptomic data related to placental biology.
