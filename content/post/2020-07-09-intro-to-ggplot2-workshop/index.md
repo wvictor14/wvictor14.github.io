@@ -68,4 +68,4 @@ slides: ""
 projects: []
 ---
 
-A beginner ggplot2 workshop I hosted for the Trainee Omics Group at BC Children's Research Institute. The first time creating a xaringan presentation. See slides [here](/slides/intro-to-ggplot2.html). The code / `.rmd` file can be found [here]()
+A beginner ggplot2 workshop I hosted for the Trainee Omics Group at BC Children's Research Institute. The first time creating a xaringan presentation. See slides [here](/slides/intro-to-ggplot2.html). The code / `.rmd` file can be found here.
