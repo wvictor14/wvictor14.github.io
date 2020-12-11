@@ -90,9 +90,10 @@
 <div id="planet" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#planet" class="anchor"></a>planet</h1></div>
+<!-- badges: start -->
 
-<p><code>planet</code> is an R package for inferring <strong>ethnicity</strong> <span class="math display">1</span>, <strong>gestational age</strong> <span class="math display">2</span>, and <strong>cell composition</strong> <span class="math display">3</span> from placental DNA methylation data.</p>
-<p>See full documentation at <a href="https://wvictor14.github.io/planet/" class="uri">https://wvictor14.github.io/planet/</a></p>
+<p><code>planet</code> is an R package for inferring <strong>ethnicity</strong> <br><span class="math display">1</span><br>, <strong>gestational age</strong> <br><span class="math display">2</span><br>, and <strong>cell composition</strong> <br><span class="math display">3</span><br> from placental DNA methylation data.</p>
+<p>See full documentation at <a href="https://victor.rbind.io/planet" class="uri">https://victor.rbind.io/planet</a></p>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
@@ -103,7 +104,7 @@
 <div id="usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h3>
-<p>See <a href="https://wvictor14.github.io/planet/articles">vignettes</a> for more detailed usage.</p>
+<p>See <a href="https://victor.rbind.io/planet/articles">vignettes</a> for more detailed usage.</p>
 <div id="example-data" class="section level4">
 <h4 class="hasAnchor">
 <a href="#example-data" class="anchor"></a>Example Data</h4>
@@ -138,7 +139,7 @@
 <div id="infer-gestational-age" class="section level4">
 <h4 class="hasAnchor">
 <a href="#infer-gestational-age" class="anchor"></a>Infer Gestational Age</h4>
-<p>There are 3 gestational age clocks for placental DNA methylation data from <span class="math display">$$Lee Y. et al. 2019 \[2$$</span>. To use a specific one, we can use the <code>type</code> argument in <code>pl_infer_age</code>:</p>
+<p>There are 3 gestational age clocks for placental DNA methylation data from Lee Y. et al. 2019 <br><span class="math display">2</span><br>. To use a specific one, we can use the <code>type</code> argument in <code>pl_infer_age</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/pl_infer_age.html">pl_infer_age</a></span><span class="op">(</span><span class="va">pl_betas</span>, type <span class="op">=</span> <span class="st">'RPC'</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
@@ -148,7 +149,7 @@
 <div id="infer-cell-composition" class="section level4">
 <h4 class="hasAnchor">
 <a href="#infer-cell-composition" class="anchor"></a>Infer Cell Composition</h4>
-<p>Reference data to infer cell composition on placental villi DNAm samples <span class="math display">3</span> can be used with cell deconvolution from minfi or EpiDISH. These are provided in this package as <code>pl_cell_cpgs_third</code> and <code>pl_cell_cpgs_first</code> for third trimester (term) and first trimester samples, respectively.</p>
+<p>Reference data to infer cell composition on placental villi DNAm samples <br><span class="math display">3</span><br> can be used with cell deconvolution from minfi or EpiDISH. These are provided in this package as <code>pl_cell_cpgs_third</code> and <code>pl_cell_cpgs_first</code> for third trimester (term) and first trimester samples, respectively.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">'pl_cell_cpgs_third'</span><span class="op">)</span>
 
@@ -219,6 +220,8 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://zenodo.org/badge/latestdoi/157781369"><img src="https://zenodo.org/badge/157781369.svg" alt="DOI"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg"></a></li>
+<li><a href="https://github.com/GuangchuangYu/badger/commits/master"><img src="https://img.shields.io/github/last-commit/GuangchuangYu/badger.svg"></a></li>
 </ul>
 </div>
 </div>
