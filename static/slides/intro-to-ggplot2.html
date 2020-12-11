@@ -5,7 +5,6 @@
     <meta charset="utf-8" />
     <meta name="author" content="Victor Yuan" />
     <meta name="date" content="2020-07-09" />
-    <script src="libs/header-attrs-2.5/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/middlebury-fonts.css" rel="stylesheet" />
     <link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
@@ -43,7 +42,7 @@ library(tidyverse)
 ```
 
 ```
-## -- Attaching packages -------------------- tidyverse 1.3.0 --
+## -- Attaching packages --------------------------- tidyverse 1.3.0 --
 ```
 
 ```
@@ -54,7 +53,7 @@ library(tidyverse)
 ```
 
 ```
-## -- Conflicts ----------------------- tidyverse_conflicts() --
+## -- Conflicts ------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()
 ```
@@ -146,7 +145,7 @@ First step of every ggplot2 call is to *declare* the data.
 ]
 
 .pull-right[
-&lt;img src="intro-to-gglot2_files/figure-html/our-first-plot-1-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/our-first-plot-1-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -167,7 +166,7 @@ This is referred to as *aesthetic mapping*.
 ]
 
 .pull-right[
-&lt;img src="intro-to-gglot2_files/figure-html/our-first-plot-2-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/our-first-plot-2-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -190,7 +189,7 @@ Geoms are like saying what type of plot you want (e.g. scatterplot, boxplots, hi
 ]
 
 .pull-right[
-&lt;img src="intro-to-gglot2_files/figure-html/our-first-plot-3-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/our-first-plot-3-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -209,7 +208,7 @@ ggplot(data = geo_data,
 ]
 
 .pull-right[
-&lt;img src="intro-to-gglot2_files/figure-html/our-first-plot-4-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/our-first-plot-4-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -232,7 +231,7 @@ But note that this assigned maternal ethnicity to the color of both points and l
 ]
 
 .pull-right[
-&lt;img src="intro-to-gglot2_files/figure-html/our-first-plot-5-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/our-first-plot-5-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -251,7 +250,7 @@ ggplot(data = geo_data,
 ]
 
 .pull-right[
-&lt;img src="intro-to-gglot2_files/figure-html/our-first-plot-6-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/our-first-plot-6-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -274,7 +273,7 @@ See [reference](https://ggplot2.tidyverse.org/reference/scale_shape.html) for co
 ]
 
 .pull-right[
-&lt;img src="intro-to-gglot2_files/figure-html/our-first-plot-6-2-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/our-first-plot-6-2-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -294,7 +293,7 @@ ggplot(data = geo_data,
 ]
 
 .pull-right[
-&lt;img src="intro-to-gglot2_files/figure-html/our-first-plot-7-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/our-first-plot-7-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 This assigns color to all the data
@@ -341,7 +340,7 @@ First we declare the data.
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-1-1-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-1-1-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 PE: diagnosed with preeclampsia
@@ -362,7 +361,7 @@ Then we declare the mappings of our variables to aesthetics
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-1-2-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-1-2-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 PE: diagnosed with preeclampsia
@@ -384,7 +383,7 @@ To specify we want boxplots, we use `geom_boxplot`
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-1-3-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-1-3-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 PE: diagnosed with preeclampsia
@@ -411,7 +410,7 @@ But it's a bit hard to see when the points overlap each other..
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-2-1-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-2-1-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -433,7 +432,7 @@ ggplot(data = geo_data,
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-2-2-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-2-2-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -486,7 +485,7 @@ I supplied a vector of colors (can be in hex code) of same length of the number 
 
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-3-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-3-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -511,7 +510,7 @@ Here I change the labels of my x-axis.
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-4-1-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-4-1-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -536,7 +535,7 @@ It's better to be explicit about which label corresponds to which category
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-4-2-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-4-2-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -568,7 +567,7 @@ Note that the y axis is a numeric variable and x axis is categorical, and how th
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-5-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-5-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -598,7 +597,7 @@ Pull up `?theme` to see a full description of all options
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-6-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-6-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -632,7 +631,7 @@ The type of element depends on the type of input (e.g. `element_text` for `axis.
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-7-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-7-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -666,7 +665,7 @@ There are some predefined themes that look nice and easy to use.
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-8-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-8-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
@@ -695,7 +694,7 @@ You can customize these complete themes by calling `theme()` after e.g. `theme_b
 ]
 
 .right-plot[
-&lt;img src="intro-to-gglot2_files/figure-html/fine-tune-9-out-1.png" width="100%" height="100%" /&gt;
+&lt;img src="intro-to-ggplot2_files/figure-html/fine-tune-9-out-1.png" width="100%" height="100%" /&gt;
 ]
 
 ---
