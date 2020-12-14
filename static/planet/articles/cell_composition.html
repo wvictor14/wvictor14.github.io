@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Infer Placental Cell Composition • planet</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/journal/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">planet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.34</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sjmgarnier/viridis">viridis</a></span><span class="op">)</span>
 
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/wvictor14/planet">planet</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://victor.rbind.io/planet">planet</a></span><span class="op">)</span>
 
 <span class="co"># load example data</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">'pl_betas'</span><span class="op">)</span>
@@ -185,7 +185,10 @@
 <a href="#compare" class="anchor"></a>Compare</h3>
 <p>We can compare the different cell composition estimates.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="va">houseman_estimates</span> <span class="op">%&gt;%</span> <span class="va">as.data.frame</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>algorithm <span class="op">=</span> <span class="st">'CP (Houseman)'</span><span class="op">)</span>,
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"pl_colors"</span><span class="op">)</span>
+
+<span class="co"># bind estimate data frames and reshape for plotting</span>
+<span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_rows</a></span><span class="op">(</span><span class="va">houseman_estimates</span> <span class="op">%&gt;%</span> <span class="va">as.data.frame</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>algorithm <span class="op">=</span> <span class="st">'CP (Houseman)'</span><span class="op">)</span>,
           <span class="va">epidish_RPC</span><span class="op">$</span><span class="va">estF</span> <span class="op">%&gt;%</span> <span class="va">as.data.frame</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>algorithm <span class="op">=</span> <span class="st">'RPC'</span><span class="op">)</span>,
           <span class="va">epidish_CBS</span><span class="op">$</span><span class="va">estF</span> <span class="op">%&gt;%</span> <span class="va">as.data.frame</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>algorithm <span class="op">=</span> <span class="st">'CBS'</span><span class="op">)</span>,
           <span class="va">epidish_CP</span><span class="op">$</span><span class="va">estF</span> <span class="op">%&gt;%</span> <span class="va">as.data.frame</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>algorithm <span class="op">=</span> <span class="st">'CP (EpiDISH)'</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -193,13 +196,19 @@
   <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">algorithm</span>, <span class="va">sample</span><span class="op">)</span>,
                names_to <span class="op">=</span> <span class="st">'component'</span>,
-               values_to <span class="op">=</span> <span class="st">'estimate'</span><span class="op">)</span> <span class="op">%&gt;%</span>
+               values_to <span class="op">=</span> <span class="st">'estimate'</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   
-
+  <span class="co"># relevel for plot</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>component <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">component</span>, 
+                            levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"nRBC"</span>, <span class="st">"Endothelial"</span>, <span class="st">"Hofbauer"</span>, 
+                                       <span class="st">"Stromal"</span>, <span class="st">"Trophoblasts"</span>,
+                                       <span class="st">"Syncytiotrophoblast"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  
+  <span class="co">#plot</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">sample</span>, y <span class="op">=</span> <span class="va">estimate</span>, fill <span class="op">=</span> <span class="va">component</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">'identity'</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">algorithm</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_fill_viridis_d</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">pl_colors</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.1</span>,<span class="fl">1.1</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>

@@ -12,8 +12,8 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/journal/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">planet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.34</span>
       </span>
     </div>
 
@@ -132,12 +132,38 @@
       <small>Source: <a href='http://github.com/wvictor14/planet/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="planet-development-version" class="section level1">
-<h1 class="page-header" data-toc-text="development version">
-<a href="#planet-development-version" class="anchor"></a>planet (development version)</h1>
+    <div id="planet-0234-12-11-2020" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.34">
+<a href="#planet-0234-12-11-2020" class="anchor"></a>planet 0.2.34 (12-11-2020)</h1>
+<ul>
+<li>Reduced <code>nbeta</code> from 4 mb to 30 kb</li>
+<li>Removed <code>Matrix</code> dependency from imports</li>
+</ul>
+</div>
+    <div id="planet-0233-12-11-2020" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.33">
+<a href="#planet-0233-12-11-2020" class="anchor"></a>planet 0.2.33 (12-11-2020)</h1>
+<ul>
+<li>Fixed <code><a href="../reference/pl_infer_age.html">pl_infer_age()</a></code> when missing CpGs</li>
+<li>Added tests for <code><a href="../reference/pl_infer_age.html">pl_infer_age()</a></code> and <code><a href="../reference/pl_infer_ethnicity.html">pl_infer_ethnicity()</a></code>
+</li>
+<li>Updated documentation</li>
+</ul>
+</div>
+    <div id="planet-0232-12-11-2020" class="section level1">
+<h1 class="page-header" data-toc-text="0.2.32">
+<a href="#planet-0232-12-11-2020" class="anchor"></a>planet 0.2.32 (12-11-2020)</h1>
 <ul>
 <li>Added vignettes</li>
 <li>Reduced README significantly</li>
+<li>Format documentation for Bioconductor style
+<ul>
+<li>Added BiocViews to DESCRIPTION</li>
+<li>Wrap lines max 80 characters</li>
+</ul>
+</li>
+<li>Create CITATION</li>
+<li>Add Wendy Robinson to authors</li>
 </ul>
 </div>
     <div id="planet-023" class="section level1">
