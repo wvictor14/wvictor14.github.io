@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Placental DNA methylation analysis tools">
-<meta property="og:description" content="This package contains R functions to infer additional biological 
+<meta property="og:description" content="This package contains R functions to infer additional biological
     variables to supplemental DNA methylation analysis of placental data. This 
     includes inferring ethnicity/ancestry, gestational age, and cell composition
     from placental DNA methylation array (450k/850k) data. The package comes 
@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">planet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
       </span>
     </div>
 
@@ -65,13 +65,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/cell_composition.html">Infer Placental Cell Composition</a>
+      <a href="articles/cell_composition.html">Predict Placental Cell Composition</a>
     </li>
     <li>
-      <a href="articles/ethnicity.html">Infer Ethnicity</a>
+      <a href="articles/ethnicity.html">Predict Ethnicity</a>
     </li>
     <li>
-      <a href="articles/gestational_age.html">Infer Gestational Age</a>
+      <a href="articles/gestational_age.html">Predict Gestational Age</a>
     </li>
   </ul>
 </li>
@@ -120,23 +120,23 @@
 <div id="example-data" class="section level4">
 <h4 class="hasAnchor">
 <a href="#example-data" class="anchor"></a>Example Data</h4>
-<p>All functions in this package take as input DNAm data the 450k and EPIC DNAm microarray. For best performance I suggest providing unfiltered data normalized with noob and BMIQ. A processed example dataset, <code>pl_betas</code>, is provided to show the format that this data should be in. The output of all <code>planet</code> functions is a <code>data.frame</code>.</p>
+<p>All functions in this package take as input DNAm data the 450k and EPIC DNAm microarray. For best performance I suggest providing unfiltered data normalized with noob and BMIQ. A processed example dataset, <code>plBetas</code>, is provided to show the format that this data should be in. The output of all <code>planet</code> functions is a <code>data.frame</code>.</p>
 <p>A quick example of each major function is illustrated with this example data:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hansenlab/minfi">minfi</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://victor.rbind.io/planet">planet</a></span><span class="op">)</span>
 
 <span class="co">#load example data</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">pl_betas</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">pl_pDat</span><span class="op">)</span> <span class="co"># sample information</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">plPhenoData</span><span class="op">)</span> <span class="co"># sample information</span></code></pre></div>
 </div>
-<div id="infer-ethnicity" class="section level4">
+<div id="predict-ethnicity" class="section level4">
 <h4 class="hasAnchor">
-<a href="#infer-ethnicity" class="anchor"></a>Infer Ethnicity</h4>
+<a href="#predict-ethnicity" class="anchor"></a>Predict Ethnicity</h4>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/pl_infer_ethnicity.html">pl_infer_ethnicity</a></span><span class="op">(</span><span class="va">pl_betas</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="fu"><a href="reference/predictEthnicity.html">predictEthnicity</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "1860 of 1860 predictors present."</span>
+<span class="co">#&gt; 1860 of 1860 predictors present.</span>
 <span class="co">#&gt; # A tibble: 6 x 7</span>
 <span class="co">#&gt;   Sample_ID Predicted_ethni~ Predicted_ethni~ Prob_African Prob_Asian</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;                   &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -148,31 +148,31 @@
 <span class="co">#&gt; 6 GSM19449~ Caucasian        Caucasian            0.000852   0.000973</span>
 <span class="co">#&gt; # ... with 2 more variables: Prob_Caucasian &lt;dbl&gt;, Highest_Prob &lt;dbl&gt;</span></code></pre></div>
 </div>
-<div id="infer-gestational-age" class="section level4">
+<div id="predict-gestational-age" class="section level4">
 <h4 class="hasAnchor">
-<a href="#infer-gestational-age" class="anchor"></a>Infer Gestational Age</h4>
-<p>There are 3 gestational age clocks for placental DNA methylation data from Lee Y. et al. 2019 (2). To use a specific one, we can use the <code>type</code> argument in <code>pl_infer_age</code>:</p>
+<a href="#predict-gestational-age" class="anchor"></a>Predict Gestational Age</h4>
+<p>There are 3 gestational age clocks for placental DNA methylation data from Lee Y. et al. 2019 (2). To use a specific one, we can use the <code>type</code> argument in <code>predictAge</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/pl_infer_age.html">pl_infer_age</a></span><span class="op">(</span><span class="va">pl_betas</span>, type <span class="op">=</span> <span class="st">'RPC'</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="fu"><a href="reference/predictAge.html">predictAge</a></span><span class="op">(</span><span class="va">plBetas</span>, type <span class="op">=</span> <span class="st">'RPC'</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; [1] "558 of 558 predictors present."</span>
+<span class="co">#&gt; 558 of 558 predictors present.</span>
 <span class="co">#&gt; [1] 38.46528 33.09680 34.32520 35.50937 37.63910 36.77051</span></code></pre></div>
 </div>
-<div id="infer-cell-composition" class="section level4">
+<div id="predict-cell-composition" class="section level4">
 <h4 class="hasAnchor">
-<a href="#infer-cell-composition" class="anchor"></a>Infer Cell Composition</h4>
+<a href="#predict-cell-composition" class="anchor"></a>Predict Cell Composition</h4>
 <p>Reference data to infer cell composition on placental villi DNAm samples</p>
-<p>(3) can be used with cell deconvolution from minfi or EpiDISH. These are provided in this package as <code>pl_cell_cpgs_third</code> and <code>pl_cell_cpgs_first</code> for third trimester (term) and first trimester samples, respectively.</p>
+<p>(3) can be used with cell deconvolution from minfi or EpiDISH. These are provided in this package as <code>plCellCpGsThird</code> and <code>plCellCpGsFirst</code> for third trimester (term) and first trimester samples, respectively.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">'pl_cell_cpgs_third'</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">'plCellCpGsThird'</span><span class="op">)</span>
 
 <span class="fu">minfi</span><span class="fu">:::</span><span class="fu">projectCellType</span><span class="op">(</span>
   
   <span class="co"># subset your data to cell cpgs</span>
-  <span class="va">pl_betas</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">pl_cell_cpgs_third</span><span class="op">)</span>,<span class="op">]</span>, 
+  <span class="va">plBetas</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">plCellCpGsThird</span><span class="op">)</span>,<span class="op">]</span>, 
   
   <span class="co"># input the reference cpg matrix</span>
-  <span class="va">pl_cell_cpgs_third</span>,
+  <span class="va">plCellCpGsThird</span>,
   
   lessThanOne <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">%&gt;%</span>
   
@@ -211,7 +211,8 @@
 <ul class="list-unstyled">
 <li>Browse source code at <br><a href="http://github.com/wvictor14/planet/">http://​github.com/​wvictor14/​planet/​</a>
 </li>
-<li>Report a bug at <br><a href="http://github.com/wvictor14/planet/issues">http://​github.com/​wvictor14/​planet/​issues</a>
+<li>Report a bug at <br><a href="http://github.com/wvictor14/planet/issues">
+    http://​github.com/​wvictor14/​planet/​issues</a>
 </li>
 </ul>
 </div>
@@ -219,7 +220,7 @@
 <h2>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small>GPL (&gt;= 2)</small></li>
 </ul>
 </div>
 <div class="citation">
@@ -240,8 +241,9 @@
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://doi.org/10.5281/zenodo.4321633"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4321633.svg" alt="DOI"></a></li>
-<li><a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg"></a></li>
 <li><a href="https://github.com/GuangchuangYu/badger/commits/master"><img src="https://img.shields.io/github/last-commit/GuangchuangYu/badger.svg"></a></li>
+<li><a href="https://github.com/wvictor14/planet/actions"><img src="https://github.com/wvictor14/planet/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#stable"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
 </ul>
 </div>
 </div>

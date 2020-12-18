@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • planet</title>
+<title>Example placental DNA methylation data — plBetas • planet</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,7 +46,27 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Example placental DNA methylation data — plBetas" />
+<meta property="og:description" content="6 DNA methylation profiles from preeclampsia and healthy
+control placentas. This data was downloaded from:
+GSE75196
+
+
+&quot;Genome wide DNA methylation profiling of normal and
+preeclampsia placental samples. Illumina Infinium HumanMethylation450
+BeadChip (450K array) was used to obtain DNA methylation profiles in
+placental samples. Samples included 16 samples from healthy uncomplicated
+pregnancies and 8 samples from pregnancies affected by preeclampsia.&quot; -
+from Yeung et al.
+The DNA methylation data for 24 placental samples were downloaded from
+GSE75196.
+After normalizing using minfi::preprocessNoob and wateRmelon::BMIQ,
+the data were filtered to 6/24 samples and 10,000 random CpGs + those CpGs
+used in the gestational age clock and ethnicity classifier.
+Reference: Yeung KR, Chiu CL, Pidsley R, Makris A et al. DNA methylation
+profiles in preeclampsia and healthy control placentas. Am J Physiol Heart
+Circ Physiol 2016 May 15;310(10):H1295-303.
+PMID:26968548" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -66,7 +86,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -136,145 +156,50 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='http://github.com/wvictor14/planet/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Example placental DNA methylation data</h1>
+    <small class="dont-index">Source: <a href='http://github.com/wvictor14/planet/blob/master/R/data.r'><code>R/data.r</code></a></small>
+    <div class="hidden name"><code>plBetas.Rd</code></div>
     </div>
 
-    <div id="planet-0990" class="section level1">
-<h1 class="page-header" data-toc-text="0.99.0">
-<a href="#planet-0990" class="anchor"></a>planet 0.99.0</h1>
-</div>
-    <div id="planet-030-12-17-2020" class="section level1">
-<h1 class="page-header" data-toc-text="0.3.0">
-<a href="#planet-030-12-17-2020" class="anchor"></a>planet 0.3.0 (12-17-2020)</h1>
-<ul>
-<li>Final preparations for Bioconductor submission</li>
-<li>Changed license to =&gt; GPL-2</li>
-<li>More detailed attribution to glmnet</li>
-<li>Renamed all functions to camel case convention, including functions, data, tests, documentation, vignettes</li>
-<li>Added <code>planet-deprecated.R</code>
-</li>
-<li>
-<code><a href="../reference/predictEthnicity.html">pl_infer_ethnicity()</a></code> and <code><a href="../reference/predictAge.html">pl_infer_age()</a></code> now deprecated, replaced with <code>predictEthnicity</code> and <code>predictAge</code>, respectively.</li>
+    <div class="ref-description">
+    <p>6 DNA methylation profiles from preeclampsia and healthy
+control placentas. This data was downloaded from:</p><ul>
+<li><p><a href='https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196'>GSE75196</a></p></li>
 </ul>
-</div>
-    <div id="planet-0236-12-17-2020" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.36">
-<a href="#planet-0236-12-17-2020" class="anchor"></a>planet 0.2.36 (12-17-2020)</h1>
-<ul>
-<li>Removed minfi dependency</li>
-<li>Addressed all fixable &gt;line80 and 4 space indent notes from BiocCheck</li>
-<li>Precompiling vignettes.</li>
-</ul>
-</div>
-    <div id="planet-0235-12-14-2020" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.35">
-<a href="#planet-0235-12-14-2020" class="anchor"></a>planet 0.2.35 (12-14-2020)</h1>
-<ul>
-<li>added hexsticker</li>
-<li>updated zenodo doi</li>
-<li>added github actions</li>
-<li>added cells color palette</li>
-<li>favicons</li>
-<li>Fixed in-text citations in README</li>
-</ul>
-</div>
-    <div id="planet-0234-12-11-2020" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.34">
-<a href="#planet-0234-12-11-2020" class="anchor"></a>planet 0.2.34 (12-11-2020)</h1>
-<ul>
-<li>Reduced <code>nbeta</code> from 4 mb to 30 kb</li>
-<li>Removed <code>Matrix</code> dependency from imports</li>
-</ul>
-</div>
-    <div id="planet-0233-12-11-2020" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.33">
-<a href="#planet-0233-12-11-2020" class="anchor"></a>planet 0.2.33 (12-11-2020)</h1>
-<ul>
-<li>Fixed <code><a href="../reference/predictAge.html">pl_infer_age()</a></code> when missing CpGs</li>
-<li>Added tests for <code><a href="../reference/predictAge.html">pl_infer_age()</a></code> and <code><a href="../reference/predictEthnicity.html">pl_infer_ethnicity()</a></code>
-</li>
-<li>Updated documentation</li>
-</ul>
-</div>
-    <div id="planet-0232-12-11-2020" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.32">
-<a href="#planet-0232-12-11-2020" class="anchor"></a>planet 0.2.32 (12-11-2020)</h1>
-<ul>
-<li>Added vignettes</li>
-<li>Reduced README significantly</li>
-<li>Format documentation for Bioconductor style
-<ul>
-<li>Added BiocViews to DESCRIPTION</li>
-<li>Wrap lines max 80 characters</li>
-</ul>
-</li>
-<li>Create CITATION</li>
-<li>Add Wendy Robinson to authors</li>
-</ul>
-</div>
-    <div id="planet-023" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.3">
-<a href="#planet-023" class="anchor"></a>planet 0.2.3</h1>
-<ul>
-<li>Fixes data export error on linux. See <a href="https://github.com/wvictor14/planet/pull/6#issuecomment-740147118"><a href='http://github.com/wvictor14/planet/issues/6'>#6</a></a>
-</li>
-</ul>
-</div>
-    <div id="planet-022" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.2">
-<a href="#planet-022" class="anchor"></a>planet 0.2.2</h1>
-<ul>
-<li>Export <code>nbeta</code>, instead of keeping internal</li>
-<li>This fixes the install errors</li>
-<li>On linux, data objects are not properly exported. See <a href="https://github.com/wvictor14/planet/issues/2"><a href='http://github.com/wvictor14/planet/issues/2'>#2</a></a>
-</li>
-</ul>
-</div>
-    <div id="planet-021" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.1">
-<a href="#planet-021" class="anchor"></a>planet 0.2.1</h1>
-<ul>
-<li>added syncytiotrophoblast reference cpgs</li>
-</ul>
-</div>
-    <div id="planet-020" class="section level1">
-<h1 class="page-header" data-toc-text="0.2.0">
-<a href="#planet-020" class="anchor"></a>planet 0.2.0</h1>
-<ul>
-<li>added <code>pl_cell_cpgs_first</code> and <code>pl_cell_cpgs_third</code> for cell composition inference</li>
-</ul>
-</div>
-    <div id="planet-011" class="section level1">
-<h1 class="page-header" data-toc-text="0.1.1">
-<a href="#planet-011" class="anchor"></a>planet 0.1.1</h1>
-<ul>
-<li>copied glmnet:::glment_softmax code to be compatible with new glmnet version</li>
-</ul>
-</div>
-    <div id="planet-010" class="section level1">
-<h1 class="page-header" data-toc-text="0.1.0">
-<a href="#planet-010" class="anchor"></a>planet 0.1.0</h1>
-<ul>
-<li>Added <code>pl_infer_age</code> to infer gestational age using Lee Y et al. placental DNAm clock.</li>
-<li>Modified example data to contain less probes and more samples, to save space but still be useful in the examples.</li>
-</ul>
-</div>
-    <div id="planet-0019000" class="section level1">
-<h1 class="page-header" data-toc-text="0.0.1.9000">
-<a href="#planet-0019000" class="anchor"></a>planet 0.0.1.9000</h1>
-<ul>
-<li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
-</ul>
-</div>
-  </div>
 
+<p>"Genome wide DNA methylation profiling of normal and
+preeclampsia placental samples. Illumina Infinium HumanMethylation450
+BeadChip (450K array) was used to obtain DNA methylation profiles in
+placental samples. Samples included 16 samples from healthy uncomplicated
+pregnancies and 8 samples from pregnancies affected by preeclampsia." -
+from <a href='https://pubmed.ncbi.nlm.nih.gov/26968548/'>Yeung et al.</a></p>
+<p>The DNA methylation data for 24 placental samples were downloaded from
+<a href='https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196'>GSE75196</a>.
+After normalizing using <code><a href='https://rdrr.io/pkg/minfi/man/preprocessNoob.html'>minfi::preprocessNoob</a></code> and <code><a href='https://rdrr.io/pkg/wateRmelon/man/BMIQ.html'>wateRmelon::BMIQ</a></code>,
+the data were filtered to 6/24 samples and 10,000 random CpGs + those CpGs
+used in the gestational age clock and ethnicity classifier.</p>
+<p>Reference: Yeung KR, Chiu CL, Pidsley R, Makris A et al. DNA methylation
+profiles in preeclampsia and healthy control placentas. Am J Physiol Heart
+Circ Physiol 2016 May 15;310(10):H1295-303.
+<a href='https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196'>PMID:26968548</a></p>
+    </div>
+
+    <pre class="usage"><span class='va'>plBetas</span></pre>
+
+
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A matrix</p>
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p><a href='https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196'>https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196</a></p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 

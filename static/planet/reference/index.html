@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">planet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.34</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
       </span>
     </div>
 
@@ -102,13 +102,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/cell_composition.html">Infer Placental Cell Composition</a>
+      <a href="../articles/cell_composition.html">Predict Placental Cell Composition</a>
     </li>
     <li>
-      <a href="../articles/ethnicity.html">Infer Ethnicity</a>
+      <a href="../articles/ethnicity.html">Predict Ethnicity</a>
     </li>
     <li>
-      <a href="../articles/gestational_age.html">Infer Gestational Age</a>
+      <a href="../articles/gestational_age.html">Predict Gestational Age</a>
     </li>
   </ul>
 </li>
@@ -162,86 +162,64 @@
       <tr>
         
         <td>
-          <p><code><a href="pl_betas.html">pl_betas</a></code> </p>
+          <p><code><a href="ageCpGs.html">ageCpGs</a></code> </p>
         </td>
-        <td><p>6 DNA methylation profiles from preeclampsia and healthy control 
-placentas
-
-"Genome wide DNA methylation profiling of normal and preeclampsia placental 
-samples. Illumina Infinium HumanMethylation450 BeadChip (450K array) was used
-to obtain DNA methylation profiles in placental samples. Samples included 16 
-samples from healthy uncomplicated pregnancies and 8 samples from pregnancies
- affected by preeclampsia."
-
-The DNA methylation data for 24 placental samples were downloaded from
-[GSE75196](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196). 
-After normalizing using `minfi::preprocessNoob` and `wateRmelon::BMIQ`, the 
-betas were filtered to 10,000 random CpGs + those CpGs used in the 
-gestational age clock and ethnicity classifier.
-
-Reference: Yeung KR, Chiu CL, Pidsley R, Makris A et al. DNA methylation 
-profiles in preeclampsia and healthy control placentas. Am J Physiol Heart 
-Circ Physiol 2016 May 15;310(10):H1295-303.
-PMID: 26968548</p></td>
+        <td><p>Placental gestational age CpGs</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pl_cell_cpgs_first.html">pl_cell_cpgs_first</a></code> </p>
+          <p><code><a href="ethnicityCpGs.html">ethnicityCpGs</a></code> </p>
         </td>
-        <td><p>First trimester cell type coefficients</p></td>
+        <td><p>CpGs to predict ethnicity</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pl_cell_cpgs_third.html">pl_cell_cpgs_third</a></code> </p>
+          <p><code><a href="planet-deprecated.html">planet-deprecated</a></code> </p>
         </td>
-        <td><p>Third trimester cell type reference coefficients</p></td>
+        <td><p>Deprecated functions in <span class="pkg">planet</span></p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pl_clock.html">pl_clock</a></code> </p>
+          <p><code><a href="plBetas.html">plBetas</a></code> </p>
         </td>
-        <td><p>Coefficients from the three placental gestational age clocks from Lee 
-Y et al. 2019.
-
-Reference: Lee Y, Choufani S, Weksberg R, et al. Placental epigenetic clocks:
-estimating gestational age using placental DNA methylation levels. Aging 
-(Albany NY). 2019;11(12):4238–4253. doi:10.18632/aging.102049. PMID: 31235674</p></td>
+        <td><p>Example placental DNA methylation data</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pl_colors.html">pl_colors</a></code> </p>
+          <p><code><a href="plCellCpGsFirst.html">plCellCpGsFirst</a></code> </p>
         </td>
-        <td><p>pl_colors</p></td>
+        <td><p>First trimester placental cell type coefficients</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pl_ethnicity_features.html">pl_ethnicity_features</a></code> </p>
+          <p><code><a href="plCellCpGsThird.html">plCellCpGsThird</a></code> </p>
         </td>
-        <td><p>Features from 450k/850k data used to predict ethnicity
-
-The features on the 450k/850k DNAm microarry used to predict ethnicity.</p></td>
+        <td><p>Third trimester placental cell type coefficients</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pl_infer_age.html">pl_infer_age()</a></code> </p>
+          <p><code><a href="plColors.html">plColors</a></code> </p>
         </td>
-        <td><p>Predicts gestational age using DNA methylation microarray data</p></td>
+        <td><p>A color palette for placental cell types</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pl_infer_ethnicity.html">pl_infer_ethnicity()</a></code> </p>
+          <p><code><a href="plPhenoData.html">plPhenoData</a></code> </p>
         </td>
-        <td><p>Infers ethnicity using DNA methylation microarray data</p></td>
+        <td><p>Sample information accompanying <code>pl_betas</code></p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="pl_pDat.html">pl_pDat</a></code> </p>
+          <p><code><a href="predictAge.html">predictAge()</a></code> </p>
         </td>
-        <td><p>Sex, disease, and gestational age information associated with 
-`pl_betas`. 
-
-Taken from 
-[GSE75196](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196).</p></td>
+        <td><p>Predicts gestational age using placental DNA methylation microarray
+data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="predictEthnicity.html">predictEthnicity()</a></code> </p>
+        </td>
+        <td><p>Predicts ethnicity using placental DNA methylation microarray data</p></td>
       </tr>
     </tbody>
     </table>
