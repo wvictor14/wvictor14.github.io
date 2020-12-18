@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -78,7 +78,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="http://github.com/wvictor14/planet/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -92,8 +92,7 @@
 
       
 
-      </header><script src="ethnicity_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="ethnicity_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="ethnicity_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="ethnicity_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Predict Ethnicity</h1>
@@ -186,7 +185,7 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"P(Caucasian)"</span>, y <span class="op">=</span> <span class="st">"P(African)"</span><span class="op">)</span></code></pre></div>
-<p><img src="fig/eth-results-1.png" title="plot of chunk eth-results" alt="plot of chunk eth-results" style="display: block; margin: auto;"></p>
+<p><img src="fig/ethnicity-1.png" title="plot of chunk ethnicity" alt="plot of chunk ethnicity" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">results</span> <span class="op">%&gt;%</span>
@@ -199,7 +198,7 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"P(Caucasian)"</span>, y <span class="op">=</span> <span class="st">"P(Asian)"</span><span class="op">)</span></code></pre></div>
-<p><img src="fig/eth-results-2.png" title="plot of chunk eth-results" alt="plot of chunk eth-results" style="display: block; margin: auto;"></p>
+<p><img src="fig/ethnicity-2.png" title="plot of chunk ethnicity" alt="plot of chunk ethnicity" style="display: block; margin: auto;"></p>
 <p>We can’t compare this to self-reported ethnicity as it is unavailable. But we know these samples were collected in Sydney, Australia, and are therefore likely mostly European with some East Asian ancestries.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">Predicted_ethnicity</span><span class="op">)</span>
