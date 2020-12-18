@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -78,7 +78,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="http://github.com/wvictor14/planet/">
-    <span class="fab fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -92,7 +92,8 @@
 
       
 
-      </header><script src="ethnicity_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="ethnicity_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="ethnicity_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="ethnicity_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Predict Ethnicity</h1>
@@ -118,20 +119,19 @@
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">plPhenoData</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] 13918    24</code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">plPhenoData</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 6 x 7
-##   sample_id sex   disease gestation_wk ga_RPC ga_CPC
-##   &lt;fct&gt;     &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 GSM19449~ Male  preecl~           36   38.5   38.7
-## 2 GSM19449~ Male  preecl~           32   33.1   34.2
-## 3 GSM19449~ Fema~ preecl~           32   34.3   35.1
-## 4 GSM19449~ Male  preecl~           35   35.5   36.7
-## 5 GSM19449~ Fema~ preecl~           38   37.6   37.6
-## 6 GSM19449~ Fema~ preecl~           36   36.8   38.4
-## # ... with 1 more variable: ga_RRPC &lt;dbl&gt;</code></pre>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span>
+<span class="co">#&gt; [1] 13918    24</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">plPhenoData</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 6 x 7</span>
+<span class="co">#&gt;   sample_id sex   disease gestation_wk ga_RPC ga_CPC</span>
+<span class="co">#&gt;   &lt;fct&gt;     &lt;chr&gt; &lt;chr&gt;          &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 GSM19449~ Male  preecl~           36   38.5   38.7</span>
+<span class="co">#&gt; 2 GSM19449~ Male  preecl~           32   33.1   34.2</span>
+<span class="co">#&gt; 3 GSM19449~ Fema~ preecl~           32   34.3   35.1</span>
+<span class="co">#&gt; 4 GSM19449~ Male  preecl~           35   35.5   36.7</span>
+<span class="co">#&gt; 5 GSM19449~ Fema~ preecl~           38   37.6   37.6</span>
+<span class="co">#&gt; 6 GSM19449~ Fema~ preecl~           36   36.8   38.4</span>
+<span class="co">#&gt; # ... with 1 more variable: ga_RRPC &lt;dbl&gt;</span></code></pre></div>
 </div>
 <div id="infer-ethnicity" class="section level3">
 <h3 class="hasAnchor">
@@ -140,42 +140,42 @@
 <ul>
 <li>CpGs and SNPs that are used in <code>pl_infer_ethnicity</code> need to be in your betas <code>data.frame</code>. You can ensure that you have all features with the <code>ethnicityCpGs</code> vector:</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">ethnicityCpGs</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">ethnicityCpGs</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p><em>Note that if some features are missing, <code>pl_infer_ethnicity</code> will throw a warning, but will still work.</em></p>
 <ul>
 <li><p>The betas <code>data.frame</code> needs to have <em>samples in columns</em> and <em>CpGs/snps</em> in rows. The rownames must be CpG/rs identifiers.</p></li>
-<li><p>If you have IDAT files available, then I recommend normalizing your betas <code>data.frame</code> using the same normalization methods used on the training data: <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3627582/"><strong>noob</strong></a> and <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3546795/"><strong>BMIQ</strong></a>. To apply these, run <code><a href="https://rdrr.io/pkg/minfi/man/preprocessNoob.html">minfi::preprocessNoob()</a></code> on an <code>rgset</code> object and then <code>wateRmelon::BMIQ()</code>. This has already applied to the example data.</p></li>
+<li><p>If you have IDAT files available, then I recommend normalizing your betas <code>data.frame</code> using the same normalization methods used on the training data: <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3627582/"><strong>noob</strong></a> and <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3546795/"><strong>BMIQ</strong></a>. To apply these, run <code><a href="https://rdrr.io/pkg/minfi/man/preprocessNoob.html">minfi::preprocessNoob()</a></code> on an <code>rgset</code> object and then <code><a href="https://rdrr.io/pkg/wateRmelon/man/BMIQ.html">wateRmelon::BMIQ()</a></code>. This has already applied to the example data.</p></li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictEthnicity.html">pl_infer_ethnicity</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span></code></pre></div>
-<pre><code>## Warning: 'pl_infer_ethnicity' is deprecated.
-## Use 'predictEthnicity' instead.
-## See help("Deprecated")</code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># show last 8 rows</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predictEthnicity.html">pl_infer_ethnicity</a></span><span class="op">(</span><span class="va">plBetas</span><span class="op">)</span>
+<span class="co">#&gt; Warning: 'pl_infer_ethnicity' is deprecated.</span>
+<span class="co">#&gt; Use 'predictEthnicity' instead.</span>
+<span class="co">#&gt; See help("Deprecated")</span>
+
+<span class="co"># show last 8 rows</span>
 <span class="va">results</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span></code></pre></div>
-<pre><code>## # A tibble: 8 x 7
-##   Sample_ID Predicted_ethni~ Predicted_ethni~ Prob_African
-##   &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;                   &lt;dbl&gt;
-## 1 GSM19449~ Asian            Asian                0.0123  
-## 2 GSM19449~ Caucasian        Caucasian            0.0157  
-## 3 GSM19449~ Asian            Asian                0.0208  
-## 4 GSM19449~ Caucasian        Caucasian            0.000928
-## 5 GSM19449~ Caucasian        Caucasian            0.00226 
-## 6 GSM19449~ Caucasian        Caucasian            0.00660 
-## 7 GSM19449~ Caucasian        Caucasian            0.00216 
-## 8 GSM19449~ Caucasian        Caucasian            0.00114 
-## # ... with 3 more variables: Prob_Asian &lt;dbl&gt;,
-## #   Prob_Caucasian &lt;dbl&gt;, Highest_Prob &lt;dbl&gt;</code></pre>
+    <span class="fu"><a href="https://rdrr.io/r/utils/head.html">tail</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 8 x 7</span>
+<span class="co">#&gt;   Sample_ID Predicted_ethni~ Predicted_ethni~ Prob_African</span>
+<span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;                   &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 GSM19449~ Asian            Asian                0.0123  </span>
+<span class="co">#&gt; 2 GSM19449~ Caucasian        Caucasian            0.0157  </span>
+<span class="co">#&gt; 3 GSM19449~ Asian            Asian                0.0208  </span>
+<span class="co">#&gt; 4 GSM19449~ Caucasian        Caucasian            0.000928</span>
+<span class="co">#&gt; 5 GSM19449~ Caucasian        Caucasian            0.00226 </span>
+<span class="co">#&gt; 6 GSM19449~ Caucasian        Caucasian            0.00660 </span>
+<span class="co">#&gt; 7 GSM19449~ Caucasian        Caucasian            0.00216 </span>
+<span class="co">#&gt; 8 GSM19449~ Caucasian        Caucasian            0.00114 </span>
+<span class="co">#&gt; # ... with 3 more variables: Prob_Asian &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   Prob_Caucasian &lt;dbl&gt;, Highest_Prob &lt;dbl&gt;</span></code></pre></div>
 <p><code>pl_infer_ethnicity</code> returns probabilities corresponding to each ethnicity for each sample (e.g <code>Prob_Caucasian</code>, <code>Prob_African</code>, <code>Prob_Asian</code>). A final classification is determined in two ways:</p>
 <ol style="list-style-type: decimal">
 <li><p><code>Predicted_ethnicity_nothresh</code> - returns a classification corresponding to the highest class-specific probability.</p></li>
 <li><p><code>Predicted_ethnicity</code> - if the highest class-specific probability is below <code>0.75</code>, then the the sample is assigned an <code>Amibiguous</code> label. This threshold can be adjusted with the <code>threshold</code> argument. Samples with this label might require special attention in downstream analyses.</p></li>
 </ol>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">results</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>
         x <span class="op">=</span> <span class="va">Prob_Caucasian</span>, y <span class="op">=</span> <span class="va">Prob_African</span>,
@@ -186,11 +186,10 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"P(Caucasian)"</span>, y <span class="op">=</span> <span class="st">"P(African)"</span><span class="op">)</span></code></pre></div>
-<div class="figure">
-<img src="fig/eth-results-1.png" alt=""><p class="caption">plot of chunk eth-results</p>
-</div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">results</span> <span class="op">%&gt;%</span>
+<p><img src="fig/eth-results-1.png" title="plot of chunk eth-results" alt="plot of chunk eth-results" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">results</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>
         x <span class="op">=</span> <span class="va">Prob_Caucasian</span>, y <span class="op">=</span> <span class="va">Prob_Asian</span>,
         col <span class="op">=</span> <span class="va">Predicted_ethnicity</span>
@@ -200,15 +199,13 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"P(Caucasian)"</span>, y <span class="op">=</span> <span class="st">"P(Asian)"</span><span class="op">)</span></code></pre></div>
-<div class="figure">
-<img src="fig/eth-results-2.png" alt=""><p class="caption">plot of chunk eth-results</p>
-</div>
+<p><img src="fig/eth-results-2.png" title="plot of chunk eth-results" alt="plot of chunk eth-results" style="display: block; margin: auto;"></p>
 <p>We can’t compare this to self-reported ethnicity as it is unavailable. But we know these samples were collected in Sydney, Australia, and are therefore likely mostly European with some East Asian ancestries.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">Predicted_ethnicity</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-##     Asian Caucasian 
-##         2        22</code></pre>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">Predicted_ethnicity</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     Asian Caucasian </span>
+<span class="co">#&gt;         2        22</span></code></pre></div>
 <p><strong>A note on adjustment in differential methylation analysis</strong></p>
 <p>Because ‘Ambiguous’ samples might have different mixtures of ancestries, it might be inadequate to adjust for them as one group in an analysis of admixed populations (e.g. 50/50 Asian/African should not be considered the same group as 50/50 Caucasian/African). One solution would be to simply remove these samples. Another would be to adjust for the raw probabilities-in this case, use only two of the three probabilities, since the third will be redundant (probabilities sum to 1). If sample numbers are large enough in each group, stratifying downstream analyses by ethnicity might also be a valid option.</p>
 </div>

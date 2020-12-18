@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -78,7 +78,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="http://github.com/wvictor14/planet/">
-    <span class="fab fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -92,7 +92,8 @@
 
       
 
-      </header><script src="cell_composition_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="cell_composition_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="cell_composition_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="cell_composition_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Predict Placental Cell Composition</h1>
@@ -110,81 +111,80 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># cell deconvolution packages</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hansenlab/minfi">minfi</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">EpiDISH</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sjczheng/EpiDISH">EpiDISH</a></span><span class="op">)</span>
 
 <span class="co"># data wrangling and plotting</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">viridis</span><span class="op">)</span>
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://victor.rbind.io/planet">planet</a></span><span class="op">)</span>
 
 <span class="co"># load example data</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"plBetas"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"plCellCpGsThird"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">plCellCpGsThird</span><span class="op">)</span></code></pre></div>
-<pre><code>##            Trophoblasts   Stromal  Hofbauer Endothelial
-## cg10590657    0.1014098 0.9345796 0.8655285   0.8963641
-## cg14923398    0.1282030 0.8902107 0.9036769   0.9383641
-## cg05348366    0.1305697 0.9519820 0.8803082   0.9065136
-## cg17907628    0.1215249 0.9278777 0.8727841   0.8914412
-## cg26799656    0.1259953 0.9482014 0.8803863   0.8791004
-## cg11862144    0.1561991 0.9430855 0.9114967   0.9341671
-##                 nRBC Syncytiotrophoblast
-## cg10590657 0.8448382          0.05460441
-## cg14923398 0.9508709          0.05383193
-## cg05348366 0.9278057          0.06546727
-## cg17907628 0.9143601          0.05325227
-## cg26799656 0.9010419          0.06823985
-## cg11862144 0.9647331          0.06044207</code></pre>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">plCellCpGsThird</span><span class="op">)</span>
+<span class="co">#&gt;            Trophoblasts   Stromal  Hofbauer Endothelial</span>
+<span class="co">#&gt; cg10590657    0.1014098 0.9345796 0.8655285   0.8963641</span>
+<span class="co">#&gt; cg14923398    0.1282030 0.8902107 0.9036769   0.9383641</span>
+<span class="co">#&gt; cg05348366    0.1305697 0.9519820 0.8803082   0.9065136</span>
+<span class="co">#&gt; cg17907628    0.1215249 0.9278777 0.8727841   0.8914412</span>
+<span class="co">#&gt; cg26799656    0.1259953 0.9482014 0.8803863   0.8791004</span>
+<span class="co">#&gt; cg11862144    0.1561991 0.9430855 0.9114967   0.9341671</span>
+<span class="co">#&gt;                 nRBC Syncytiotrophoblast</span>
+<span class="co">#&gt; cg10590657 0.8448382          0.05460441</span>
+<span class="co">#&gt; cg14923398 0.9508709          0.05383193</span>
+<span class="co">#&gt; cg05348366 0.9278057          0.06546727</span>
+<span class="co">#&gt; cg17907628 0.9143601          0.05325227</span>
+<span class="co">#&gt; cg26799656 0.9010419          0.06823985</span>
+<span class="co">#&gt; cg11862144 0.9647331          0.06044207</span></code></pre></div>
 <p>After our reference cpg data is loaded, we can estimate cell composition by applying either the Constrained Projection approach implemented by the R packages minfi or EpiDISH, or a non-constrained approach by EpiDish.</p>
 <div id="minfi" class="section level4">
 <h4 class="hasAnchor">
 <a href="#minfi" class="anchor"></a>Minfi</h4>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">houseman_estimates</span> <span class="op">&lt;-</span> <span class="fu">minfi</span><span class="fu">:::</span><span class="fu">projectCellType</span><span class="op">(</span>
     <span class="va">plBetas</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">plCellCpGsThird</span><span class="op">)</span>, <span class="op">]</span>,
     <span class="va">plCellCpGsThird</span>,
     lessThanOne <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">houseman_estimates</span><span class="op">)</span></code></pre></div>
-<pre><code>##            Trophoblasts    Stromal      Hofbauer
-## GSM1944936    0.1091279 0.04891919  0.000000e+00
-## GSM1944939    0.2299918 0.00000000 -1.806592e-19
-## GSM1944942    0.1934287 0.03483540  0.000000e+00
-## GSM1944944    0.2239896 0.06249135  1.608645e-03
-## GSM1944946    0.1894152 0.07935955  0.000000e+00
-## GSM1944948    0.2045124 0.07657717  0.000000e+00
-##            Endothelial       nRBC Syncytiotrophoblast
-## GSM1944936  0.08983998 0.05294062           0.6979477
-## GSM1944939  0.07888007 0.03374149           0.6377822
-## GSM1944942  0.09260353 0.02929310           0.6350506
-## GSM1944944  0.11040693 0.04447951           0.5467642
-## GSM1944946  0.10587439 0.05407587           0.6022329
-## GSM1944948  0.09871149 0.02269798           0.6085825</code></pre>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">houseman_estimates</span><span class="op">)</span>
+<span class="co">#&gt;            Trophoblasts    Stromal      Hofbauer</span>
+<span class="co">#&gt; GSM1944936    0.1091279 0.04891919  0.000000e+00</span>
+<span class="co">#&gt; GSM1944939    0.2299918 0.00000000 -1.806592e-19</span>
+<span class="co">#&gt; GSM1944942    0.1934287 0.03483540  0.000000e+00</span>
+<span class="co">#&gt; GSM1944944    0.2239896 0.06249135  1.608645e-03</span>
+<span class="co">#&gt; GSM1944946    0.1894152 0.07935955  0.000000e+00</span>
+<span class="co">#&gt; GSM1944948    0.2045124 0.07657717  0.000000e+00</span>
+<span class="co">#&gt;            Endothelial       nRBC Syncytiotrophoblast</span>
+<span class="co">#&gt; GSM1944936  0.08983998 0.05294062           0.6979477</span>
+<span class="co">#&gt; GSM1944939  0.07888007 0.03374149           0.6377822</span>
+<span class="co">#&gt; GSM1944942  0.09260353 0.02929310           0.6350506</span>
+<span class="co">#&gt; GSM1944944  0.11040693 0.04447951           0.5467642</span>
+<span class="co">#&gt; GSM1944946  0.10587439 0.05407587           0.6022329</span>
+<span class="co">#&gt; GSM1944948  0.09871149 0.02269798           0.6085825</span></code></pre></div>
 </div>
 <div id="epidish" class="section level4">
 <h4 class="hasAnchor">
 <a href="#epidish" class="anchor"></a>EpiDish</h4>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># robust partial correlations</span>
-<span class="va">epidish_RPC</span> <span class="op">&lt;-</span> <span class="fu">epidish</span><span class="op">(</span>
+<span class="va">epidish_RPC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/EpiDISH/man/epidish.html">epidish</a></span><span class="op">(</span>
     beta.m <span class="op">=</span> <span class="va">plBetas</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">plCellCpGsThird</span><span class="op">)</span>, <span class="op">]</span>,
     ref.m <span class="op">=</span> <span class="va">plCellCpGsThird</span>,
     method <span class="op">=</span> <span class="st">"RPC"</span>
 <span class="op">)</span>
 
 <span class="co"># CIBERSORT</span>
-<span class="va">epidish_CBS</span> <span class="op">&lt;-</span> <span class="fu">epidish</span><span class="op">(</span>
+<span class="va">epidish_CBS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/EpiDISH/man/epidish.html">epidish</a></span><span class="op">(</span>
     beta.m <span class="op">=</span> <span class="va">plBetas</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">plCellCpGsThird</span><span class="op">)</span>, <span class="op">]</span>,
     ref.m <span class="op">=</span> <span class="va">plCellCpGsThird</span>,
     method <span class="op">=</span> <span class="st">"CBS"</span>
 <span class="op">)</span>
 
 <span class="co"># constrained projection (houseman 2012)</span>
-<span class="va">epidish_CP</span> <span class="op">&lt;-</span> <span class="fu">epidish</span><span class="op">(</span>
+<span class="va">epidish_CP</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/EpiDISH/man/epidish.html">epidish</a></span><span class="op">(</span>
     beta.m <span class="op">=</span> <span class="va">plBetas</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">plCellCpGsThird</span><span class="op">)</span>, <span class="op">]</span>,
     ref.m <span class="op">=</span> <span class="va">plCellCpGsThird</span>,
     method <span class="op">=</span> <span class="st">"CP"</span>
@@ -194,7 +194,7 @@
 <h3 class="hasAnchor">
 <a href="#compare" class="anchor"></a>Compare</h3>
 <p>We can compare the different cell composition estimates.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"plColors"</span><span class="op">)</span>
 
 <span class="co"># bind estimate data frames and reshape for plotting</span>
@@ -227,7 +227,6 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">algorithm</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">plColors</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>
         limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.1</span>, <span class="fl">1.1</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.5</span>, <span class="fl">1</span><span class="op">)</span>,
         labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org//reference/label_percent.html">percent</a></span>
@@ -235,9 +234,7 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html">coord_cartesian</a></span><span class="op">(</span>ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, fill <span class="op">=</span> <span class="st">""</span><span class="op">)</span></code></pre></div>
-<div class="figure">
-<img src="fig/cell-compare-alg-1.png" alt=""><p class="caption">plot of chunk cell-compare-alg</p>
-</div>
+<p><img src="fig/cell-compare-alg-1.png" title="plot of chunk cell-compare-alg" alt="plot of chunk cell-compare-alg" style="display: block; margin: auto;"></p>
 </div>
 <div id="references" class="section level3">
 <h3 class="hasAnchor">

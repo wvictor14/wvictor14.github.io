@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -78,7 +78,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="http://github.com/wvictor14/planet/">
-    <span class="fab fa-github fa-lg"></span>
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -92,7 +92,8 @@
 
       
 
-      </header><script src="gestational_age_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="gestational_age_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="gestational_age_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="gestational_age_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Predict Gestational Age</h1>
@@ -135,13 +136,13 @@
         ga_RPC <span class="op">=</span> <span class="fu"><a href="../reference/predictAge.html">predictAge</a></span><span class="op">(</span><span class="va">plBetas</span>, type <span class="op">=</span> <span class="st">"RPC"</span><span class="op">)</span>,
         ga_CPC <span class="op">=</span> <span class="fu"><a href="../reference/predictAge.html">predictAge</a></span><span class="op">(</span><span class="va">plBetas</span>, type <span class="op">=</span> <span class="st">"CPC"</span><span class="op">)</span>,
         ga_RRPC <span class="op">=</span> <span class="fu"><a href="../reference/predictAge.html">predictAge</a></span><span class="op">(</span><span class="va">plBetas</span>, type <span class="op">=</span> <span class="st">"RRPC"</span><span class="op">)</span>
-    <span class="op">)</span></code></pre></div>
-<pre><code>## 558 of 558 predictors present.</code></pre>
-<pre><code>## 546 of 546 predictors present.</code></pre>
-<pre><code>## 395 of 395 predictors present.</code></pre>
+    <span class="op">)</span>
+<span class="co">#&gt; 558 of 558 predictors present.</span>
+<span class="co">#&gt; 546 of 546 predictors present.</span>
+<span class="co">#&gt; 395 of 395 predictors present.</span></code></pre></div>
 <p>Note that the number of predictors (CpGs) that were used in our data are printed. It’s important to take note if a significant number of predictive CpGs are missing in your data, as this can affect the predicted gestational age accuracy.</p>
 <p>Next, I plot the difference between predicted and reported gestational age, for each of the 3 gestational age predictors.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">plPhenoData</span> <span class="op">%&gt;%</span>
     <span class="co"># reshape, to plot</span>
     <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span>
@@ -156,11 +157,9 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">clock_type</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Reported GA (weeks)"</span>, y <span class="op">=</span> <span class="st">"Inferred GA (weeks)"</span>, col <span class="op">=</span> <span class="st">""</span><span class="op">)</span></code></pre></div>
-<pre><code>## `geom_smooth()` using formula 'y ~ x'</code></pre>
-<div class="figure">
-<img src="fig/ga-3-clocks-1.png" alt=""><p class="caption">plot of chunk ga-3-clocks</p>
-</div>
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Reported GA (weeks)"</span>, y <span class="op">=</span> <span class="st">"Inferred GA (weeks)"</span>, col <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+<span class="co">#&gt; `geom_smooth()` using formula 'y ~ x'</span></code></pre></div>
+<p><img src="fig/ga-3-clocks-1.png" title="plot of chunk ga-3-clocks" alt="plot of chunk ga-3-clocks" style="display: block; margin: auto;"></p>
 <p><em>GA: gestational age</em></p>
 <div id="references" class="section level3">
 <h3 class="hasAnchor">
