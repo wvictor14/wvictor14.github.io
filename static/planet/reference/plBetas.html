@@ -19,8 +19,8 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumen/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
@@ -67,7 +67,7 @@ Reference: Yeung KR, Chiu CL, Pidsley R, Makris A et al. DNA methylation
 profiles in preeclampsia and healthy control placentas. Am J Physiol Heart
 Circ Physiol 2016 May 15;310(10):H1295-303.
 PMID:26968548" />
-<meta property="og:image" content="https://victor.rbind.io/planet/logo.png" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -99,7 +99,7 @@ PMID:26968548" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">planet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -175,7 +175,7 @@ pregnancies and 8 samples from pregnancies affected by preeclampsia." -
 from <a href='https://pubmed.ncbi.nlm.nih.gov/26968548/'>Yeung et al.</a></p>
 <p>The DNA methylation data for 24 placental samples were downloaded from
 <a href='https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196'>GSE75196</a>.
-After normalizing using <code><a href='https://rdrr.io/pkg/minfi/man/preprocessNoob.html'>minfi::preprocessNoob</a></code> and <code><a href='https://rdrr.io/pkg/wateRmelon/man/BMIQ.html'>wateRmelon::BMIQ</a></code>,
+After normalizing using <code><a href='https://rdrr.io/pkg/minfi/man/preprocessNoob.html'>minfi::preprocessNoob</a></code> and <code>wateRmelon::BMIQ</code>,
 the data were filtered to 6/24 samples and 10,000 random CpGs + those CpGs
 used in the gestational age clock and ethnicity classifier.</p>
 <p>Reference: Yeung KR, Chiu CL, Pidsley R, Makris A et al. DNA methylation
@@ -184,7 +184,7 @@ Circ Physiol 2016 May 15;310(10):H1295-303.
 <a href='https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE75196'>PMID:26968548</a></p>
     </div>
 
-    <pre class="usage"><span class='va'>plBetas</span></pre>
+    <pre class="usage"><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>plBetas</span><span class='op'>)</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
