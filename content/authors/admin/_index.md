@@ -6,16 +6,15 @@ education:
   courses:
   - course: PhD in Genome Sciences and Technology
     institution: University of British Columbia
-    year: In Progress
+    year: Anticipated graduation 2021
   - course: BSc in Cell and Molecular Biology
     institution: Concordia University
     year: 2016
 email: "victor.2wy@gmail.com"
 interests:
-- Placental genomics
-- Epigenetics
-- Data visualization
-- R programming
+- Human development with focus on placenta / perinatal
+- Epigenetics, genomics
+- R programming, development, data visualization
 name: Victor Yuan
 organizations:
 - name: BC Children's Hospital Research Institute, Vancouver, Canada
@@ -40,4 +39,4 @@ user_groups:
 - Visitors
 ---
 
-I am a [PhD student under Professor Wendy Robinson](https://robinsonresearch.ca/) at the University of British Columbia in the Genome Sciences and Technology program. My research interests include genomic analysis of genetic, epigenetic, and transcriptomic data related to placental biology.
+Hello! I am a [PhD student under Professor Wendy Robinson](https://robinsonresearch.ca/) at the University of British Columbia in the Genome Sciences and Technology program, where I explore my interests in human genomics under the domain of placental biology and perinatal development. I specialize in epigenetic (DNA methylation) analysis involving large populations. 
