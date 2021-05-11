@@ -39,4 +39,4 @@ user_groups:
 - Visitors
 ---
 
-Hello! I am a [PhD student under Professor Wendy Robinson](https://robinsonresearch.ca/) at the University of British Columbia in the Genome Sciences and Technology program, where I explore my interests in human genomics under the domain of placental biology and perinatal development. I specialize in epigenetic (DNA methylation) analysis involving large populations. 
+I am a PhD student in Professor Wendy Robinson's [lab](https://robinsonresearch.ca/) in Vancouver BC. I look for stories in genomic data. Right now, I am very interested in placental epigenetics and human development. Graduating soon.
