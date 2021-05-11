@@ -53,7 +53,7 @@ url_source = "https://www.aging-us.com/full/11/4238"
 
 # Custom links (optional).
 #   Uncomment line below to enable. For multiple links, use the form `[{...}, {...}, {...}]`.
-url_custom = [{name = "Software", url = "http://www.github.com/wvictor14/planet/"}]
+url_custom = [{name = "Software", url = "https://www.github.com/wvictor14/planet/"}]
 
 # Does the content use math formatting?
 math = false
