@@ -1,7 +1,7 @@
 ---
 widget: portfolio
 headless: true  # This file represents a page section.
-weight: 3
+weight: 30
 
 # ... Put Your Section Options Here (title etc.) ...
 
