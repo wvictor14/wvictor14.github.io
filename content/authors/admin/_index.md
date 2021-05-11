@@ -39,4 +39,4 @@ user_groups:
 - Visitors
 ---
 
-I am a PhD student in Professor Wendy Robinson's [lab](https://robinsonresearch.ca/) in Vancouver BC. I look for stories in genomic data. Right now, I am very interested in placental epigenetics and human development. Graduating soon.
+I am a PhD student in Professor Wendy Robinson's [lab](https://robinsonresearch.ca/) in Vancouver BC. I look for stories in genomic data. Right now, I am very interested in placental epigenetics and human development. See all of my publications on [Google Scholar](https://scholar.google.com/citations?user=k_dOrEoAAAAJ&hl=en) or my latest publication about [placental cell DNA methylation](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-020-07186-6). I am passionate about data analysis and visualization. Open to collaborations. Graduating soon.
