@@ -81,7 +81,7 @@ microarray data." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">planet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -171,22 +171,22 @@ data: NOOB and BMIQ.</p>
 <span class='co'># Load placenta DNAm data</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>plBetas</span><span class='op'>)</span>
 <span class='fu'>predictEthnicity</span><span class='op'>(</span><span class='va'>plBetas</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>1860 of 1860 predictors present.</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 24 x 7</span><span>
-#&gt;    Sample_ID Predicted_ethni~ Predicted_ethni~ Prob_African Prob_Asian
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> GSM19449~ Caucasian        Caucasian            0.003</span><span style='text-decoration: underline;'>31</span><span>    0.016</span><span style='text-decoration: underline;'>4</span><span>  
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> GSM19449~ Caucasian        Caucasian            0.000</span><span style='text-decoration: underline;'>772</span><span>   0.000</span><span style='text-decoration: underline;'>514</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> GSM19449~ Caucasian        Caucasian            0.000</span><span style='text-decoration: underline;'>806</span><span>   0.000</span><span style='text-decoration: underline;'>699</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> GSM19449~ Caucasian        Caucasian            0.000</span><span style='text-decoration: underline;'>883</span><span>   0.000</span><span style='text-decoration: underline;'>792</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> GSM19449~ Caucasian        Caucasian            0.000</span><span style='text-decoration: underline;'>885</span><span>   0.001</span><span style='text-decoration: underline;'>30</span><span> 
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> GSM19449~ Caucasian        Caucasian            0.000</span><span style='text-decoration: underline;'>852</span><span>   0.000</span><span style='text-decoration: underline;'>973</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> GSM19449~ Caucasian        Caucasian            0.000</span><span style='text-decoration: underline;'>902</span><span>   0.001</span><span style='text-decoration: underline;'>76</span><span> 
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> GSM19449~ Caucasian        Caucasian            0.001</span><span style='text-decoration: underline;'>74</span><span>    0.002</span><span style='text-decoration: underline;'>23</span><span> 
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> GSM19449~ Caucasian        Caucasian            0.000</span><span style='text-decoration: underline;'>962</span><span>   0.002</span><span style='text-decoration: underline;'>31</span><span> 
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> GSM19449~ Caucasian        Caucasian            0.002</span><span style='text-decoration: underline;'>87</span><span>    0.003</span><span style='text-decoration: underline;'>56</span><span> 
-#&gt; </span><span style='color: #949494;'># ... with 14 more rows, and 2 more variables: Prob_Caucasian </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>,</span><span>
-#&gt; </span><span style='color: #949494;'>#   Highest_Prob </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'>
-</div></span></pre>
+</div><div class='output co'>#&gt; <span class='message'>1860 of 1860 predictors present.</span></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 24 x 7</span>
+#&gt;    Sample_ID  Predicted_ethnicity_not~ Predicted_ethnic~ Prob_African Prob_Asian
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>                    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'> 1</span> GSM1944936 Caucasian                Caucasian             0.003<span style='text-decoration: underline;'>31</span>    0.016<span style='text-decoration: underline;'>4</span>  
+#&gt; <span style='color: #BCBCBC;'> 2</span> GSM1944939 Caucasian                Caucasian             0.000<span style='text-decoration: underline;'>772</span>   0.000<span style='text-decoration: underline;'>514</span>
+#&gt; <span style='color: #BCBCBC;'> 3</span> GSM1944942 Caucasian                Caucasian             0.000<span style='text-decoration: underline;'>806</span>   0.000<span style='text-decoration: underline;'>699</span>
+#&gt; <span style='color: #BCBCBC;'> 4</span> GSM1944944 Caucasian                Caucasian             0.000<span style='text-decoration: underline;'>883</span>   0.000<span style='text-decoration: underline;'>792</span>
+#&gt; <span style='color: #BCBCBC;'> 5</span> GSM1944946 Caucasian                Caucasian             0.000<span style='text-decoration: underline;'>885</span>   0.001<span style='text-decoration: underline;'>30</span> 
+#&gt; <span style='color: #BCBCBC;'> 6</span> GSM1944948 Caucasian                Caucasian             0.000<span style='text-decoration: underline;'>852</span>   0.000<span style='text-decoration: underline;'>973</span>
+#&gt; <span style='color: #BCBCBC;'> 7</span> GSM1944949 Caucasian                Caucasian             0.000<span style='text-decoration: underline;'>902</span>   0.001<span style='text-decoration: underline;'>76</span> 
+#&gt; <span style='color: #BCBCBC;'> 8</span> GSM1944950 Caucasian                Caucasian             0.001<span style='text-decoration: underline;'>74</span>    0.002<span style='text-decoration: underline;'>23</span> 
+#&gt; <span style='color: #BCBCBC;'> 9</span> GSM1944951 Caucasian                Caucasian             0.000<span style='text-decoration: underline;'>962</span>   0.002<span style='text-decoration: underline;'>31</span> 
+#&gt; <span style='color: #BCBCBC;'>10</span> GSM1944952 Caucasian                Caucasian             0.002<span style='text-decoration: underline;'>87</span>    0.003<span style='text-decoration: underline;'>56</span> 
+#&gt; <span style='color: #949494;'># ... with 14 more rows, and 2 more variables: Prob_Caucasian &lt;dbl&gt;,</span>
+#&gt; <span style='color: #949494;'>#   Highest_Prob &lt;dbl&gt;</span></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
