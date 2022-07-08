@@ -8,8 +8,8 @@ headless: true
 
 # Order that this section appears on the page.
 
-title: 'CV'
+title: 'Resume'
 subtitle:
 ---
 
-My CV is available in [PDF](cv/2021-02 VictorY Academic CV.pdf) form. Last updated: February 2021.
+My resume is available in [PDF](cv/2022 06 - Victor Yuan.pdf). Last updated: July 2022.

@@ -23,7 +23,7 @@ date_format = "Jan 2006"
   company_url = "https://robinsonresearch.ca/"
   location = "Vancouver, BC"
   date_start = "2016-09-01"
-  date_end = ""
+  date_end = "2022-03-29"
   description = ""
 
 [[experience]]
