@@ -14,4 +14,3 @@ options(
 )
 
 library(blogdown)
-library(usethis)
