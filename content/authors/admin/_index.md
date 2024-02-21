@@ -12,21 +12,21 @@ education:
     year: 2016
 email: "victor.2wy@gmail.com"
 interests:
-- Human developmental biology, health sciences
-- Genomics, epigenomics, transcriptomics, sequencing
-- R programming, Statistics, Machine learning, data visualization
+- Immunology, Cell therapy, Biotechnology
+- Epi/Gen/Transcript -omics
+- Data Science and Engineering, R, Statistics, Machine learning, Data Viz
 name: Victor Yuan
 organizations:
-- name: BC Children's Hospital Research Institute, Vancouver, Canada
+- name: Sonoma Biotherapeutics, South San Francisco, California, USA
   url: ""
-role: Computational Biologist
+role: Bioinformatics Scientist
 social:
 - icon: envelope
   icon_pack: fas
   link: '#contact'
-- icon: twitter
-  icon_pack: fab
-  link: https://twitter.com/wvictor14
+#- icon: twitter
+#  icon_pack: fab
+#  link: https://twitter.com/wvictor14
 - icon: google-scholar
   icon_pack: ai
   link: https://scholar.google.com/citations?user=k_dOrEoAAAAJ&hl=en
@@ -39,4 +39,11 @@ user_groups:
 - Visitors
 ---
 
-I recently graduated with a PhD in Genome Sciences and Technology from UBC in Professor Wendy Robinson's [lab](https://robinsonresearch.ca/). I look for stories in genomic data. Right now, I am very interested in placental epigenomics and human development. See my publications on [Google Scholar](https://scholar.google.com/citations?user=k_dOrEoAAAAJ&hl=en). I am passionate about genomic data analysis and visualization. Open to collaborations.
+A bioinformatics scientist working in on cell therapy at Sonoma Biotherapeutics
+in San Francisco. Studied DNA methylation in context of pregnancy epigenetics
+for my PhD at University of British Columbia. Due to start-up nature, I have 
+diverse responsibilities and experience: analyzing in-house generated
+immunological NGS datasets, utilizing public RNA/protein databases like HPA and
+UniProt, developing R packages and web apps, and designing and implementing NGS
+workflows and data engineering models. 
+
