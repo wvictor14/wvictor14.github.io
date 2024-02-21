@@ -12,3 +12,6 @@ options(
   blogdown.new_bundle = TRUE,
   blogdown.title_case = TRUE
 )
+
+library(blogdown)
+library(usethis)
