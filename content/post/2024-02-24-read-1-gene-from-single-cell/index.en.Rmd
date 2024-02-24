@@ -1,0 +1,252 @@
+---
+title: Fast Memory-Efficient Reading 1 Gene at a Time from Single Cell Data
+author: Victor Yuan
+date: '2024-02-24'
+slug: read-1-gene-from-single-cell
+categories:
+  - R
+  - Analysis
+  - scRNAseq
+tags:
+  - Bioconductor
+  - R
+  - scRNAseq
+  - Analysis
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2024-02-24T11:30:22-08:00'
+featured: no
+draft: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+# start point
+
+The starting point for this task is that we have a sparse count matrix, maybe a `Seurat` or `SingleCellExperiment` object that I want to make accessible via a shiny app to stakeholders. I can write an app that just simply works with these objects directly, but that would involve loading the several gigabytes of data into memory.
+
+I was looking for ways to circumvent loading entire count matrices (the main memory-hungry culprit) into R, and this post is about that exploration.
+
+The outline for this post is that: there are some great "on-disk" streaming options, where essentially you open a *connection* to a file, then only subsets of the data file that you request are actually read into memory. 
+
+# the plan
+
+Actually, there is already a great memory-efficient solution out there called [ShinyCell](https://github.com/SGDDNB/ShinyCell), which utilizes the HDF5 format. This doesn't work perfectly for me though, because I have my own app functions and framework that I want to apply. I am just interested in the memory-efficient data read functionality.
+
+So I will compare ShinyCell's rather manual h5 strategy to some other options. The other option included here is `HDF5Array` + `delayedArray`, which are some Bioconductor options specifically for Bioconductor-specific data structures, like scRNAseq.
+
+# key packages for this post
+
+For HDF5, there are a couple of general purpose options in R: [hdf5r](https://cran.r-project.org/web/packages/hdf5r/index.html), [rhdf5](https://bioconductor.org/packages/release/bioc/html/rhdf5.html). Then there is the bioconductor package [HDF5Array](https://bioconductor.org/packages/release/bioc/html/HDF5Array.html) which uses `hdf5r` in backend to work with bioconductor data structures specifically.
+
+# other packages
+
+`HDF5Array` hdf5 read write dense/sparse matrices
+`hdf5r` hdf5 r implementation
+`scRNAseq` to access example scRNAseq dataset
+`tidyverse` `glue` `gt` `fs` general purpose 
+`tictoc` `bench` timing
+
+```{r, message = FALSE, warning = FALSE}
+library(HDF5Array)
+library(hdf5r)
+library(scRNAseq)
+library(tidyverse)
+library(tictoc)
+library(withr)
+library(bench)
+library(gt)
+library(glue)
+library(fs)
+```
+
+```{r}
+sce <- ZilionisLungData()
+counts <- sce@assays@data$counts[1:1500,]
+```
+
+# saving dgc matrix manually with hdf5r
+
+This is ShinyCell's approach, which is to write the sparse count matrix of a `Seurat` / `SingleCellExperiment` object to a dense representation on disk. Because converting the sparse matrix to dense would implode most computers, shinycell's approach is to do this in chunks / loops. 
+
+I modify the code to make it easier to follow, and I litter the function with `tictoc::tic` and `toc` to monitor the overall and each step takes.
+
+Alternatively, we could write sparse representation to disk, which would be faster to write (less data), but then we would need to convert to dense on the read-in endpoints. I don't do that here, because the goal is to speed up read-in, not write-out. Though it may be trivially fast to coerce a 1 x 1million vector? Am not sure.
+
+
+```{r manual-write}
+file_h5 <- fs::path('counts.h5')
+if (file.exists(file_h5)) file.remove(file_h5)
+
+write_dgc_to_h5 <- function(dgc, file, chunk_size = 500) {
+  
+  # open h5 connection and groups
+  h5 <- H5File$new(file, mode = "w")
+  on.exit(h5$close_all())
+  h5_grp <- h5$create_group("grp")
+  h5_grp_data <- h5_grp$create_dataset(
+    "data",  
+    dtype = h5types$H5T_NATIVE_FLOAT,
+    space = H5S$new("simple", dims = dim(dgc), maxdims = dim(dgc)),
+    chunk_dims = c(1, ncol(dgc))
+  )
+  
+  tic('total')
+  for (i in 1:floor((nrow(dgc) - 8)/chunk_size)) {
+    
+    index_start <- ((i - 1) * chunk_size) + 1
+    index_end <- i * chunk_size
+    tic(glue::glue('loop {i}, rows {index_start}:{index_end}'))
+    
+    h5_grp_data[index_start:index_end, ] <- dgc[index_start:index_end,] |> 
+      as.matrix()
+    toc(log = TRUE)
+  }
+  
+  # final group
+  index_start <- i*chunk_size + 1
+  index_end <- nrow(dgc)
+  
+  tic(glue::glue('final loop, rows {index_start}:{index_end}'))
+  h5_grp_data[index_start:index_end, ] <- as.matrix(dgc[index_start:index_end, ])
+  toc(log = TRUE)
+  
+  # add rownames and colnames
+  h5_grp[['rownames']] <- rownames(dgc)
+  h5_grp[['colnames']] <- colnames(dgc)
+  toc()
+}
+write_dgc_to_h5(counts, file_h5, chunk_size = 1000)
+```
+
+# read 1 gene at a time
+
+Now to define a function that opens the h5 file, reads the particular slice of data we want, and then close the h5 file. It is important to ensure the file gets closed, otherwise it can get corrupt. This is a bit of a drawback for this approach, but I have yet to encounter a problem so far. 
+
+```{r}
+read_gene <- function(gene, file_h5) {
+  #tic('whole thing')
+  stopifnot(file.exists(file_h5))
+  # open connections
+  #tic('open')
+  h5 <- H5File$new(
+    file_h5, 
+    mode = "r")
+  
+  #on.exit(h5$close_all())
+  
+  h5_data <- h5[['grp']][['data']]
+  h5_rownames <- h5[['grp']][['rownames']]
+  h5_colnames <- h5[['grp']][['colnames']]
+  
+  #toc()
+  #tic('read gene')
+  ind <- str_which(h5_rownames[], gene)
+  #ind <- 18871
+  #print(ind)
+  gene <- h5_data[ind,]
+  #toc()
+  
+  #tic('set name')
+  gene <- setNames(gene, nm = h5_colnames[])
+  #toc()
+  
+  #tic('close')
+  h5$close_all()
+  #toc()
+  #toc()
+  return(gene) 
+}
+
+
+gene <- read_gene('AC006486.2', file_h5)
+```
+
+# HDF5array
+
+Bioconductor has the [`HDF5array`](https://bioconductor.org/packages/release/bioc/html/HDF5Array.html) R package that supports writing / loading dense and sparse matrices from `.h5` files.
+
+Let's see how this compares to the manual implementation.
+
+First write to disk using `HDF5Array::writeHDF5Array`
+
+```{r HDF5Array-write}
+file_h5array <- fs::path('HDF5array.h5')
+if (file.exists(file_h5array)) file.remove(file_h5array)
+tic();HDF5Array::writeHDF5Array(
+  DelayedArray(counts), 
+  file_h5array, as.sparse = FALSE, name = 'full', with.dimnames = TRUE);toc()
+h5ls(file_h5array) # see content of h5
+```
+
+Point to the hf5 file
+
+```{r}
+hf5 <- HDF5Array(file_h5array,  name = 'full', as.sparse = TRUE)
+hf5['AC006486.2',] |>  head()
+```
+
+Explore the class
+
+```{r}
+showtree(hf5)
+showtree(hf5[2,])
+class(hf5)
+is(hf5, 'DelayedMatrix')
+```
+
+# compare HDF5array vs diy implementation
+
+Now we have written the count matrices to disk in hdf5 format in two ways: manually, and through `HDF5Array`. 
+
+Let's see if there are differences in performance in reading 1 gene at a time.
+
+```{r bench}
+bench_read <- bench::mark(
+  hf5['AC006486.2',],
+  read_gene('AC006486.2', file_h5),
+  counts['AC006486.2',]
+)  
+
+summary(bench_read) |> select(-memory, -result, -time, -gc) |>  gt()
+bench_read |>  autoplot(type = 'jitter')
+```
+
+`HDF5array` is slower than my manual method
+
+Fastest is holding in memory, but not by that much, and of course the cost is occupying a large amount of memory at any given time. 
+
+# SingleCellExperiment
+
+In reading `HD5Array` docs, I learned that you can back a `SingleCellExperiment` object with a HDF5-backed matrix. This is actually incredibly useful, because now we can use any packages for `SingleCellExperiment` (like [`tidySingleCellExperiment`](https://stemangiola.github.io/tidySingleCellExperiment/)). 
+
+```{r sce-backed-hdf5}
+sce_h5 <- SingleCellExperiment(assays = list(counts = hf5))
+```
+
+Size of SingleCellExperiment object backed by HDF5
+
+```{r}
+object.size(sce_h5) |>  print(units = 'auto')
+```
+
+Size of dgc counts matrix held in memory
+
+```{r}
+object.size(counts) |>  print(units = 'auto')`
+```
+
+Speed:
+
+```{r}
+bench::mark(sce_h5['AC006486.2',]) |> select(-c(result:gc)) |>  gt()
+```
+
+
+
+
+
