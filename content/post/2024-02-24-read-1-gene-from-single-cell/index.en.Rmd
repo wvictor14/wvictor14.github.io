@@ -237,7 +237,7 @@ object.size(sce_h5) |>  print(units = 'auto')
 Size of dgc counts matrix held in memory
 
 ```{r}
-object.size(counts) |>  print(units = 'auto')`
+object.size(counts) |>  print(units = 'auto')
 ```
 
 Speed:
