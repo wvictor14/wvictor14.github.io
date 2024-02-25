@@ -1,0 +1,276 @@
+---
+title: '"Can you check gene x for me?" quickly reading 1 gene at a time from single cell data'
+author: Victor Yuan
+date: '2024-02-24'
+slug: read-1-gene-from-single-cell
+categories:
+  - R
+  - Analysis
+  - scRNAseq
+tags:
+  - Bioconductor
+  - R
+  - scRNAseq
+  - Analysis
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2024-02-24T11:30:22-08:00'
+featured: no
+draft: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+editor_options: 
+  chunk_output_type: console
+---
+
+"Can you check gene x for me?" is a common question I get when working with other scientists on gene expression projects. This is an easy task after setting up a gene expression web apps with shiny. Though, one pain point for specficially single cell data is that app start up and general data queries become quite slow if using standard analytical single cell packages like `Seurat` and others. For example, a 500 000 cell dataset can take up to 40 seconds to load into memory. Increasingly, I need to check a gene in not just one, but multiple single cell datasets. In my current system of loading entire single cell datasets into memory, this is terribly inefficient for what is essentially a simple task.
+
+How can we optimize these queries so that instead of taking minutes, it only takes seconds? 
+
+Well, rather than loading the entire data into memory, can we load only the relevant portion, i.e. a gene of interest? 
+
+# Single cell formats
+
+If we distill this task into a more general one - loading a single row / slice from rectangular data, then there are many options that exist. However, for single cell RNAseq data there are other considerations:
+
+- data for single cell is often the order of 20,000 - 40,000 genes, often arranged in rows, and 100 000 - 1 million cells in the columns. It does not often travel in "tidy" formats (e.g. with columns gene, cell, value).
+
+- single cell count matrix usually travels as sparse matrix due to high drop-out rate. Coercion to dense is resource-heavy so need to do this thoughtfully and only when necessary.
+
+For this post I explore how to utilize the HDF5 format to speed up reading 1 gene at a time into R, in order to address memory and speed issues when working with large and multple single cell datasets.
+
+# Options for using HDF5 with single cell data
+
+Actually, there is already a great memory-efficient solution out there called [ShinyCell](https://github.com/SGDDNB/ShinyCell), which utilizes the HDF5 format, and produces a clean, fast, memory-efficient shiny-based app. It looks like `ShinyCell` has it's own approach to writing single cell count data to h5 format. 
+I think this is interesting because there are already some existing h5 formats already designed for single cell data, like python's `.h5ad` and `h5Seurat`. And in contrast to these ones, `Shinycell` writes a dense count matrix, rather than the other formats mentioned which keep the format of the data as sparse. This makes sense though as the goal of these other formats is to provide entry to existing tools that work with sparse data. 
+
+So I will compare `ShinyCell`'s rather manual h5 strategy to some other options. The other option included here is `HDF5Array` + `delayedArray`, which are some Bioconductor options specifically for Bioconductor-specific data structures, like scRNAseq.
+
+# Key packages for this post
+
+For HDF5, there are a couple of general purpose options in R: [hdf5r](https://cran.r-project.org/web/packages/hdf5r/index.html), [rhdf5](https://bioconductor.org/packages/release/bioc/html/rhdf5.html). Then there is the bioconductor package [HDF5Array](https://bioconductor.org/packages/release/bioc/html/HDF5Array.html) which uses `hdf5r` in backend to work with bioconductor data structures specifically.
+
+# Other packages
+
+`HDF5Array` hdf5 read write dense/sparse matrices
+`hdf5r` hdf5 r implementation
+`scRNAseq` to access example scRNAseq dataset
+`tidyverse` `glue` `gt` `fs` general purpose 
+`tictoc` `bench` timing
+
+```{r, message = FALSE, warning = FALSE}
+library(HDF5Array)
+library(hdf5r)
+library(scRNAseq)
+library(tidyverse)
+library(tictoc)
+library(withr)
+library(bench)
+library(gt)
+library(glue)
+library(fs)
+```
+
+```{r}
+sce <- ZilionisLungData()
+counts <- sce@assays@data$counts[,]
+```
+
+# Saving dgc matrix manually with hdf5r
+
+This is ShinyCell's approach, which is to write the sparse count matrix of a `Seurat` / `SingleCellExperiment` object to a dense representation on disk. Because converting the sparse matrix to dense would implode most computers, shinycell's approach is to do this in chunks / loops. 
+
+I modify the code to make it easier to follow, and I litter the function with `tictoc::tic` and `toc` to monitor the overall and each step takes.
+
+Alternatively, we could write sparse representation to disk, which would be faster to write (less data), but then we would need to convert to dense on the read-in endpoints. I don't do that here, because the goal is to speed up read-in, not write-out. Though it may be trivially fast to coerce a 1 x 1million vector? Am not sure.
+
+
+```{r manual-write, warning = FALSE}
+file_h5 <- fs::path('counts.h5')
+if (file.exists(file_h5)) file.remove(file_h5)
+
+write_dgc_to_h5 <- function(dgc, file, chunk_size = 500) {
+  
+  # open h5 connection and groups
+  h5 <- H5File$new(file, mode = "w")
+  on.exit(h5$close_all())
+  h5_grp <- h5$create_group("grp")
+  h5_grp_data <- h5_grp$create_dataset(
+    "data",  
+    dtype = h5types$H5T_NATIVE_FLOAT,
+    space = H5S$new("simple", dims = dim(dgc), maxdims = dim(dgc)),
+    chunk_dims = c(1, ncol(dgc))
+  )
+  
+  tic('total')
+  for (i in 1:floor((nrow(dgc) - 8)/chunk_size)) {
+    
+    index_start <- ((i - 1) * chunk_size) + 1
+    index_end <- i * chunk_size
+    tic(glue::glue('loop {i}, rows {index_start}:{index_end}'))
+    
+    h5_grp_data[index_start:index_end, ] <- dgc[index_start:index_end,] |> 
+      as.matrix()
+    toc(log = TRUE)
+  }
+  
+  # final group
+  index_start <- i*chunk_size + 1
+  index_end <- nrow(dgc)
+  
+  tic(glue::glue('final loop, rows {index_start}:{index_end}'))
+  h5_grp_data[index_start:index_end, ] <- as.matrix(dgc[index_start:index_end, ])
+  toc(log = TRUE)
+  
+  # add rownames and colnames
+  h5_grp[['rownames']] <- rownames(dgc)
+  h5_grp[['colnames']] <- colnames(dgc)
+  toc()
+}
+write_dgc_to_h5(counts, file_h5, chunk_size = 1000)
+```
+
+# Read 1 gene at a time
+
+Now to define a function that opens the h5 file, reads the particular slice of data we want, and then close the h5 file. It is important to ensure the file gets closed, otherwise it can get corrupt. This is a bit of a drawback for this approach, but I have yet to encounter a problem so far. 
+
+```{r}
+read_gene <- function(gene, file_h5) {
+  #tic('whole thing')
+  stopifnot(file.exists(file_h5))
+  # open connections
+  #tic('open')
+  h5 <- H5File$new(
+    file_h5, 
+    mode = "r")
+  
+  #on.exit(h5$close_all())
+  
+  h5_data <- h5[['grp']][['data']]
+  h5_rownames <- h5[['grp']][['rownames']]
+  h5_colnames <- h5[['grp']][['colnames']]
+  
+  #toc()
+  #tic('read gene')
+  ind <- str_which(h5_rownames[], gene)
+  #ind <- 18871
+  #print(ind)
+  gene <- h5_data[ind,]
+  #toc()
+  
+  #tic('set name')
+  gene <- setNames(gene, nm = h5_colnames[])
+  #toc()
+  
+  #tic('close')
+  h5$close_all()
+  #toc()
+  #toc()
+  return(gene) 
+}
+
+
+gene <- read_gene('AC006486.2', file_h5)
+```
+
+# HDF5array
+
+Bioconductor has the [`HDF5array`](https://bioconductor.org/packages/release/bioc/html/HDF5Array.html) R package that supports writing / loading dense and sparse matrices from `.h5` files.
+
+Let's see how this compares to the manual implementation.
+
+First write to disk using `HDF5Array::writeHDF5Array`
+
+```{r HDF5Array-write}
+file_h5array <- fs::path('HDF5array.h5')
+if (file.exists(file_h5array)) file.remove(file_h5array)
+tic();HDF5Array::writeHDF5Array(
+  DelayedArray(counts), 
+  file_h5array, as.sparse = FALSE, name = 'full', with.dimnames = TRUE);toc()
+h5ls(file_h5array) # see content of h5
+```
+
+Point to the hf5 file
+
+```{r}
+hf5 <- HDF5Array(file_h5array,  name = 'full', as.sparse = TRUE)
+hf5['AC006486.2',] |>  head()
+```
+
+Explore the class
+
+```{r}
+showtree(hf5)
+showtree(hf5[2,])
+class(hf5)
+is(hf5, 'DelayedMatrix')
+```
+
+# Compare HDF5array vs diy implementation
+
+Now we have written the count matrices to disk in hdf5 format in two ways: manually, and through `HDF5Array`. 
+
+Let's see if there are differences in performance in reading 1 gene at a time.
+
+## Memory and time
+
+```{r bench}
+bench_read <- bench::mark(
+  HDF5Array = hf5['AC006486.2',],
+  `h5 - manual` = read_gene('AC006486.2', file_h5),
+  `in-memory slice` = counts['AC006486.2',]
+)  
+
+summary(bench_read) |> 
+  mutate(expression = as.character(expression)) |>  
+  select(-memory, -result, -time, -gc) |>  gt()
+bench_read |>  autoplot(type = 'jitter')
+```
+
+`HDF5array` is ~2x slower than `ShinyCell`'s manual method
+
+`ShinyCell` approach is almost as fast as holding in memory, without of course the cost is occupying a large amount of memory at any given time. 
+
+## on-disk space
+
+```{r}
+data.frame(file = c(file_h5, file_h5array)) |> 
+  mutate(file_size = fs::file_size(file)) 
+```
+
+# SingleCellExperiment
+
+In reading `HD5Array` docs, I learned that you can back a `SingleCellExperiment` object with a HDF5-backed matrix. This is actually incredibly useful, because now we can use any packages for `SingleCellExperiment` (like [`tidySingleCellExperiment`](https://stemangiola.github.io/tidySingleCellExperiment/)). 
+
+```{r sce-backed-hdf5}
+sce_h5 <- SingleCellExperiment(assays = list(counts = hf5))
+```
+
+Size of SingleCellExperiment object backed by HDF5
+
+```{r}
+object.size(sce_h5) |>  print(units = 'auto')
+```
+
+Size of dgc counts matrix held in memory
+
+```{r}
+object.size(counts) |>  print(units = 'auto')
+```
+
+Speed:
+
+```{r}
+bench::mark(sce_h5['AC006486.2',]) |> select(-c(result:gc)) |>  gt()
+```
+
+# Conclusion
+
+- `HDF5` format is great for memory efficient loading of single cell data, particularly for single gene queries which take less than 1 second on a 200,000 cell dataset. 
+- The manual `shinyCell` h5 method is almost twice as fast as `HDF5Array` (~1 second vs 0.5 second)
+- but `SingleCellExperiment` can carry hdf5-backed count matrices with `HDF5Array`, making it more useful as it opens usage to other single cell tools
+- The majority of time reading from `HDF5` is actually closing the connection of the file.   
