@@ -73,7 +73,7 @@ library(fs)</code></pre>
 <pre><code>## loading from cache</code></pre>
 <pre><code>## see ?scRNAseq and browseVignettes(&#39;scRNAseq&#39;) for documentation</code></pre>
 <pre><code>## loading from cache</code></pre>
-<pre class="r"><code>counts &lt;- sce@assays@data$counts[1:1500,]</code></pre>
+<pre class="r"><code>counts &lt;- sce@assays@data$counts[,]</code></pre>
 </div>
 <div id="saving-dgc-matrix-manually-with-hdf5r" class="section level1">
 <h1>Saving dgc matrix manually with hdf5r</h1>
@@ -122,11 +122,49 @@ if (file.exists(file_h5)) file.remove(file_h5)</code></pre>
   toc()
 }
 write_dgc_to_h5(counts, file_h5, chunk_size = 1000)</code></pre>
-<pre><code>## Warning in asMethod(object): sparse-&gt;dense coercion: allocating vector of size
-## 1.3 GiB</code></pre>
-<pre><code>## loop 1, rows 1:1000: 14.26 sec elapsed
-## final loop, rows 1001:1500: 4.08 sec elapsed
-## total: 18.4 sec elapsed</code></pre>
+<pre><code>## loop 1, rows 1:1000: 7.81 sec elapsed
+## loop 2, rows 1001:2000: 7.06 sec elapsed
+## loop 3, rows 2001:3000: 7.02 sec elapsed
+## loop 4, rows 3001:4000: 6.97 sec elapsed
+## loop 5, rows 4001:5000: 8.73 sec elapsed
+## loop 6, rows 5001:6000: 6.5 sec elapsed
+## loop 7, rows 6001:7000: 7.19 sec elapsed
+## loop 8, rows 7001:8000: 6.92 sec elapsed
+## loop 9, rows 8001:9000: 6.84 sec elapsed
+## loop 10, rows 9001:10000: 6.58 sec elapsed
+## loop 11, rows 10001:11000: 6.41 sec elapsed
+## loop 12, rows 11001:12000: 6.78 sec elapsed
+## loop 13, rows 12001:13000: 6.39 sec elapsed
+## loop 14, rows 13001:14000: 7.28 sec elapsed
+## loop 15, rows 14001:15000: 6.33 sec elapsed
+## loop 16, rows 15001:16000: 6.67 sec elapsed
+## loop 17, rows 16001:17000: 6.83 sec elapsed
+## loop 18, rows 17001:18000: 7.31 sec elapsed
+## loop 19, rows 18001:19000: 6.39 sec elapsed
+## loop 20, rows 19001:20000: 6.67 sec elapsed
+## loop 21, rows 20001:21000: 6.86 sec elapsed
+## loop 22, rows 21001:22000: 7.36 sec elapsed
+## loop 23, rows 22001:23000: 6.38 sec elapsed
+## loop 24, rows 23001:24000: 6.75 sec elapsed
+## loop 25, rows 24001:25000: 6.78 sec elapsed
+## loop 26, rows 25001:26000: 7.09 sec elapsed
+## loop 27, rows 26001:27000: 6.14 sec elapsed
+## loop 28, rows 27001:28000: 12.68 sec elapsed
+## loop 29, rows 28001:29000: 7.09 sec elapsed
+## loop 30, rows 29001:30000: 7.56 sec elapsed
+## loop 31, rows 30001:31000: 6.66 sec elapsed
+## loop 32, rows 31001:32000: 10 sec elapsed
+## loop 33, rows 32001:33000: 10.42 sec elapsed
+## loop 34, rows 33001:34000: 8.59 sec elapsed
+## loop 35, rows 34001:35000: 7.61 sec elapsed
+## loop 36, rows 35001:36000: 8.1 sec elapsed
+## loop 37, rows 36001:37000: 6.54 sec elapsed
+## loop 38, rows 37001:38000: 8.5 sec elapsed
+## loop 39, rows 38001:39000: 6.71 sec elapsed
+## loop 40, rows 39001:40000: 7.42 sec elapsed
+## loop 41, rows 40001:41000: 12.31 sec elapsed
+## final loop, rows 41001:41861: 8.39 sec elapsed
+## total: 315.11 sec elapsed</code></pre>
 </div>
 <div id="read-1-gene-at-a-time" class="section level1">
 <h1>Read 1 gene at a time</h1>
@@ -179,26 +217,26 @@ if (file.exists(file_h5array)) file.remove(file_h5array)</code></pre>
 <pre class="r"><code>tic();HDF5Array::writeHDF5Array(
   DelayedArray(counts), 
   file_h5array, as.sparse = FALSE, name = &#39;full&#39;, with.dimnames = TRUE);toc()</code></pre>
-<pre><code>## &lt;1500 x 173954&gt; HDF5Matrix object of type &quot;double&quot;:
-##            bcIIOD bcHTNA bcDLAV ... bcELDH bcFGGM
-##    5S_rRNA      0      0      0   .      0      0
-##  5_8S_rRNA      0      0      0   .      0      0
-##        7SK      0      0      0   .      0      0
-##       A1BG      0      0      0   .      0      0
-##   A1BG-AS1      0      0      0   .      0      0
-##        ...      .      .      .   .      .      .
-## AC008667.1      0      0      0   .      0      0
-## AC008667.2      0      0      0   .      0      0
-## AC008667.3      0      0      0   .      0      0
-## AC008667.4      0      0      0   .      0      0
-## AC008669.1      0      0      0   .      0      0</code></pre>
-<pre><code>## 13.98 sec elapsed</code></pre>
+<pre><code>## &lt;41861 x 173954&gt; HDF5Matrix object of type &quot;double&quot;:
+##           bcIIOD bcHTNA bcDLAV ... bcELDH bcFGGM
+##   5S_rRNA      0      0      0   .      0      0
+## 5_8S_rRNA      0      0      0   .      0      0
+##       7SK      0      0      0   .      0      0
+##      A1BG      0      0      0   .      0      0
+##  A1BG-AS1      0      0      0   .      0      0
+##       ...      .      .      .   .      .      .
+##   snoZ278      0      0      0   .      0      0
+##    snoZ40      0      0      0   .      0      0
+##     snoZ6      0      0      0   .      0      0
+##  snosnR66      0      0      0   .      0      0
+##    uc_338      0      0      0   .      0      0</code></pre>
+<pre><code>## 466.64 sec elapsed</code></pre>
 <pre class="r"><code>h5ls(file_h5array) # see content of h5</code></pre>
-<pre><code>##             group           name       otype dclass           dim
-## 0               / .full_dimnames   H5I_GROUP                     
-## 1 /.full_dimnames              1 H5I_DATASET STRING          1500
-## 2 /.full_dimnames              2 H5I_DATASET STRING        173954
-## 3               /           full H5I_DATASET  FLOAT 1500 x 173954</code></pre>
+<pre><code>##             group           name       otype dclass            dim
+## 0               / .full_dimnames   H5I_GROUP                      
+## 1 /.full_dimnames              1 H5I_DATASET STRING          41861
+## 2 /.full_dimnames              2 H5I_DATASET STRING         173954
+## 3               /           full H5I_DATASET  FLOAT 41861 x 173954</code></pre>
 <p>Point to the hf5 file</p>
 <pre class="r"><code>hf5 &lt;- HDF5Array(file_h5array,  name = &#39;full&#39;, as.sparse = TRUE)
 hf5[&#39;AC006486.2&#39;,] |&gt;  head()</code></pre>
@@ -206,8 +244,8 @@ hf5[&#39;AC006486.2&#39;,] |&gt;  head()</code></pre>
 ##      0      0      0      0      0      0</code></pre>
 <p>Explore the class</p>
 <pre class="r"><code>showtree(hf5)</code></pre>
-<pre><code>## 1500x173954 double, sparse: HDF5Matrix object
-## └─ 1500x173954 double, sparse: [seed] HDF5ArraySeed object</code></pre>
+<pre><code>## 41861x173954 double, sparse: HDF5Matrix object
+## └─ 41861x173954 double, sparse: [seed] HDF5ArraySeed object</code></pre>
 <pre class="r"><code>showtree(hf5[2,])</code></pre>
 <pre><code>##  double: [seed] numeric object</code></pre>
 <pre class="r"><code>class(hf5)</code></pre>
@@ -232,23 +270,23 @@ hf5[&#39;AC006486.2&#39;,] |&gt;  head()</code></pre>
 summary(bench_read) |&gt; 
   mutate(expression = as.character(expression)) |&gt;  
   select(-memory, -result, -time, -gc) |&gt;  gt()</code></pre>
-<div id="cotldncavz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#cotldncavz table {
+<div id="tknwdwsdpm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tknwdwsdpm table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#cotldncavz thead, #cotldncavz tbody, #cotldncavz tfoot, #cotldncavz tr, #cotldncavz td, #cotldncavz th {
+#tknwdwsdpm thead, #tknwdwsdpm tbody, #tknwdwsdpm tfoot, #tknwdwsdpm tr, #tknwdwsdpm td, #tknwdwsdpm th {
   border-style: none;
 }
 
-#cotldncavz p {
+#tknwdwsdpm p {
   margin: 0;
   padding: 0;
 }
 
-#cotldncavz .gt_table {
+#tknwdwsdpm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -274,12 +312,12 @@ summary(bench_read) |&gt;
   border-left-color: #D3D3D3;
 }
 
-#cotldncavz .gt_caption {
+#tknwdwsdpm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#cotldncavz .gt_title {
+#tknwdwsdpm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -291,7 +329,7 @@ summary(bench_read) |&gt;
   border-bottom-width: 0;
 }
 
-#cotldncavz .gt_subtitle {
+#tknwdwsdpm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -303,7 +341,7 @@ summary(bench_read) |&gt;
   border-top-width: 0;
 }
 
-#cotldncavz .gt_heading {
+#tknwdwsdpm .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -315,13 +353,13 @@ summary(bench_read) |&gt;
   border-right-color: #D3D3D3;
 }
 
-#cotldncavz .gt_bottom_border {
+#tknwdwsdpm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#cotldncavz .gt_col_headings {
+#tknwdwsdpm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -336,7 +374,7 @@ summary(bench_read) |&gt;
   border-right-color: #D3D3D3;
 }
 
-#cotldncavz .gt_col_heading {
+#tknwdwsdpm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -356,7 +394,7 @@ summary(bench_read) |&gt;
   overflow-x: hidden;
 }
 
-#cotldncavz .gt_column_spanner_outer {
+#tknwdwsdpm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -368,15 +406,15 @@ summary(bench_read) |&gt;
   padding-right: 4px;
 }
 
-#cotldncavz .gt_column_spanner_outer:first-child {
+#tknwdwsdpm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#cotldncavz .gt_column_spanner_outer:last-child {
+#tknwdwsdpm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#cotldncavz .gt_column_spanner {
+#tknwdwsdpm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -388,11 +426,11 @@ summary(bench_read) |&gt;
   width: 100%;
 }
 
-#cotldncavz .gt_spanner_row {
+#tknwdwsdpm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#cotldncavz .gt_group_heading {
+#tknwdwsdpm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -418,7 +456,7 @@ summary(bench_read) |&gt;
   text-align: left;
 }
 
-#cotldncavz .gt_empty_group_heading {
+#tknwdwsdpm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -433,15 +471,15 @@ summary(bench_read) |&gt;
   vertical-align: middle;
 }
 
-#cotldncavz .gt_from_md > :first-child {
+#tknwdwsdpm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#cotldncavz .gt_from_md > :last-child {
+#tknwdwsdpm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#cotldncavz .gt_row {
+#tknwdwsdpm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -460,7 +498,7 @@ summary(bench_read) |&gt;
   overflow-x: hidden;
 }
 
-#cotldncavz .gt_stub {
+#tknwdwsdpm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -473,7 +511,7 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#cotldncavz .gt_stub_row_group {
+#tknwdwsdpm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -487,15 +525,15 @@ summary(bench_read) |&gt;
   vertical-align: top;
 }
 
-#cotldncavz .gt_row_group_first td {
+#tknwdwsdpm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#cotldncavz .gt_row_group_first th {
+#tknwdwsdpm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#cotldncavz .gt_summary_row {
+#tknwdwsdpm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -505,16 +543,16 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#cotldncavz .gt_first_summary_row {
+#tknwdwsdpm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#cotldncavz .gt_first_summary_row.thick {
+#tknwdwsdpm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#cotldncavz .gt_last_summary_row {
+#tknwdwsdpm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -524,7 +562,7 @@ summary(bench_read) |&gt;
   border-bottom-color: #D3D3D3;
 }
 
-#cotldncavz .gt_grand_summary_row {
+#tknwdwsdpm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -534,7 +572,7 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#cotldncavz .gt_first_grand_summary_row {
+#tknwdwsdpm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -544,7 +582,7 @@ summary(bench_read) |&gt;
   border-top-color: #D3D3D3;
 }
 
-#cotldncavz .gt_last_grand_summary_row_top {
+#tknwdwsdpm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -554,11 +592,11 @@ summary(bench_read) |&gt;
   border-bottom-color: #D3D3D3;
 }
 
-#cotldncavz .gt_striped {
+#tknwdwsdpm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#cotldncavz .gt_table_body {
+#tknwdwsdpm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -567,7 +605,7 @@ summary(bench_read) |&gt;
   border-bottom-color: #D3D3D3;
 }
 
-#cotldncavz .gt_footnotes {
+#tknwdwsdpm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -581,7 +619,7 @@ summary(bench_read) |&gt;
   border-right-color: #D3D3D3;
 }
 
-#cotldncavz .gt_footnote {
+#tknwdwsdpm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -590,7 +628,7 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#cotldncavz .gt_sourcenotes {
+#tknwdwsdpm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -604,7 +642,7 @@ summary(bench_read) |&gt;
   border-right-color: #D3D3D3;
 }
 
-#cotldncavz .gt_sourcenote {
+#tknwdwsdpm .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -612,63 +650,63 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#cotldncavz .gt_left {
+#tknwdwsdpm .gt_left {
   text-align: left;
 }
 
-#cotldncavz .gt_center {
+#tknwdwsdpm .gt_center {
   text-align: center;
 }
 
-#cotldncavz .gt_right {
+#tknwdwsdpm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#cotldncavz .gt_font_normal {
+#tknwdwsdpm .gt_font_normal {
   font-weight: normal;
 }
 
-#cotldncavz .gt_font_bold {
+#tknwdwsdpm .gt_font_bold {
   font-weight: bold;
 }
 
-#cotldncavz .gt_font_italic {
+#tknwdwsdpm .gt_font_italic {
   font-style: italic;
 }
 
-#cotldncavz .gt_super {
+#tknwdwsdpm .gt_super {
   font-size: 65%;
 }
 
-#cotldncavz .gt_footnote_marks {
+#tknwdwsdpm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#cotldncavz .gt_asterisk {
+#tknwdwsdpm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#cotldncavz .gt_indent_1 {
+#tknwdwsdpm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#cotldncavz .gt_indent_2 {
+#tknwdwsdpm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#cotldncavz .gt_indent_3 {
+#tknwdwsdpm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#cotldncavz .gt_indent_4 {
+#tknwdwsdpm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#cotldncavz .gt_indent_5 {
+#tknwdwsdpm .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -688,32 +726,32 @@ summary(bench_read) |&gt;
   </thead>
   <tbody class="gt_table_body">
     <tr><td headers="expression" class="gt_row gt_left">HDF5Array</td>
-<td headers="min" class="gt_row gt_center">374.48ms</td>
-<td headers="median" class="gt_row gt_center">380.96ms</td>
-<td headers="itr/sec" class="gt_row gt_right">2.624962</td>
-<td headers="mem_alloc" class="gt_row gt_center">8.04MB</td>
-<td headers="gc/sec" class="gt_row gt_right">0</td>
-<td headers="n_itr" class="gt_row gt_right">2</td>
-<td headers="n_gc" class="gt_row gt_right">0</td>
-<td headers="total_time" class="gt_row gt_center">762ms</td></tr>
-    <tr><td headers="expression" class="gt_row gt_left">h5 - manual</td>
-<td headers="min" class="gt_row gt_center">681.42ms</td>
-<td headers="median" class="gt_row gt_center">681.42ms</td>
-<td headers="itr/sec" class="gt_row gt_right">1.467532</td>
-<td headers="mem_alloc" class="gt_row gt_center">4.05MB</td>
+<td headers="min" class="gt_row gt_center">1.7s</td>
+<td headers="median" class="gt_row gt_center">1.7s</td>
+<td headers="itr/sec" class="gt_row gt_right">0.5875962</td>
+<td headers="mem_alloc" class="gt_row gt_center">10.11MB</td>
 <td headers="gc/sec" class="gt_row gt_right">0</td>
 <td headers="n_itr" class="gt_row gt_right">1</td>
 <td headers="n_gc" class="gt_row gt_right">0</td>
-<td headers="total_time" class="gt_row gt_center">681ms</td></tr>
-    <tr><td headers="expression" class="gt_row gt_left">in-memory slice</td>
-<td headers="min" class="gt_row gt_center">6.34ms</td>
-<td headers="median" class="gt_row gt_center">6.58ms</td>
-<td headers="itr/sec" class="gt_row gt_right">148.270953</td>
-<td headers="mem_alloc" class="gt_row gt_center">3.62MB</td>
+<td headers="total_time" class="gt_row gt_center">1.7s</td></tr>
+    <tr><td headers="expression" class="gt_row gt_left">h5 - manual</td>
+<td headers="min" class="gt_row gt_center">774.7ms</td>
+<td headers="median" class="gt_row gt_center">774.7ms</td>
+<td headers="itr/sec" class="gt_row gt_right">1.2908001</td>
+<td headers="mem_alloc" class="gt_row gt_center">4.97MB</td>
 <td headers="gc/sec" class="gt_row gt_right">0</td>
-<td headers="n_itr" class="gt_row gt_right">75</td>
+<td headers="n_itr" class="gt_row gt_right">1</td>
 <td headers="n_gc" class="gt_row gt_right">0</td>
-<td headers="total_time" class="gt_row gt_center">506ms</td></tr>
+<td headers="total_time" class="gt_row gt_center">774.7ms</td></tr>
+    <tr><td headers="expression" class="gt_row gt_left">in-memory slice</td>
+<td headers="min" class="gt_row gt_center">154.5ms</td>
+<td headers="median" class="gt_row gt_center">210.9ms</td>
+<td headers="itr/sec" class="gt_row gt_right">5.0724987</td>
+<td headers="mem_alloc" class="gt_row gt_center">3.93MB</td>
+<td headers="gc/sec" class="gt_row gt_right">0</td>
+<td headers="n_itr" class="gt_row gt_right">3</td>
+<td headers="n_gc" class="gt_row gt_right">0</td>
+<td headers="total_time" class="gt_row gt_center">591.4ms</td></tr>
   </tbody>
   
   
@@ -721,16 +759,16 @@ summary(bench_read) |&gt;
 </div>
 <pre class="r"><code>bench_read |&gt;  autoplot(type = &#39;jitter&#39;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index.en_files/figure-html/bench-1.png" width="672" /></p>
-<p><code>HDF5array</code> is slower than <code>ShinyCell</code>’s manual method</p>
-<p>Fastest is holding in memory, but not by that much, and of course the cost is occupying a large amount of memory at any given time.</p>
+<p><code>HDF5array</code> is ~2x slower than <code>ShinyCell</code>’s manual method</p>
+<p><code>ShinyCell</code> approach is almost as fast as holding in memory, without of course the cost is occupying a large amount of memory at any given time.</p>
 </div>
 <div id="on-disk-space" class="section level2">
 <h2>on-disk space</h2>
 <pre class="r"><code>data.frame(file = c(file_h5, file_h5array)) |&gt; 
   mutate(file_size = fs::file_size(file)) </code></pre>
 <pre><code>##           file file_size
-## 1    counts.h5     6.61M
-## 2 HDF5array.h5     4.47M</code></pre>
+## 1    counts.h5   153.28M
+## 2 HDF5array.h5   221.88M</code></pre>
 </div>
 </div>
 <div id="singlecellexperiment" class="section level1">
@@ -739,29 +777,29 @@ summary(bench_read) |&gt;
 <pre class="r"><code>sce_h5 &lt;- SingleCellExperiment(assays = list(counts = hf5))</code></pre>
 <p>Size of SingleCellExperiment object backed by HDF5</p>
 <pre class="r"><code>object.size(sce_h5) |&gt;  print(units = &#39;auto&#39;)</code></pre>
-<pre><code>## 6.3 Mb</code></pre>
+<pre><code>## 9.1 Mb</code></pre>
 <p>Size of dgc counts matrix held in memory</p>
 <pre class="r"><code>object.size(counts) |&gt;  print(units = &#39;auto&#39;)</code></pre>
-<pre><code>## 12.2 Mb</code></pre>
+<pre><code>## 624.4 Mb</code></pre>
 <p>Speed:</p>
 <pre class="r"><code>bench::mark(sce_h5[&#39;AC006486.2&#39;,]) |&gt; select(-c(result:gc)) |&gt;  gt()</code></pre>
-<div id="isnmvfwivf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#isnmvfwivf table {
+<div id="fzgpsnstab" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fzgpsnstab table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#isnmvfwivf thead, #isnmvfwivf tbody, #isnmvfwivf tfoot, #isnmvfwivf tr, #isnmvfwivf td, #isnmvfwivf th {
+#fzgpsnstab thead, #fzgpsnstab tbody, #fzgpsnstab tfoot, #fzgpsnstab tr, #fzgpsnstab td, #fzgpsnstab th {
   border-style: none;
 }
 
-#isnmvfwivf p {
+#fzgpsnstab p {
   margin: 0;
   padding: 0;
 }
 
-#isnmvfwivf .gt_table {
+#fzgpsnstab .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -787,12 +825,12 @@ summary(bench_read) |&gt;
   border-left-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_caption {
+#fzgpsnstab .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#isnmvfwivf .gt_title {
+#fzgpsnstab .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -804,7 +842,7 @@ summary(bench_read) |&gt;
   border-bottom-width: 0;
 }
 
-#isnmvfwivf .gt_subtitle {
+#fzgpsnstab .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -816,7 +854,7 @@ summary(bench_read) |&gt;
   border-top-width: 0;
 }
 
-#isnmvfwivf .gt_heading {
+#fzgpsnstab .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -828,13 +866,13 @@ summary(bench_read) |&gt;
   border-right-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_bottom_border {
+#fzgpsnstab .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_col_headings {
+#fzgpsnstab .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -849,7 +887,7 @@ summary(bench_read) |&gt;
   border-right-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_col_heading {
+#fzgpsnstab .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -869,7 +907,7 @@ summary(bench_read) |&gt;
   overflow-x: hidden;
 }
 
-#isnmvfwivf .gt_column_spanner_outer {
+#fzgpsnstab .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -881,15 +919,15 @@ summary(bench_read) |&gt;
   padding-right: 4px;
 }
 
-#isnmvfwivf .gt_column_spanner_outer:first-child {
+#fzgpsnstab .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#isnmvfwivf .gt_column_spanner_outer:last-child {
+#fzgpsnstab .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#isnmvfwivf .gt_column_spanner {
+#fzgpsnstab .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -901,11 +939,11 @@ summary(bench_read) |&gt;
   width: 100%;
 }
 
-#isnmvfwivf .gt_spanner_row {
+#fzgpsnstab .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#isnmvfwivf .gt_group_heading {
+#fzgpsnstab .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -931,7 +969,7 @@ summary(bench_read) |&gt;
   text-align: left;
 }
 
-#isnmvfwivf .gt_empty_group_heading {
+#fzgpsnstab .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -946,15 +984,15 @@ summary(bench_read) |&gt;
   vertical-align: middle;
 }
 
-#isnmvfwivf .gt_from_md > :first-child {
+#fzgpsnstab .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#isnmvfwivf .gt_from_md > :last-child {
+#fzgpsnstab .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#isnmvfwivf .gt_row {
+#fzgpsnstab .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -973,7 +1011,7 @@ summary(bench_read) |&gt;
   overflow-x: hidden;
 }
 
-#isnmvfwivf .gt_stub {
+#fzgpsnstab .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -986,7 +1024,7 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#isnmvfwivf .gt_stub_row_group {
+#fzgpsnstab .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1000,15 +1038,15 @@ summary(bench_read) |&gt;
   vertical-align: top;
 }
 
-#isnmvfwivf .gt_row_group_first td {
+#fzgpsnstab .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#isnmvfwivf .gt_row_group_first th {
+#fzgpsnstab .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#isnmvfwivf .gt_summary_row {
+#fzgpsnstab .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1018,16 +1056,16 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#isnmvfwivf .gt_first_summary_row {
+#fzgpsnstab .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_first_summary_row.thick {
+#fzgpsnstab .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#isnmvfwivf .gt_last_summary_row {
+#fzgpsnstab .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1037,7 +1075,7 @@ summary(bench_read) |&gt;
   border-bottom-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_grand_summary_row {
+#fzgpsnstab .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1047,7 +1085,7 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#isnmvfwivf .gt_first_grand_summary_row {
+#fzgpsnstab .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1057,7 +1095,7 @@ summary(bench_read) |&gt;
   border-top-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_last_grand_summary_row_top {
+#fzgpsnstab .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1067,11 +1105,11 @@ summary(bench_read) |&gt;
   border-bottom-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_striped {
+#fzgpsnstab .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#isnmvfwivf .gt_table_body {
+#fzgpsnstab .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1080,7 +1118,7 @@ summary(bench_read) |&gt;
   border-bottom-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_footnotes {
+#fzgpsnstab .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1094,7 +1132,7 @@ summary(bench_read) |&gt;
   border-right-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_footnote {
+#fzgpsnstab .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1103,7 +1141,7 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#isnmvfwivf .gt_sourcenotes {
+#fzgpsnstab .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1117,7 +1155,7 @@ summary(bench_read) |&gt;
   border-right-color: #D3D3D3;
 }
 
-#isnmvfwivf .gt_sourcenote {
+#fzgpsnstab .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1125,63 +1163,63 @@ summary(bench_read) |&gt;
   padding-right: 5px;
 }
 
-#isnmvfwivf .gt_left {
+#fzgpsnstab .gt_left {
   text-align: left;
 }
 
-#isnmvfwivf .gt_center {
+#fzgpsnstab .gt_center {
   text-align: center;
 }
 
-#isnmvfwivf .gt_right {
+#fzgpsnstab .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#isnmvfwivf .gt_font_normal {
+#fzgpsnstab .gt_font_normal {
   font-weight: normal;
 }
 
-#isnmvfwivf .gt_font_bold {
+#fzgpsnstab .gt_font_bold {
   font-weight: bold;
 }
 
-#isnmvfwivf .gt_font_italic {
+#fzgpsnstab .gt_font_italic {
   font-style: italic;
 }
 
-#isnmvfwivf .gt_super {
+#fzgpsnstab .gt_super {
   font-size: 65%;
 }
 
-#isnmvfwivf .gt_footnote_marks {
+#fzgpsnstab .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#isnmvfwivf .gt_asterisk {
+#fzgpsnstab .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#isnmvfwivf .gt_indent_1 {
+#fzgpsnstab .gt_indent_1 {
   text-indent: 5px;
 }
 
-#isnmvfwivf .gt_indent_2 {
+#fzgpsnstab .gt_indent_2 {
   text-indent: 10px;
 }
 
-#isnmvfwivf .gt_indent_3 {
+#fzgpsnstab .gt_indent_3 {
   text-indent: 15px;
 }
 
-#isnmvfwivf .gt_indent_4 {
+#fzgpsnstab .gt_indent_4 {
   text-indent: 20px;
 }
 
-#isnmvfwivf .gt_indent_5 {
+#fzgpsnstab .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1201,14 +1239,14 @@ summary(bench_read) |&gt;
   </thead>
   <tbody class="gt_table_body">
     <tr><td headers="expression" class="gt_row gt_center">[, sce_h5, AC006486.2, </td>
-<td headers="min" class="gt_row gt_center">72.6ms</td>
-<td headers="median" class="gt_row gt_center">92.8ms</td>
-<td headers="itr/sec" class="gt_row gt_right">11.03047</td>
-<td headers="mem_alloc" class="gt_row gt_center">6.07MB</td>
+<td headers="min" class="gt_row gt_center">81.4ms</td>
+<td headers="median" class="gt_row gt_center">83.5ms</td>
+<td headers="itr/sec" class="gt_row gt_right">11.77477</td>
+<td headers="mem_alloc" class="gt_row gt_center">7.49MB</td>
 <td headers="gc/sec" class="gt_row gt_right">0</td>
 <td headers="n_itr" class="gt_row gt_right">6</td>
 <td headers="n_gc" class="gt_row gt_right">0</td>
-<td headers="total_time" class="gt_row gt_center">544ms</td></tr>
+<td headers="total_time" class="gt_row gt_center">510ms</td></tr>
   </tbody>
   
   
@@ -1219,7 +1257,7 @@ summary(bench_read) |&gt;
 <h1>Conclusion</h1>
 <ul>
 <li><code>HDF5</code> format is great for memory efficient loading of single cell data, particularly for single gene queries which take less than 1 second on a 200,000 cell dataset.</li>
-<li>The manual <code>shinyCell</code> h5 method is slightly faster than <code>HDF5Array</code></li>
+<li>The manual <code>shinyCell</code> h5 method is almost twice as fast as <code>HDF5Array</code> (~1 second vs 0.5 second)</li>
 <li>but <code>SingleCellExperiment</code> can carry hdf5-backed count matrices with <code>HDF5Array</code>, making it more useful as it opens usage to other single cell tools</li>
 <li>The majority of time reading from <code>HDF5</code> is actually closing the connection of the file.</li>
 </ul>
