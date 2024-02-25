@@ -45,9 +45,15 @@ ignoreFiles = ["\\.ipynb$", ".ipynb_checkpoints$", "\\.Rmd$", "\\.Rmarkdown$", "
 [mediaTypes."application/manifest+json"]
   suffixes = ["webmanifest"]
 
+# allow images to render on deploy previews
+# https://stackoverflow.com/questions/67977033/blogdown-site-not-showing-my-images-after-deploying-on-netlify
 [outputFormats.WebAppManifest]
   mediaType = "application/manifest+json"
   rel = "manifest"
+
+
+[context.deploy-preview.environment]
+  HUGO_BLOGDOWN_POST_RELREF = "true"
 
 # Configure BlackFriday Markdown rendering.
 #   See: https://gohugo.io/getting-started/configuration/#configure-blackfriday
