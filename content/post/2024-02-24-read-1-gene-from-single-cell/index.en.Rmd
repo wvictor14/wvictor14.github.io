@@ -1,5 +1,5 @@
 ---
-title: Fast Memory-Efficient Reading 1 Gene at a Time from Single Cell Data
+title: '"Can you check gene x for me?" quickly reading 1 gene at a time from single cell data'
 author: Victor Yuan
 date: '2024-02-24'
 slug: read-1-gene-from-single-cell
@@ -23,27 +23,38 @@ image:
   focal_point: ''
   preview_only: no
 projects: []
+editor_options: 
+  chunk_output_type: console
 ---
 
-# start point
+"Can you check gene x for me?" is a common question I get when working with other scientists on gene expression projects. This is an easy task after setting up a gene expression web apps with shiny. Though, one pain point for specficially single cell data is that app start up and general data queries become quite slow if using standard analytical single cell packages like `Seurat` and others. For example, a 500 000 cell dataset can take up to 40 seconds to load into memory. Increasingly, I need to check a gene in not just one, but multiple single cell datasets. In my current system of loading entire single cell datasets into memory, this is terribly inefficient for what is essentially a simple task.
 
-The starting point for this task is that we have a sparse count matrix, maybe a `Seurat` or `SingleCellExperiment` object that I want to make accessible via a shiny app to stakeholders. I can write an app that just simply works with these objects directly, but that would involve loading the several gigabytes of data into memory.
+How can we optimize these queries so that instead of taking minutes, it only takes seconds? 
 
-I was looking for ways to circumvent loading entire count matrices (the main memory-hungry culprit) into R, and this post is about that exploration.
+Well, rather than loading the entire data into memory, can we load only the relevant portion, i.e. a gene of interest? 
 
-The outline for this post is that: there are some great "on-disk" streaming options, where essentially you open a *connection* to a file, then only subsets of the data file that you request are actually read into memory. 
+# Single cell formats
 
-# the plan
+If we distill this task into a more general one - loading a single row / slice from rectangular data, then there are many options that exist. However, for single cell RNAseq data there are other considerations:
 
-Actually, there is already a great memory-efficient solution out there called [ShinyCell](https://github.com/SGDDNB/ShinyCell), which utilizes the HDF5 format. This doesn't work perfectly for me though, because I have my own app functions and framework that I want to apply. I am just interested in the memory-efficient data read functionality.
+- data for single cell is often the order of 20,000 - 40,000 genes, often arranged in rows, and 100 000 - 1 million cells in the columns. It does not often travel in "tidy" formats (e.g. with columns gene, cell, value).
 
-So I will compare ShinyCell's rather manual h5 strategy to some other options. The other option included here is `HDF5Array` + `delayedArray`, which are some Bioconductor options specifically for Bioconductor-specific data structures, like scRNAseq.
+- single cell count matrix usually travels as sparse matrix due to high drop-out rate. Coercion to dense is resource-heavy so need to do this thoughtfully and only when necessary.
 
-# key packages for this post
+For this post I explore how to utilize the HDF5 format to speed up reading 1 gene at a time into R, in order to address memory and speed issues when working with large and multple single cell datasets.
+
+# Options for using HDF5 with single cell data
+
+Actually, there is already a great memory-efficient solution out there called [ShinyCell](https://github.com/SGDDNB/ShinyCell), which utilizes the HDF5 format, and produces a clean, fast, memory-efficient shiny-based app. It looks like `ShinyCell` has it's own approach to writing single cell count data to h5 format. 
+I think this is interesting because there are already some existing h5 formats already designed for single cell data, like python's `.h5ad` and `h5Seurat`. And in contrast to these ones, `Shinycell` writes a dense count matrix, rather than the other formats mentioned which keep the format of the data as sparse. This makes sense though as the goal of these other formats is to provide entry to existing tools that work with sparse data. 
+
+So I will compare `ShinyCell`'s rather manual h5 strategy to some other options. The other option included here is `HDF5Array` + `delayedArray`, which are some Bioconductor options specifically for Bioconductor-specific data structures, like scRNAseq.
+
+# Key packages for this post
 
 For HDF5, there are a couple of general purpose options in R: [hdf5r](https://cran.r-project.org/web/packages/hdf5r/index.html), [rhdf5](https://bioconductor.org/packages/release/bioc/html/rhdf5.html). Then there is the bioconductor package [HDF5Array](https://bioconductor.org/packages/release/bioc/html/HDF5Array.html) which uses `hdf5r` in backend to work with bioconductor data structures specifically.
 
-# other packages
+# Other packages
 
 `HDF5Array` hdf5 read write dense/sparse matrices
 `hdf5r` hdf5 r implementation
@@ -69,7 +80,7 @@ sce <- ZilionisLungData()
 counts <- sce@assays@data$counts[1:1500,]
 ```
 
-# saving dgc matrix manually with hdf5r
+# Saving dgc matrix manually with hdf5r
 
 This is ShinyCell's approach, which is to write the sparse count matrix of a `Seurat` / `SingleCellExperiment` object to a dense representation on disk. Because converting the sparse matrix to dense would implode most computers, shinycell's approach is to do this in chunks / loops. 
 
@@ -123,7 +134,7 @@ write_dgc_to_h5 <- function(dgc, file, chunk_size = 500) {
 write_dgc_to_h5(counts, file_h5, chunk_size = 1000)
 ```
 
-# read 1 gene at a time
+# Read 1 gene at a time
 
 Now to define a function that opens the h5 file, reads the particular slice of data we want, and then close the h5 file. It is important to ensure the file gets closed, otherwise it can get corrupt. This is a bit of a drawback for this approach, but I have yet to encounter a problem so far. 
 
@@ -199,26 +210,37 @@ class(hf5)
 is(hf5, 'DelayedMatrix')
 ```
 
-# compare HDF5array vs diy implementation
+# Compare HDF5array vs diy implementation
 
 Now we have written the count matrices to disk in hdf5 format in two ways: manually, and through `HDF5Array`. 
 
 Let's see if there are differences in performance in reading 1 gene at a time.
 
+## Memory and time
+
 ```{r bench}
 bench_read <- bench::mark(
-  hf5['AC006486.2',],
-  read_gene('AC006486.2', file_h5),
-  counts['AC006486.2',]
+  HDF5Array = hf5['AC006486.2',],
+  `h5 - manual` = read_gene('AC006486.2', file_h5),
+  `in-memory slice` = counts['AC006486.2',]
 )  
 
-summary(bench_read) |> select(-memory, -result, -time, -gc) |>  gt()
+summary(bench_read) |> 
+  mutate(expression = as.character(expression)) |>  
+  select(-memory, -result, -time, -gc) |>  gt()
 bench_read |>  autoplot(type = 'jitter')
 ```
 
-`HDF5array` is slower than my manual method
+`HDF5array` is slower than `ShinyCell`'s manual method
 
 Fastest is holding in memory, but not by that much, and of course the cost is occupying a large amount of memory at any given time. 
+
+## on-disk space
+
+```{r}
+data.frame(file = c(file_h5, file_h5array)) |> 
+  mutate(file_size = fs::file_size(file)) 
+```
 
 # SingleCellExperiment
 
@@ -246,7 +268,9 @@ Speed:
 bench::mark(sce_h5['AC006486.2',]) |> select(-c(result:gc)) |>  gt()
 ```
 
+# Conclusion
 
-
-
-
+- `HDF5` format is great for memory efficient loading of single cell data, particularly for single gene queries which take less than 1 second on a 200,000 cell dataset. 
+- The manual `shinyCell` h5 method is slightly faster than `HDF5Array`
+- but `SingleCellExperiment` can carry hdf5-backed count matrices with `HDF5Array`, making it more useful as it opens usage to other single cell tools
+- The majority of time reading from `HDF5` is actually closing the connection of the file.   
