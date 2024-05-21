@@ -11,17 +11,17 @@
 # ordered by weight from lowest to highest.
 
 [[main]]
-  name = "Docs"
+  name = "ドキュメント"
   pageRef = "docs"
   weight = 10
 
 [[main]]
-  name = "Samples"
+  name = "サンプル"
   pageRef = "samples"
   weight = 20
 
 [[main]]
-  name = "Users"
+  name = "利用例"
   pageRef = "users"
   weight = 30
 
@@ -35,7 +35,7 @@
     target = "_blank"
 
 [[main]]
-  identifier = "search"
+  identifier = "検索"
   weight = 99
   [main.params]
     action = "search"

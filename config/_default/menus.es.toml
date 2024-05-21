@@ -12,16 +12,16 @@
 
 [[main]]
   name = "Docs"
-  pageRef = "docs"
+  url = "/docs"
   weight = 10
 
 [[main]]
-  name = "Samples"
+  name = "Ejemplos"
   pageRef = "samples"
   weight = 20
 
 [[main]]
-  name = "Users"
+  name = "Usuarios"
   pageRef = "users"
   weight = 30
 
