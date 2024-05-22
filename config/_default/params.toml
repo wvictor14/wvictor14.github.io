@@ -26,14 +26,14 @@ fingerprintAlgorithm = "sha256"
 
 [footer]
   showCopyright = true
-  showThemeAttribution = true
+  showThemeAttribution = false
   showAppearanceSwitcher = true
   showScrollToTop = true
 
 [homepage]
-  layout = "custom" # valid options: page, profile, custom
+  layout = "profile" # valid options: page, profile, custom
   showRecent = true
-  recentLimit = 5
+  recentLimit = 3
 
 [article]
   showDate = true
