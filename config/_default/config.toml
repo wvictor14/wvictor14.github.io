@@ -11,3 +11,6 @@ summaryLength = 0
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+
+baseURL = "https://victor.rbind.io/"
+languageCode = "en"
