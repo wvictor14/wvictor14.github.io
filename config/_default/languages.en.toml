@@ -14,8 +14,8 @@ title = "Victor Yuan"
 [params.author]
   name = "Victor Yuan"
   image = "img/author.jpg"
-  headline = "A human!"
-  bio = "Bioinformatics Data Scientist :dog:"
+  headline = "Bioinformatics Scientist :bar_chart:"
+  bio = ":dog: :maple_leaf:"
   links = [
     { github = "https://github.com/wvictor14" },
     { linkedin = "https://linkedin.com/" },
