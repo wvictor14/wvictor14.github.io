@@ -3,3 +3,7 @@
 This is the repository that hosts my personal website: [victor.rbind.io](https://victor.rbind.io/)
 
 Built using `blogdown` with the Academic theme.
+
+# dev
+
+congo specific documentation: https://jpanther.github.io/congo/docs/configuration/
