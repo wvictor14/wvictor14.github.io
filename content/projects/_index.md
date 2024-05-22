@@ -1,6 +1,10 @@
 ---
 title: Projects
-view: 3
+date: 21 May 2024
+cascade:
+  showDate: false
+  showDateUpdated: false
+  showReadingTime: false
 ---
 
 - [planet](/planet): an R package for analysis of placental methylation data
