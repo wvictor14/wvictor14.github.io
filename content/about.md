@@ -1,4 +1,9 @@
-# About
+---
+showDate: false
+showDateUpdated: false
+showReadingTime: false
+---
+# About Me
 
 Hi I'm Victor, I'm a bioinformatics scientist working at Sonoma Biotherapeutics
 in San Francisco. I work with RNAseq data a lot, sometimes I dabble in other 
