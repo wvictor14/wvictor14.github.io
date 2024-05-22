@@ -8,7 +8,7 @@ title = "Victor Yuan"
 [params]
   dateFormat = "2 January 2006"
 
-  mainSections = ["samples"]
+  mainSections = ["post"]
   description = "Wander world"
 
 [params.author]
