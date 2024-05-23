@@ -1,5 +1,5 @@
 ---
-title: Fast Memory-Efficient Reading 1 Gene at a Time from Single Cell Data
+title: '"Can you check gene x for me?" quickly reading 1 gene at a time from single cell data'
 author: Victor Yuan
 date: '2024-02-24'
 slug: read-1-gene-from-single-cell
@@ -23,27 +23,36 @@ image:
   focal_point: ''
   preview_only: no
 projects: []
+editor_options: 
+  chunk_output_type: console
 ---
 
 
 
-<div id="start-point" class="section level1">
-<h1>start point</h1>
-<p>The starting point for this task is that we have a sparse count matrix, maybe a <code>Seurat</code> or <code>SingleCellExperiment</code> object that I want to make accessible via a shiny app to stakeholders. I can write an app that just simply works with these objects directly, but that would involve loading the several gigabytes of data into memory.</p>
-<p>I was looking for ways to circumvent loading entire count matrices (the main memory-hungry culprit) into R, and this post is about that exploration.</p>
-<p>The outline for this post is that: there are some great “on-disk” streaming options, where essentially you open a <em>connection</em> to a file, then only subsets of the data file that you request are actually read into memory.</p>
+<p>“Can you check gene x for me?” is a common question I get when working with other scientists on gene expression projects. This is an easy task after setting up a gene expression web apps with shiny. Though, one pain point for specficially single cell data is that app start up and general data queries become quite slow if using standard analytical single cell packages like <code>Seurat</code> and others. For example, a 500 000 cell dataset can take up to 40 seconds to load into memory. Increasingly, I need to check a gene in not just one, but multiple single cell datasets. In my current system of loading entire single cell datasets into memory, this is terribly inefficient for what is essentially a simple task.</p>
+<p>How can we optimize these queries so that instead of taking minutes, it only takes seconds?</p>
+<p>Well, rather than loading the entire data into memory, can we load only the relevant portion, i.e. a gene of interest?</p>
+<div id="single-cell-formats" class="section level1">
+<h1>Single cell formats</h1>
+<p>If we distill this task into a more general one - loading a single row / slice from rectangular data, then there are many options that exist. However, for single cell RNAseq data there are other considerations:</p>
+<ul>
+<li><p>data for single cell is often the order of 20,000 - 40,000 genes, often arranged in rows, and 100 000 - 1 million cells in the columns. It does not often travel in “tidy” formats (e.g. with columns gene, cell, value).</p></li>
+<li><p>single cell count matrix usually travels as sparse matrix due to high drop-out rate. Coercion to dense is resource-heavy so need to do this thoughtfully and only when necessary.</p></li>
+</ul>
+<p>For this post I explore how to utilize the HDF5 format to speed up reading 1 gene at a time into R, in order to address memory and speed issues when working with large and multple single cell datasets.</p>
 </div>
-<div id="the-plan" class="section level1">
-<h1>the plan</h1>
-<p>Actually, there is already a great memory-efficient solution out there called <a href="https://github.com/SGDDNB/ShinyCell">ShinyCell</a>, which utilizes the HDF5 format. This doesn’t work perfectly for me though, because I have my own app functions and framework that I want to apply. I am just interested in the memory-efficient data read functionality.</p>
-<p>So I will compare ShinyCell’s rather manual h5 strategy to some other options. The other option included here is <code>HDF5Array</code> + <code>delayedArray</code>, which are some Bioconductor options specifically for Bioconductor-specific data structures, like scRNAseq.</p>
+<div id="options-for-using-hdf5-with-single-cell-data" class="section level1">
+<h1>Options for using HDF5 with single cell data</h1>
+<p>Actually, there is already a great memory-efficient solution out there called <a href="https://github.com/SGDDNB/ShinyCell">ShinyCell</a>, which utilizes the HDF5 format, and produces a clean, fast, memory-efficient shiny-based app. It looks like <code>ShinyCell</code> has it’s own approach to writing single cell count data to h5 format.
+I think this is interesting because there are already some existing h5 formats already designed for single cell data, like python’s <code>.h5ad</code> and <code>h5Seurat</code>. And in contrast to these ones, <code>Shinycell</code> writes a dense count matrix, rather than the other formats mentioned which keep the format of the data as sparse. This makes sense though as the goal of these other formats is to provide entry to existing tools that work with sparse data.</p>
+<p>So I will compare <code>ShinyCell</code>’s rather manual h5 strategy to some other options. The other option included here is <code>HDF5Array</code> + <code>delayedArray</code>, which are some Bioconductor options specifically for Bioconductor-specific data structures, like scRNAseq.</p>
 </div>
 <div id="key-packages-for-this-post" class="section level1">
-<h1>key packages for this post</h1>
+<h1>Key packages for this post</h1>
 <p>For HDF5, there are a couple of general purpose options in R: <a href="https://cran.r-project.org/web/packages/hdf5r/index.html">hdf5r</a>, <a href="https://bioconductor.org/packages/release/bioc/html/rhdf5.html">rhdf5</a>. Then there is the bioconductor package <a href="https://bioconductor.org/packages/release/bioc/html/HDF5Array.html">HDF5Array</a> which uses <code>hdf5r</code> in backend to work with bioconductor data structures specifically.</p>
 </div>
 <div id="other-packages" class="section level1">
-<h1>other packages</h1>
+<h1>Other packages</h1>
 <p><code>HDF5Array</code> hdf5 read write dense/sparse matrices
 <code>hdf5r</code> hdf5 r implementation
 <code>scRNAseq</code> to access example scRNAseq dataset
@@ -64,10 +73,10 @@ library(fs)</code></pre>
 <pre><code>## loading from cache</code></pre>
 <pre><code>## see ?scRNAseq and browseVignettes(&#39;scRNAseq&#39;) for documentation</code></pre>
 <pre><code>## loading from cache</code></pre>
-<pre class="r"><code>counts &lt;- sce@assays@data$counts[1:1500,]</code></pre>
+<pre class="r"><code>counts &lt;- sce@assays@data$counts[,]</code></pre>
 </div>
 <div id="saving-dgc-matrix-manually-with-hdf5r" class="section level1">
-<h1>saving dgc matrix manually with hdf5r</h1>
+<h1>Saving dgc matrix manually with hdf5r</h1>
 <p>This is ShinyCell’s approach, which is to write the sparse count matrix of a <code>Seurat</code> / <code>SingleCellExperiment</code> object to a dense representation on disk. Because converting the sparse matrix to dense would implode most computers, shinycell’s approach is to do this in chunks / loops.</p>
 <p>I modify the code to make it easier to follow, and I litter the function with <code>tictoc::tic</code> and <code>toc</code> to monitor the overall and each step takes.</p>
 <p>Alternatively, we could write sparse representation to disk, which would be faster to write (less data), but then we would need to convert to dense on the read-in endpoints. I don’t do that here, because the goal is to speed up read-in, not write-out. Though it may be trivially fast to coerce a 1 x 1million vector? Am not sure.</p>
@@ -113,14 +122,52 @@ if (file.exists(file_h5)) file.remove(file_h5)</code></pre>
   toc()
 }
 write_dgc_to_h5(counts, file_h5, chunk_size = 1000)</code></pre>
-<pre><code>## Warning in asMethod(object): sparse-&gt;dense coercion: allocating vector of size
-## 1.3 GiB</code></pre>
-<pre><code>## loop 1, rows 1:1000: 14.06 sec elapsed
-## final loop, rows 1001:1500: 6.2 sec elapsed
-## total: 20.47 sec elapsed</code></pre>
+<pre><code>## loop 1, rows 1:1000: 7.81 sec elapsed
+## loop 2, rows 1001:2000: 7.06 sec elapsed
+## loop 3, rows 2001:3000: 7.02 sec elapsed
+## loop 4, rows 3001:4000: 6.97 sec elapsed
+## loop 5, rows 4001:5000: 8.73 sec elapsed
+## loop 6, rows 5001:6000: 6.5 sec elapsed
+## loop 7, rows 6001:7000: 7.19 sec elapsed
+## loop 8, rows 7001:8000: 6.92 sec elapsed
+## loop 9, rows 8001:9000: 6.84 sec elapsed
+## loop 10, rows 9001:10000: 6.58 sec elapsed
+## loop 11, rows 10001:11000: 6.41 sec elapsed
+## loop 12, rows 11001:12000: 6.78 sec elapsed
+## loop 13, rows 12001:13000: 6.39 sec elapsed
+## loop 14, rows 13001:14000: 7.28 sec elapsed
+## loop 15, rows 14001:15000: 6.33 sec elapsed
+## loop 16, rows 15001:16000: 6.67 sec elapsed
+## loop 17, rows 16001:17000: 6.83 sec elapsed
+## loop 18, rows 17001:18000: 7.31 sec elapsed
+## loop 19, rows 18001:19000: 6.39 sec elapsed
+## loop 20, rows 19001:20000: 6.67 sec elapsed
+## loop 21, rows 20001:21000: 6.86 sec elapsed
+## loop 22, rows 21001:22000: 7.36 sec elapsed
+## loop 23, rows 22001:23000: 6.38 sec elapsed
+## loop 24, rows 23001:24000: 6.75 sec elapsed
+## loop 25, rows 24001:25000: 6.78 sec elapsed
+## loop 26, rows 25001:26000: 7.09 sec elapsed
+## loop 27, rows 26001:27000: 6.14 sec elapsed
+## loop 28, rows 27001:28000: 12.68 sec elapsed
+## loop 29, rows 28001:29000: 7.09 sec elapsed
+## loop 30, rows 29001:30000: 7.56 sec elapsed
+## loop 31, rows 30001:31000: 6.66 sec elapsed
+## loop 32, rows 31001:32000: 10 sec elapsed
+## loop 33, rows 32001:33000: 10.42 sec elapsed
+## loop 34, rows 33001:34000: 8.59 sec elapsed
+## loop 35, rows 34001:35000: 7.61 sec elapsed
+## loop 36, rows 35001:36000: 8.1 sec elapsed
+## loop 37, rows 36001:37000: 6.54 sec elapsed
+## loop 38, rows 37001:38000: 8.5 sec elapsed
+## loop 39, rows 38001:39000: 6.71 sec elapsed
+## loop 40, rows 39001:40000: 7.42 sec elapsed
+## loop 41, rows 40001:41000: 12.31 sec elapsed
+## final loop, rows 41001:41861: 8.39 sec elapsed
+## total: 315.11 sec elapsed</code></pre>
 </div>
 <div id="read-1-gene-at-a-time" class="section level1">
-<h1>read 1 gene at a time</h1>
+<h1>Read 1 gene at a time</h1>
 <p>Now to define a function that opens the h5 file, reads the particular slice of data we want, and then close the h5 file. It is important to ensure the file gets closed, otherwise it can get corrupt. This is a bit of a drawback for this approach, but I have yet to encounter a problem so far.</p>
 <pre class="r"><code>read_gene &lt;- function(gene, file_h5) {
   #tic(&#39;whole thing&#39;)
@@ -170,26 +217,26 @@ if (file.exists(file_h5array)) file.remove(file_h5array)</code></pre>
 <pre class="r"><code>tic();HDF5Array::writeHDF5Array(
   DelayedArray(counts), 
   file_h5array, as.sparse = FALSE, name = &#39;full&#39;, with.dimnames = TRUE);toc()</code></pre>
-<pre><code>## &lt;1500 x 173954&gt; HDF5Matrix object of type &quot;double&quot;:
-##            bcIIOD bcHTNA bcDLAV ... bcELDH bcFGGM
-##    5S_rRNA      0      0      0   .      0      0
-##  5_8S_rRNA      0      0      0   .      0      0
-##        7SK      0      0      0   .      0      0
-##       A1BG      0      0      0   .      0      0
-##   A1BG-AS1      0      0      0   .      0      0
-##        ...      .      .      .   .      .      .
-## AC008667.1      0      0      0   .      0      0
-## AC008667.2      0      0      0   .      0      0
-## AC008667.3      0      0      0   .      0      0
-## AC008667.4      0      0      0   .      0      0
-## AC008669.1      0      0      0   .      0      0</code></pre>
-<pre><code>## 30.13 sec elapsed</code></pre>
+<pre><code>## &lt;41861 x 173954&gt; HDF5Matrix object of type &quot;double&quot;:
+##           bcIIOD bcHTNA bcDLAV ... bcELDH bcFGGM
+##   5S_rRNA      0      0      0   .      0      0
+## 5_8S_rRNA      0      0      0   .      0      0
+##       7SK      0      0      0   .      0      0
+##      A1BG      0      0      0   .      0      0
+##  A1BG-AS1      0      0      0   .      0      0
+##       ...      .      .      .   .      .      .
+##   snoZ278      0      0      0   .      0      0
+##    snoZ40      0      0      0   .      0      0
+##     snoZ6      0      0      0   .      0      0
+##  snosnR66      0      0      0   .      0      0
+##    uc_338      0      0      0   .      0      0</code></pre>
+<pre><code>## 466.64 sec elapsed</code></pre>
 <pre class="r"><code>h5ls(file_h5array) # see content of h5</code></pre>
-<pre><code>##             group           name       otype dclass           dim
-## 0               / .full_dimnames   H5I_GROUP                     
-## 1 /.full_dimnames              1 H5I_DATASET STRING          1500
-## 2 /.full_dimnames              2 H5I_DATASET STRING        173954
-## 3               /           full H5I_DATASET  FLOAT 1500 x 173954</code></pre>
+<pre><code>##             group           name       otype dclass            dim
+## 0               / .full_dimnames   H5I_GROUP                      
+## 1 /.full_dimnames              1 H5I_DATASET STRING          41861
+## 2 /.full_dimnames              2 H5I_DATASET STRING         173954
+## 3               /           full H5I_DATASET  FLOAT 41861 x 173954</code></pre>
 <p>Point to the hf5 file</p>
 <pre class="r"><code>hf5 &lt;- HDF5Array(file_h5array,  name = &#39;full&#39;, as.sparse = TRUE)
 hf5[&#39;AC006486.2&#39;,] |&gt;  head()</code></pre>
@@ -197,8 +244,8 @@ hf5[&#39;AC006486.2&#39;,] |&gt;  head()</code></pre>
 ##      0      0      0      0      0      0</code></pre>
 <p>Explore the class</p>
 <pre class="r"><code>showtree(hf5)</code></pre>
-<pre><code>## 1500x173954 double, sparse: HDF5Matrix object
-## └─ 1500x173954 double, sparse: [seed] HDF5ArraySeed object</code></pre>
+<pre><code>## 41861x173954 double, sparse: HDF5Matrix object
+## └─ 41861x173954 double, sparse: [seed] HDF5ArraySeed object</code></pre>
 <pre class="r"><code>showtree(hf5[2,])</code></pre>
 <pre><code>##  double: [seed] numeric object</code></pre>
 <pre class="r"><code>class(hf5)</code></pre>
@@ -209,33 +256,37 @@ hf5[&#39;AC006486.2&#39;,] |&gt;  head()</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="compare-hdf5array-vs-diy-implementation" class="section level1">
-<h1>compare HDF5array vs diy implementation</h1>
+<h1>Compare HDF5array vs diy implementation</h1>
 <p>Now we have written the count matrices to disk in hdf5 format in two ways: manually, and through <code>HDF5Array</code>.</p>
 <p>Let’s see if there are differences in performance in reading 1 gene at a time.</p>
+<div id="memory-and-time" class="section level2">
+<h2>Memory and time</h2>
 <pre class="r"><code>bench_read &lt;- bench::mark(
-  hf5[&#39;AC006486.2&#39;,],
-  read_gene(&#39;AC006486.2&#39;, file_h5),
-  counts[&#39;AC006486.2&#39;,]
+  HDF5Array = hf5[&#39;AC006486.2&#39;,],
+  `h5 - manual` = read_gene(&#39;AC006486.2&#39;, file_h5),
+  `in-memory slice` = counts[&#39;AC006486.2&#39;,]
 )  
 
-summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code></pre>
-<div id="vdtqeykpzr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vdtqeykpzr table {
+summary(bench_read) |&gt; 
+  mutate(expression = as.character(expression)) |&gt;  
+  select(-memory, -result, -time, -gc) |&gt;  gt()</code></pre>
+<div id="tknwdwsdpm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tknwdwsdpm table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vdtqeykpzr thead, #vdtqeykpzr tbody, #vdtqeykpzr tfoot, #vdtqeykpzr tr, #vdtqeykpzr td, #vdtqeykpzr th {
+#tknwdwsdpm thead, #tknwdwsdpm tbody, #tknwdwsdpm tfoot, #tknwdwsdpm tr, #tknwdwsdpm td, #tknwdwsdpm th {
   border-style: none;
 }
 
-#vdtqeykpzr p {
+#tknwdwsdpm p {
   margin: 0;
   padding: 0;
 }
 
-#vdtqeykpzr .gt_table {
+#tknwdwsdpm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -261,12 +312,12 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-left-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_caption {
+#tknwdwsdpm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vdtqeykpzr .gt_title {
+#tknwdwsdpm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -278,7 +329,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-bottom-width: 0;
 }
 
-#vdtqeykpzr .gt_subtitle {
+#tknwdwsdpm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -290,7 +341,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-top-width: 0;
 }
 
-#vdtqeykpzr .gt_heading {
+#tknwdwsdpm .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -302,13 +353,13 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-right-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_bottom_border {
+#tknwdwsdpm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_col_headings {
+#tknwdwsdpm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -323,7 +374,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-right-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_col_heading {
+#tknwdwsdpm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -343,7 +394,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   overflow-x: hidden;
 }
 
-#vdtqeykpzr .gt_column_spanner_outer {
+#tknwdwsdpm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -355,15 +406,15 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 4px;
 }
 
-#vdtqeykpzr .gt_column_spanner_outer:first-child {
+#tknwdwsdpm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vdtqeykpzr .gt_column_spanner_outer:last-child {
+#tknwdwsdpm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vdtqeykpzr .gt_column_spanner {
+#tknwdwsdpm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -375,11 +426,11 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   width: 100%;
 }
 
-#vdtqeykpzr .gt_spanner_row {
+#tknwdwsdpm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vdtqeykpzr .gt_group_heading {
+#tknwdwsdpm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -405,7 +456,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   text-align: left;
 }
 
-#vdtqeykpzr .gt_empty_group_heading {
+#tknwdwsdpm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -420,15 +471,15 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   vertical-align: middle;
 }
 
-#vdtqeykpzr .gt_from_md > :first-child {
+#tknwdwsdpm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vdtqeykpzr .gt_from_md > :last-child {
+#tknwdwsdpm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vdtqeykpzr .gt_row {
+#tknwdwsdpm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -447,7 +498,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   overflow-x: hidden;
 }
 
-#vdtqeykpzr .gt_stub {
+#tknwdwsdpm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -460,7 +511,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#vdtqeykpzr .gt_stub_row_group {
+#tknwdwsdpm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -474,15 +525,15 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   vertical-align: top;
 }
 
-#vdtqeykpzr .gt_row_group_first td {
+#tknwdwsdpm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vdtqeykpzr .gt_row_group_first th {
+#tknwdwsdpm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vdtqeykpzr .gt_summary_row {
+#tknwdwsdpm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -492,16 +543,16 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#vdtqeykpzr .gt_first_summary_row {
+#tknwdwsdpm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_first_summary_row.thick {
+#tknwdwsdpm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vdtqeykpzr .gt_last_summary_row {
+#tknwdwsdpm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -511,7 +562,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-bottom-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_grand_summary_row {
+#tknwdwsdpm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -521,7 +572,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#vdtqeykpzr .gt_first_grand_summary_row {
+#tknwdwsdpm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -531,7 +582,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-top-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_last_grand_summary_row_top {
+#tknwdwsdpm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -541,11 +592,11 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-bottom-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_striped {
+#tknwdwsdpm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vdtqeykpzr .gt_table_body {
+#tknwdwsdpm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -554,7 +605,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-bottom-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_footnotes {
+#tknwdwsdpm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -568,7 +619,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-right-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_footnote {
+#tknwdwsdpm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -577,7 +628,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#vdtqeykpzr .gt_sourcenotes {
+#tknwdwsdpm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -591,7 +642,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-right-color: #D3D3D3;
 }
 
-#vdtqeykpzr .gt_sourcenote {
+#tknwdwsdpm .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -599,70 +650,70 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#vdtqeykpzr .gt_left {
+#tknwdwsdpm .gt_left {
   text-align: left;
 }
 
-#vdtqeykpzr .gt_center {
+#tknwdwsdpm .gt_center {
   text-align: center;
 }
 
-#vdtqeykpzr .gt_right {
+#tknwdwsdpm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vdtqeykpzr .gt_font_normal {
+#tknwdwsdpm .gt_font_normal {
   font-weight: normal;
 }
 
-#vdtqeykpzr .gt_font_bold {
+#tknwdwsdpm .gt_font_bold {
   font-weight: bold;
 }
 
-#vdtqeykpzr .gt_font_italic {
+#tknwdwsdpm .gt_font_italic {
   font-style: italic;
 }
 
-#vdtqeykpzr .gt_super {
+#tknwdwsdpm .gt_super {
   font-size: 65%;
 }
 
-#vdtqeykpzr .gt_footnote_marks {
+#tknwdwsdpm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vdtqeykpzr .gt_asterisk {
+#tknwdwsdpm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vdtqeykpzr .gt_indent_1 {
+#tknwdwsdpm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vdtqeykpzr .gt_indent_2 {
+#tknwdwsdpm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vdtqeykpzr .gt_indent_3 {
+#tknwdwsdpm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vdtqeykpzr .gt_indent_4 {
+#tknwdwsdpm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vdtqeykpzr .gt_indent_5 {
+#tknwdwsdpm .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
   <thead>
     <tr class="gt_col_headings">
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="expression">expression</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="expression">expression</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="min">min</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="median">median</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="itr/sec">itr/sec</th>
@@ -674,33 +725,33 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td headers="expression" class="gt_row gt_center">[, hf5, AC006486.2, </td>
-<td headers="min" class="gt_row gt_center">1.16s</td>
-<td headers="median" class="gt_row gt_center">1.16s</td>
-<td headers="itr/sec" class="gt_row gt_right">0.8585398</td>
-<td headers="mem_alloc" class="gt_row gt_center">8.04MB</td>
+    <tr><td headers="expression" class="gt_row gt_left">HDF5Array</td>
+<td headers="min" class="gt_row gt_center">1.7s</td>
+<td headers="median" class="gt_row gt_center">1.7s</td>
+<td headers="itr/sec" class="gt_row gt_right">0.5875962</td>
+<td headers="mem_alloc" class="gt_row gt_center">10.11MB</td>
 <td headers="gc/sec" class="gt_row gt_right">0</td>
 <td headers="n_itr" class="gt_row gt_right">1</td>
 <td headers="n_gc" class="gt_row gt_right">0</td>
-<td headers="total_time" class="gt_row gt_center">1.16s</td></tr>
-    <tr><td headers="expression" class="gt_row gt_center">read_gene, AC006486.2, file_h5</td>
-<td headers="min" class="gt_row gt_center">987.22ms</td>
-<td headers="median" class="gt_row gt_center">987.22ms</td>
-<td headers="itr/sec" class="gt_row gt_right">1.0129467</td>
-<td headers="mem_alloc" class="gt_row gt_center">4.05MB</td>
+<td headers="total_time" class="gt_row gt_center">1.7s</td></tr>
+    <tr><td headers="expression" class="gt_row gt_left">h5 - manual</td>
+<td headers="min" class="gt_row gt_center">774.7ms</td>
+<td headers="median" class="gt_row gt_center">774.7ms</td>
+<td headers="itr/sec" class="gt_row gt_right">1.2908001</td>
+<td headers="mem_alloc" class="gt_row gt_center">4.97MB</td>
 <td headers="gc/sec" class="gt_row gt_right">0</td>
 <td headers="n_itr" class="gt_row gt_right">1</td>
 <td headers="n_gc" class="gt_row gt_right">0</td>
-<td headers="total_time" class="gt_row gt_center">987.22ms</td></tr>
-    <tr><td headers="expression" class="gt_row gt_center">[, counts, AC006486.2, </td>
-<td headers="min" class="gt_row gt_center">11.27ms</td>
-<td headers="median" class="gt_row gt_center">12.73ms</td>
-<td headers="itr/sec" class="gt_row gt_right">78.5342524</td>
-<td headers="mem_alloc" class="gt_row gt_center">3.62MB</td>
+<td headers="total_time" class="gt_row gt_center">774.7ms</td></tr>
+    <tr><td headers="expression" class="gt_row gt_left">in-memory slice</td>
+<td headers="min" class="gt_row gt_center">154.5ms</td>
+<td headers="median" class="gt_row gt_center">210.9ms</td>
+<td headers="itr/sec" class="gt_row gt_right">5.0724987</td>
+<td headers="mem_alloc" class="gt_row gt_center">3.93MB</td>
 <td headers="gc/sec" class="gt_row gt_right">0</td>
-<td headers="n_itr" class="gt_row gt_right">40</td>
+<td headers="n_itr" class="gt_row gt_right">3</td>
 <td headers="n_gc" class="gt_row gt_right">0</td>
-<td headers="total_time" class="gt_row gt_center">509.33ms</td></tr>
+<td headers="total_time" class="gt_row gt_center">591.4ms</td></tr>
   </tbody>
   
   
@@ -708,8 +759,17 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
 </div>
 <pre class="r"><code>bench_read |&gt;  autoplot(type = &#39;jitter&#39;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index.en_files/figure-html/bench-1.png" width="672" /></p>
-<p><code>HDF5array</code> is slower than my manual method</p>
-<p>Fastest is holding in memory, but not by that much, and of course the cost is occupying a large amount of memory at any given time.</p>
+<p><code>HDF5array</code> is ~2x slower than <code>ShinyCell</code>’s manual method</p>
+<p><code>ShinyCell</code> approach is almost as fast as holding in memory, without of course the cost is occupying a large amount of memory at any given time.</p>
+</div>
+<div id="on-disk-space" class="section level2">
+<h2>on-disk space</h2>
+<pre class="r"><code>data.frame(file = c(file_h5, file_h5array)) |&gt; 
+  mutate(file_size = fs::file_size(file)) </code></pre>
+<pre><code>##           file file_size
+## 1    counts.h5   153.28M
+## 2 HDF5array.h5   221.88M</code></pre>
+</div>
 </div>
 <div id="singlecellexperiment" class="section level1">
 <h1>SingleCellExperiment</h1>
@@ -717,29 +777,29 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
 <pre class="r"><code>sce_h5 &lt;- SingleCellExperiment(assays = list(counts = hf5))</code></pre>
 <p>Size of SingleCellExperiment object backed by HDF5</p>
 <pre class="r"><code>object.size(sce_h5) |&gt;  print(units = &#39;auto&#39;)</code></pre>
-<pre><code>## 6.3 Mb</code></pre>
+<pre><code>## 9.1 Mb</code></pre>
 <p>Size of dgc counts matrix held in memory</p>
 <pre class="r"><code>object.size(counts) |&gt;  print(units = &#39;auto&#39;)</code></pre>
-<pre><code>## 12.2 Mb</code></pre>
+<pre><code>## 624.4 Mb</code></pre>
 <p>Speed:</p>
 <pre class="r"><code>bench::mark(sce_h5[&#39;AC006486.2&#39;,]) |&gt; select(-c(result:gc)) |&gt;  gt()</code></pre>
-<div id="hcxypjelli" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#hcxypjelli table {
+<div id="fzgpsnstab" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fzgpsnstab table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#hcxypjelli thead, #hcxypjelli tbody, #hcxypjelli tfoot, #hcxypjelli tr, #hcxypjelli td, #hcxypjelli th {
+#fzgpsnstab thead, #fzgpsnstab tbody, #fzgpsnstab tfoot, #fzgpsnstab tr, #fzgpsnstab td, #fzgpsnstab th {
   border-style: none;
 }
 
-#hcxypjelli p {
+#fzgpsnstab p {
   margin: 0;
   padding: 0;
 }
 
-#hcxypjelli .gt_table {
+#fzgpsnstab .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -765,12 +825,12 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-left-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_caption {
+#fzgpsnstab .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#hcxypjelli .gt_title {
+#fzgpsnstab .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -782,7 +842,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-bottom-width: 0;
 }
 
-#hcxypjelli .gt_subtitle {
+#fzgpsnstab .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -794,7 +854,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-top-width: 0;
 }
 
-#hcxypjelli .gt_heading {
+#fzgpsnstab .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -806,13 +866,13 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-right-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_bottom_border {
+#fzgpsnstab .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_col_headings {
+#fzgpsnstab .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -827,7 +887,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-right-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_col_heading {
+#fzgpsnstab .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -847,7 +907,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   overflow-x: hidden;
 }
 
-#hcxypjelli .gt_column_spanner_outer {
+#fzgpsnstab .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -859,15 +919,15 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 4px;
 }
 
-#hcxypjelli .gt_column_spanner_outer:first-child {
+#fzgpsnstab .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#hcxypjelli .gt_column_spanner_outer:last-child {
+#fzgpsnstab .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#hcxypjelli .gt_column_spanner {
+#fzgpsnstab .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -879,11 +939,11 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   width: 100%;
 }
 
-#hcxypjelli .gt_spanner_row {
+#fzgpsnstab .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#hcxypjelli .gt_group_heading {
+#fzgpsnstab .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -909,7 +969,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   text-align: left;
 }
 
-#hcxypjelli .gt_empty_group_heading {
+#fzgpsnstab .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -924,15 +984,15 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   vertical-align: middle;
 }
 
-#hcxypjelli .gt_from_md > :first-child {
+#fzgpsnstab .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#hcxypjelli .gt_from_md > :last-child {
+#fzgpsnstab .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#hcxypjelli .gt_row {
+#fzgpsnstab .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -951,7 +1011,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   overflow-x: hidden;
 }
 
-#hcxypjelli .gt_stub {
+#fzgpsnstab .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -964,7 +1024,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#hcxypjelli .gt_stub_row_group {
+#fzgpsnstab .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -978,15 +1038,15 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   vertical-align: top;
 }
 
-#hcxypjelli .gt_row_group_first td {
+#fzgpsnstab .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#hcxypjelli .gt_row_group_first th {
+#fzgpsnstab .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#hcxypjelli .gt_summary_row {
+#fzgpsnstab .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -996,16 +1056,16 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#hcxypjelli .gt_first_summary_row {
+#fzgpsnstab .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_first_summary_row.thick {
+#fzgpsnstab .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#hcxypjelli .gt_last_summary_row {
+#fzgpsnstab .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1015,7 +1075,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-bottom-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_grand_summary_row {
+#fzgpsnstab .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1025,7 +1085,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#hcxypjelli .gt_first_grand_summary_row {
+#fzgpsnstab .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1035,7 +1095,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-top-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_last_grand_summary_row_top {
+#fzgpsnstab .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1045,11 +1105,11 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-bottom-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_striped {
+#fzgpsnstab .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#hcxypjelli .gt_table_body {
+#fzgpsnstab .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1058,7 +1118,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-bottom-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_footnotes {
+#fzgpsnstab .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1072,7 +1132,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-right-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_footnote {
+#fzgpsnstab .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1081,7 +1141,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#hcxypjelli .gt_sourcenotes {
+#fzgpsnstab .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1095,7 +1155,7 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   border-right-color: #D3D3D3;
 }
 
-#hcxypjelli .gt_sourcenote {
+#fzgpsnstab .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1103,63 +1163,63 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   padding-right: 5px;
 }
 
-#hcxypjelli .gt_left {
+#fzgpsnstab .gt_left {
   text-align: left;
 }
 
-#hcxypjelli .gt_center {
+#fzgpsnstab .gt_center {
   text-align: center;
 }
 
-#hcxypjelli .gt_right {
+#fzgpsnstab .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#hcxypjelli .gt_font_normal {
+#fzgpsnstab .gt_font_normal {
   font-weight: normal;
 }
 
-#hcxypjelli .gt_font_bold {
+#fzgpsnstab .gt_font_bold {
   font-weight: bold;
 }
 
-#hcxypjelli .gt_font_italic {
+#fzgpsnstab .gt_font_italic {
   font-style: italic;
 }
 
-#hcxypjelli .gt_super {
+#fzgpsnstab .gt_super {
   font-size: 65%;
 }
 
-#hcxypjelli .gt_footnote_marks {
+#fzgpsnstab .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#hcxypjelli .gt_asterisk {
+#fzgpsnstab .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#hcxypjelli .gt_indent_1 {
+#fzgpsnstab .gt_indent_1 {
   text-indent: 5px;
 }
 
-#hcxypjelli .gt_indent_2 {
+#fzgpsnstab .gt_indent_2 {
   text-indent: 10px;
 }
 
-#hcxypjelli .gt_indent_3 {
+#fzgpsnstab .gt_indent_3 {
   text-indent: 15px;
 }
 
-#hcxypjelli .gt_indent_4 {
+#fzgpsnstab .gt_indent_4 {
   text-indent: 20px;
 }
 
-#hcxypjelli .gt_indent_5 {
+#fzgpsnstab .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1179,17 +1239,26 @@ summary(bench_read) |&gt; select(-memory, -result, -time, -gc) |&gt;  gt()</code
   </thead>
   <tbody class="gt_table_body">
     <tr><td headers="expression" class="gt_row gt_center">[, sce_h5, AC006486.2, </td>
-<td headers="min" class="gt_row gt_center">181ms</td>
-<td headers="median" class="gt_row gt_center">188ms</td>
-<td headers="itr/sec" class="gt_row gt_right">5.372</td>
-<td headers="mem_alloc" class="gt_row gt_center">6.07MB</td>
+<td headers="min" class="gt_row gt_center">81.4ms</td>
+<td headers="median" class="gt_row gt_center">83.5ms</td>
+<td headers="itr/sec" class="gt_row gt_right">11.77477</td>
+<td headers="mem_alloc" class="gt_row gt_center">7.49MB</td>
 <td headers="gc/sec" class="gt_row gt_right">0</td>
-<td headers="n_itr" class="gt_row gt_right">3</td>
+<td headers="n_itr" class="gt_row gt_right">6</td>
 <td headers="n_gc" class="gt_row gt_right">0</td>
-<td headers="total_time" class="gt_row gt_center">558ms</td></tr>
+<td headers="total_time" class="gt_row gt_center">510ms</td></tr>
   </tbody>
   
   
 </table>
 </div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<ul>
+<li><code>HDF5</code> format is great for memory efficient loading of single cell data, particularly for single gene queries which take less than 1 second on a 200,000 cell dataset.</li>
+<li>The manual <code>shinyCell</code> h5 method is almost twice as fast as <code>HDF5Array</code> (~1 second vs 0.5 second)</li>
+<li>but <code>SingleCellExperiment</code> can carry hdf5-backed count matrices with <code>HDF5Array</code>, making it more useful as it opens usage to other single cell tools</li>
+<li>The majority of time reading from <code>HDF5</code> is actually closing the connection of the file.</li>
+</ul>
 </div>
