@@ -1,9 +1,9 @@
 [build]
-  command = "hugo --gc --minify -b $URL"
+  command = "hugo mod get -u && hugo --gc --minify -b $URL"
   publish = "public"
 
 [build.environment]
-  HUGO_VERSION = "0.119.0"
+  HUGO_VERSION = "0.126.1"
   NODE_ENV = "production"
   TZ = "UTC"  # Set to preferred timezone
 
