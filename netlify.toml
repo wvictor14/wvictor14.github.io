@@ -3,15 +3,9 @@
   publish = "public"
 
 [build.environment]
-  HUGO_VERSION = "0.126.1"
+  HUGO_VERSION = "0.119.0"
+  NODE_ENV = "production"
+  TZ = "UTC"  # Set to preferred timezone
 
 [context.production.environment]
-  HUGO_VERSION = "0.126.1"
   HUGO_ENV = "production"
-  HUGO_ENABLEGITINFO = "true"
-
-[context.branch-deploy.environment]
-  HUGO_VERSION = "0.126.1"
-
-[context.deploy-preview.environment]
-  HUGO_VERSION = "0.126.1"
