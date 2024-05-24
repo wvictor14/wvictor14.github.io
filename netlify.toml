@@ -4,7 +4,7 @@
 
 [build.environment]
   HUGO_VERSION = "0.126.1"
-  GO_VERSION = "1.22.3"
+  GO_VERSION = "1.21"
   NODE_ENV = "production"
 
 [context.production.environment]
