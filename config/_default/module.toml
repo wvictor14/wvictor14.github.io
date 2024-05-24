@@ -1,0 +1,6 @@
+[hugoVersion]
+  extended = true
+  min = "1.126.1"
+
+[[imports]]
+path = "github.com/jpanther/congo/v2"

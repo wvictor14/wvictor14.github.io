@@ -450,7 +450,7 @@ That's it for now! I looked at this data in a couple of other ways, but I wanted
 # Footnotes
 
 ```{r}
-blogdown::shortcode('tweet', '1141220359305232385')
+blogdown::shortcode('tweet', user = 'victor2wy', id = '1141220359305232385')
 ```
 
 
