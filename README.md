@@ -7,3 +7,13 @@ Built using  hugo theme [congo](https://jpanther.github.io/congo).
 # dev
 
 congo specific documentation: https://jpanther.github.io/congo/docs/configuration/
+
+```
+docker run -p 1313:1313 \
+  -v ${PWD}:/src \
+  -v ${HOME}/hugo_cache:/tmp/hugo_cache \
+  hugomods/hugo:0.126.1 \
+  hugo server --bind 0.0.0.0
+
+  hugo --gc --minify -d public
+```
