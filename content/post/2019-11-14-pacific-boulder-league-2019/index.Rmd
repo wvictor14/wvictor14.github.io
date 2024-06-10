@@ -23,7 +23,7 @@ image:
 projects: []
 share: true
 commentable: true
-draft: false
+draft: true
 editor_options: 
   chunk_output_type: console
 ---
@@ -452,12 +452,12 @@ That's it for now! I looked at this data in a couple of other ways, but I wanted
 ```{r}
 blogdown::shortcode('tweet', user = 'victor2wy', id = '1141220359305232385')
 ```
-
+ 
 
 [^variation]: Of course, there are many factors that can affect *individual* teams' weekly performance (e.g. injuries, absences). But, not many factors can explain large systematic changes in performance across *all* teams.
-[^1]: We had new team members this year (Me, and Robbie C). Unfortunately Dan B. betrayed us this year and joined another's team (just kidding, Dan `r emo::ji("smile")`).
+[^1]: We had new team members this year (Me, and Robbie C). Unfortunately Dan B. betrayed us this year and joined another's team (just kidding, Dan ).
 [^2]: Some teams had only a few members that were present at the finals.
-[^3]: This was certainly the most busiest day of the year for me. I had to attend Medical Genetics Research Day at UBC all day until ~6PM. Then I had to drive home to feed Sandy. I didn't actually even get to the finals until around 8PM. Oh and also it was my birthday `r emo::ji('birthday')`!
+[^3]: This was certainly the most busiest day of the year for me. I had to attend Medical Genetics Research Day at UBC all day until ~6PM. Then I had to drive home to feed Sandy. I didn't actually even get to the finals until around 8PM. Oh and also it was my birthday.
 [^4]: Yvonne only kept track of Vancouver scores from 2018. The North Shore had teams as well. The Surrey gym did not exist last year.
 [^5]: Last year I did not participate because of a chronic finger injury, which I'm happy to report has almost fully healed (continuing)
 [^6]: p-value > 0.05, linear modelling.
