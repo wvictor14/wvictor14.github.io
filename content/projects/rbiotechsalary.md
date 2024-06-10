@@ -1,6 +1,6 @@
 ---
 title: rbiotechsalary
-icon: "dollar"
+icon: reddit
 date: 2024-05-15
 weight: 41
 summary: >
