@@ -21,19 +21,16 @@ git submodule update --init # if congo/themes empty
 To serve locally, the website is built in public folder. To build into public:
 
 ```
-# Run in docker container: command to build webiste into public/
+# build
 hugo --gc --minify -d public
 
-# launch docker container, ctrl + d to exit
-docker run --rm -it \
-  -v ${PWD}:/src \
-  -v ${HOME}/hugo_cache:/tmp/hugo_cache \
-  hugomods/hugo:0.119.0 sh 
+# build 
+docker run -p 8080:8080 -v ${PWD}:/src -v ${HOME}/hugo_cache:/tmp/hugo_cache \
+  hugomods/hugo:0.119.0 \
+  hugo --gc --minify -d public
 
 # then can serve the site via docker
-docker run -p 8080:8080 \
-  -v ${PWD}:/src \
-  -v ${HOME}/hugo_cache:/tmp/hugo_cache \
+docker run -p 8080:8080 -v ${PWD}:/src -v ${HOME}/hugo_cache:/tmp/hugo_cache \
   hugomods/hugo:0.119.0 \
   hugo server --bind 0.0.0.0 -p 8080
 
