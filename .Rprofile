@@ -4,7 +4,7 @@ if (file.exists("~/.Rprofile")) {
 }
 
 options(
-  #blogdown.hugo.version = "0.126.1",
+  blogdown.hugo.version = "0.119.0",
   blogdown.author = "Victor Yuan",
   blogdown.ext = ".Rmd",
   blogdown.subdir = "post",
