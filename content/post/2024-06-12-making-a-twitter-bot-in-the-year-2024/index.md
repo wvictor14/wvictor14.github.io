@@ -11,7 +11,6 @@ tags:
   - R
   - CICD
   - Automation
-draft: yes
 description: 'A Mastodon bot, powered by github actions'
 ---
 
