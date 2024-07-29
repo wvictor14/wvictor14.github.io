@@ -18,7 +18,9 @@ Git submodule is not always straightforward, sometimes submodule does not have f
 git submodule update --init # if congo/themes empty
 ```
 
-To serve locally, the website is built in public folder. To build into public:
+The website is built in public folder. 
+
+To build and serve via hugo:
 
 ```
 # build
@@ -35,3 +37,5 @@ docker run -p 8080:8080 -v ${PWD}:/src -v ${HOME}/hugo_cache:/tmp/hugo_cache \
   hugo server --bind 0.0.0.0 -p 8080
 
 ```
+
+To build and serve via pkgdown:
