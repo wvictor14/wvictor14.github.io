@@ -1,6 +1,5 @@
 ---
 title: BC Child Care Vacancies Dashboard + Mastodon Bot
-icon: mastodon
 date: 2024-06-09
 weight: 40
 showSummary: true
