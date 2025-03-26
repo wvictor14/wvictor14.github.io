@@ -3,8 +3,8 @@
 .RData
 .Ruserdata
 *.Rproj
-/public/
-/resources/
-/blogdown
 .DS_Store
 Thumbs.db
+
+.quarto
+_site

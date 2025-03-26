@@ -1,0 +1,9 @@
+---
+title: planet
+date: 2020-01-01
+---
+
+An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease (preeclampsia), all from using placental DNA methylation data as input. 
+
+- [planet R package](https://victoryuan.com/planet/)
+- [source](https://github.com/wvictor14/planet)

@@ -1,0 +1,26 @@
+---
+title: BC Child Care Vacancies Dashboard + Mastodon Bot
+date: 2024-06-09
+---
+
+A data scientist finds childcare.
+
+This 2 part project extracts and deliveries child care vacancies using open-source BC childcare dataset. It uses github actions to automatically pull the updated data every day to 
+
+1. post to mastodon new vacancies, and 
+2. display vacancies in a webpage
+
+# Mastodon bot
+
+Last updated: 2024-06-09
+
+- [Blog post for the bot](/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024)
+- [Mastodon bot](https://botsin.space/@bcchildcarebot) 
+- [source](https://github.com/wvictor14/bcchildcarebot)
+
+# Dashboard
+
+Last updated: 2025-03-20 (the source, but the data is updated every day)
+
+- [Dashboard](https://victoryuan.com/bcchildcarebot)
+- [source](https://github.com/wvictor14/bcchildcarebot)

@@ -1,0 +1,11 @@
+---
+listing:
+  contents: 
+    - "*.qmd"
+  sort:
+    - "date desc"
+    - "title desc"
+title: Projects
+---
+
+Some of my public projects.

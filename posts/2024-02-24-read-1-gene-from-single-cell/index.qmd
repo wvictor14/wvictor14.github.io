@@ -1,0 +1,7 @@
+---
+title: '"Can you check gene x for me?" quickly reading 1 gene at a time from single cell data'
+author: Victor Yuan
+date: '2024-02-24'
+---
+
+<iframe src="/posts/2024-02-24-read-1-gene-from-single-cell/index.en.html" style="width:100%; height:600px; overflow:auto;"></iframe>

@@ -1,0 +1,57 @@
+---
+title: Making a Twitter Bot in the Year 2024
+author: Victor Yuan
+date: '2024-06-12'
+---
+
+
+## I made a Twitter bot, the [BC Child Care Bot](https://botsin.space/@bcchildcarebot)
+
+Except, because it is 2024, using Twitter is uncool, so what I actually did instead was, [I made a Mastodon Bot](https://github.com/wvictor14/bcchildcarebot). It's powered by github actions, meaning everyday it automatically pulls data from BC open map data, detects new vacancies using R, and sends a "toot" (that's the mastodon word for "tweet") to [this account](https://botsin.space/@bcchildcarebot).
+
+## What is Mastodon
+
+If you're like me and were not an avid Twitter user in the first place, you probably have never heard of Mastodon. 
+
+Well, Mastodon is basically Twitter - you create an account, follow people, and see posts from things you follow. 
+
+But unlike Twitter, the servers are decentralized, meaning nothing like what Elon did to Twitter can happen, because no single person "owns" all of the servers. Or something like that.
+
+## Why
+
+Anyways, I don't really care much about Mastodon / Twitter / X or whatever. The main reason I made a the BC Child Care Bot was so that I could help my wife find day care vacancies for my son. And after struggling with deployment challenges in [my previous project](), I was interested in CICD and other cool things you can do with github actions. 
+
+## How
+
+### Github Actions
+
+I followed [this post](https://github.com/matt-dray/londonmapbot) closely to learn how to make my own workflow. Essentially it uses github actions to run an R script in the github repository on a daily basis (a cron job).
+
+This is the section that configures the cron job. I also set it up so that on a certain branch named "test", the script will run. I use this for testing that the workflow works, without having to change the cron schedule everytime.
+
+```
+on:
+  push:
+    branches: ['test'] # push to this branch to test toots
+  schedule:
+    - cron: '41 15 * * *'  # trigger at 3pm UTC  every day
+```
+
+The other necessary component is to add mastdon API token to github repository as a "github secret". Then in the workflow, the token is used with the following syntax:
+
+```
+${{ secrets.RTOOT_DEFAULT_TOKEN}}
+```
+
+### Yay for open source
+
+The last component is making the R script to: pull data, identify NEW vacancies, create a tweet / toot to send.
+
+I pulled data from [BC gov's open data portal](https://catalogue.data.gov.bc.ca/dataset/child-care-map-data/resource/9a9f14e1-03ea-4a11-936a-6e77b15eeb39), and figured out a way to ID new vacancies. Then, a message is crafted accounting for the character limits (500) for mastodon toots.
+
+Actually the character limit is quite restrictive. Every day there can be 50-150 new vacancies over BC, depending on child care age group. But we only have 1 child (thank) so currently the bot only reports facilities with vacancy for children aged <36 months.
+
+Every day this dataset is updated at this URL. The whole script depends on whether this URL stays the same. If it changes, the bot will stop working. Fingers crossed!
+
+
+
