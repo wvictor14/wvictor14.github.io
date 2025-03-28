@@ -17,6 +17,9 @@ website:
         href: https://www.linkedin.com/in/victor2wy/
       - icon: envelope
         href: emailto:victor.2wy@gmail.com
+  body-footer: |
+    <script data-goatcounter="https://victor2wy.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 
 format:
   html:
