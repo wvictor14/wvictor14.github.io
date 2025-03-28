@@ -2,6 +2,7 @@ project:
   type: website
 
 website:
+  google-analytics: G-ZLSXEBDXV5
   title: "Victor Yuan"
   navbar:
     search: true
