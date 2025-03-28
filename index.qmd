@@ -19,4 +19,8 @@ about:
       href: mailto:victor.2wy@gmail.com
 ---
 
-This is me, I am a **Bioinformatics Scientist** working at a Cell Therapy company. On very special occasions, I somehow gather inspiration and motivation to write about things that interest me. And then, even more infrequently, do I decide that my content is good enough to publish. Stand back and revel, at my littered path of breadcrumbs.
+This is me, for a large portion of my day, I am **Bioinformatics Scientist**, meaning that my job means to understand biological data through programming, statistics, and scientific methods.
+
+Outside of my day-job however, I like to sometimes explore other parts of my life, my interests, through the lens of a data scientist. Sometimes I like to explore tools and methods that are not necessarily directly related to my dayjob, in an environment without any pressures related to work.
+
+And on rare occasions, my explorations result in content that I find to reach an acceptable standard that I'm comfortable with making public. So welcome, this is where I decided that content lives - I hope some of the things I have worked on will be helpful to others.
