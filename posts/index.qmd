@@ -1,0 +1,11 @@
+---
+listing:
+  contents:
+   - '*.qmd'
+  sort:
+    - "date desc"
+    - "title desc"
+title: Posts
+---
+
+Some attempts have been made at blogging

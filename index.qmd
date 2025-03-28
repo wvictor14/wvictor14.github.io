@@ -1,0 +1,25 @@
+---
+title: "Victor Yuan"
+format:
+  html:
+    page-layout: full
+    toc: false
+    from: "markdown+emoji"
+about:
+  template: trestles
+  image: images/bw_abstract_fixed_author.jpg
+  image-shape: round
+  links:
+    - icon: github
+      href: https://www.github.com/wvictor14/
+    - icon: linkedin
+      href: https://www.linkedin.com/in/victor2wy/
+    - icon: envelope
+      href: mailto:victor.2wy@gmail.com
+---
+
+For a large portion of my day, I am **Bioinformatics Scientist**, meaning that my job means to understand biological data through programming, statistics, and scientific methods.
+
+Outside of my day-job however, I like to sometimes explore other parts of my life, my interests, through the lens of a data scientist. Sometimes I like to explore tools and methods that are not necessarily directly related to my dayjob, in an environment without any pressures related to work.
+
+And on rare occasions, my explorations result in content that I find to reach an acceptable standard that I'm comfortable with making public. So welcome, this is where I decided that content lives - I hope some of the things I have worked on will be helpful to others.

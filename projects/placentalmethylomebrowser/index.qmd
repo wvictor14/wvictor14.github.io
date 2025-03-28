@@ -1,0 +1,13 @@
+---
+title: Placental Methylome Browser
+date: 2019-01-01
+---
+
+A mini project where me and one of my students Yifan Yin created a shiny app to
+explore epigenetic data from placental samples we collected.
+
+I no longer maintain this app, but it usually lives here:
+
+[robinsonlab.shinyapps.io/Placental_Methylome_Browser/](https://robinsonlab.shinyapps.io/Placental_Methylome_Browser/)
+
+[source](https://github.com/Yifan-Yin/DMR-Project/tree/master)

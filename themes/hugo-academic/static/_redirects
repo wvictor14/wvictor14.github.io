@@ -1,5 +1,0 @@
-# Redirect default Netlify subdomain to primary domain
-
-http://wvictor14.netlify.com/*  https://victor.rbind.io/:splat 301!
-https://wvictor14.netlify.com/* https://victor.rbind.io/:splat 301!
-http://victor.rbind.io/*     https://victor.rbind.io/:splat 301!

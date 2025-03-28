@@ -1,0 +1,28 @@
+project:
+  type: website
+
+website:
+  title: "Victor Yuan"
+  navbar:
+    search: true
+    right:
+      - href: projects
+        text: Projects
+      - href: posts
+        text: Posts
+    tools:
+      - icon: github
+        href: https://www.github.com/wvictor14
+      - icon: linkedin
+        href: https://www.linkedin.com/in/victor2wy/
+      - icon: envelope
+        href: emailto:victor.2wy@gmail.com
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+
+
