@@ -1,0 +1,93 @@
+[
+  {
+    "objectID": "posts/2024-02-24-read-1-gene-from-single-cell/index.html",
+    "href": "posts/2024-02-24-read-1-gene-from-single-cell/index.html",
+    "title": "Quickly reading 1 gene at a time from single cell data",
+    "section": "",
+    "text": "“Can you check gene x for me?” says every scientist I ever did RNAseq analysis for"
+  },
+  {
+    "objectID": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html",
+    "href": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html",
+    "title": "Making a Twitter Bot in the Year 2024",
+    "section": "",
+    "text": "Except, because it is 2024, using Twitter is uncool, so what I actually did instead was, I made a Mastodon Bot. It’s powered by github actions, meaning everyday it automatically pulls data from BC open map data, detects new vacancies using R, and sends a “toot” (that’s the mastodon word for “tweet”) to this account."
+  },
+  {
+    "objectID": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html#i-made-a-twitter-bot-the-bc-child-care-bot",
+    "href": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html#i-made-a-twitter-bot-the-bc-child-care-bot",
+    "title": "Making a Twitter Bot in the Year 2024",
+    "section": "",
+    "text": "Except, because it is 2024, using Twitter is uncool, so what I actually did instead was, I made a Mastodon Bot. It’s powered by github actions, meaning everyday it automatically pulls data from BC open map data, detects new vacancies using R, and sends a “toot” (that’s the mastodon word for “tweet”) to this account."
+  },
+  {
+    "objectID": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html#what-is-mastodon",
+    "href": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html#what-is-mastodon",
+    "title": "Making a Twitter Bot in the Year 2024",
+    "section": "What is Mastodon",
+    "text": "What is Mastodon\nIf you’re like me and were not an avid Twitter user in the first place, you probably have never heard of Mastodon.\nWell, Mastodon is basically Twitter - you create an account, follow people, and see posts from things you follow.\nBut unlike Twitter, the servers are decentralized, meaning nothing like what Elon did to Twitter can happen, because no single person “owns” all of the servers. Or something like that."
+  },
+  {
+    "objectID": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html#why",
+    "href": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html#why",
+    "title": "Making a Twitter Bot in the Year 2024",
+    "section": "Why",
+    "text": "Why\nAnyways, I don’t really care much about Mastodon / Twitter / X or whatever. The main reason I made a the BC Child Care Bot was so that I could help my wife find day care vacancies for my son. And after struggling with deployment challenges in my previous project, I was interested in CICD and other cool things you can do with github actions."
+  },
+  {
+    "objectID": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html#how",
+    "href": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html#how",
+    "title": "Making a Twitter Bot in the Year 2024",
+    "section": "How",
+    "text": "How\n\nGithub Actions\nI followed this post closely to learn how to make my own workflow. Essentially it uses github actions to run an R script in the github repository on a daily basis (a cron job).\nThis is the section that configures the cron job. I also set it up so that on a certain branch named “test”, the script will run. I use this for testing that the workflow works, without having to change the cron schedule everytime.\non:\n  push:\n    branches: ['test'] # push to this branch to test toots\n  schedule:\n    - cron: '41 15 * * *'  # trigger at 3pm UTC  every day\nThe other necessary component is to add mastdon API token to github repository as a “github secret”. Then in the workflow, the token is used with the following syntax:\n${{ secrets.RTOOT_DEFAULT_TOKEN}}\n\n\nYay for open source\nThe last component is making the R script to: pull data, identify NEW vacancies, create a tweet / toot to send.\nI pulled data from BC gov’s open data portal, and figured out a way to ID new vacancies. Then, a message is crafted accounting for the character limits (500) for mastodon toots.\nActually the character limit is quite restrictive. Every day there can be 50-150 new vacancies over BC, depending on child care age group. But we only have 1 child (thank) so currently the bot only reports facilities with vacancy for children aged &lt;36 months.\nEvery day this dataset is updated at this URL. The whole script depends on whether this URL stays the same. If it changes, the bot will stop working. Fingers crossed!"
+  },
+  {
+    "objectID": "projects/bcchildcarebot/index.html",
+    "href": "projects/bcchildcarebot/index.html",
+    "title": "BC Child Care Vacancies Dashboard + Mastodon Bot",
+    "section": "",
+    "text": "A data scientist finds childcare.\nThis 2 part project extracts and deliveries child care vacancies using open-source BC childcare dataset. It uses github actions to automatically pull the updated data every day to\n\npost to mastodon new vacancies, and\ndisplay vacancies in a webpage\n\n\nMastodon bot\nLast updated: 2024-06-09\n\nBlog post for the bot\nMastodon bot\nsource\n\n\n\nDashboard\nLast updated: 2025-03-20 (the source, but the data is updated every day)\n\nDashboard\nsource"
+  },
+  {
+    "objectID": "projects/rbiotechsalary/index.html",
+    "href": "projects/rbiotechsalary/index.html",
+    "title": "rbiotechsalary",
+    "section": "",
+    "text": "Salary data for the job search.\nA web app for exploring biotech/pharma salary data. Pulls from r/biotech. Built with R Shiny and Docker. Rshiny app / ojs static version / source"
+  },
+  {
+    "objectID": "projects/placentalmethylomebrowser/index.html",
+    "href": "projects/placentalmethylomebrowser/index.html",
+    "title": "Placental Methylome Browser",
+    "section": "",
+    "text": "A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.\nI no longer maintain this app, but it usually lives here:\nrobinsonlab.shinyapps.io/Placental_Methylome_Browser/\nsource"
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Some of my public projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBC Child Care Vacancies Dashboard + Mastodon Bot\n\n\n\n\n\n\n\n\n\n\n\nJun 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nrbiotechsalary\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nplanet\n\n\n\n\n\n\n\n\n\n\n\nJan 1, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nPlacental Methylome Browser\n\n\n\n\n\n\n\n\n\n\n\nJan 1, 2019\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects/planet/index.html",
+    "href": "projects/planet/index.html",
+    "title": "planet",
+    "section": "",
+    "text": "An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease (preeclampsia), all from using placental DNA methylation data as input.\n\nplanet R package\nsource"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Victor Yuan",
+    "section": "",
+    "text": "For a large portion of my day, I am Bioinformatics Scientist, meaning that my job means to understand biological data through programming, statistics, and scientific methods.\nOutside of my day-job however, I like to sometimes explore other parts of my life, my interests, through the lens of a data scientist. Sometimes I like to explore tools and methods that are not necessarily directly related to my dayjob, in an environment without any pressures related to work.\nAnd on rare occasions, my explorations result in content that I find to reach an acceptable standard that I’m comfortable with making public. So welcome, this is where I decided that content lives - I hope some of the things I have worked on will be helpful to others."
+  },
+  {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Posts",
+    "section": "",
+    "text": "Some attempts have been made at blogging\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMaking a Twitter Bot in the Year 2024\n\n\n\n\n\n\n\n\n\n\n\nJun 12, 2024\n\n\nVictor Yuan\n\n\n\n\n\n\n\n\n\n\n\n\nQuickly reading 1 gene at a time from single cell data\n\n\n\n\n\n\n\n\n\n\n\nFeb 24, 2024\n\n\nVictor Yuan\n\n\n\n\n\n\nNo matching items"
+  }
+]
