@@ -1,1 +1,1 @@
-Sitemap: https://victoryuan.com/sitemap.xml
+Sitemap: victoryuan.com/sitemap.xml
