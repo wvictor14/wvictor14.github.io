@@ -1,10 +1,45 @@
 [
   {
+    "objectID": "projects/rbiotechsalary/index.html",
+    "href": "projects/rbiotechsalary/index.html",
+    "title": "rbiotechsalary",
+    "section": "",
+    "text": "Salary data for the job search.\nA web app for exploring biotech/pharma salary data. Pulls from r/biotech. Built with R Shiny and Docker. Rshiny app / ojs static version / source"
+  },
+  {
+    "objectID": "projects/placentalmethylomebrowser/index.html",
+    "href": "projects/placentalmethylomebrowser/index.html",
+    "title": "Placental Methylome Browser",
+    "section": "",
+    "text": "A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.\nI no longer maintain this app, but it usually lives here:\nrobinsonlab.shinyapps.io/Placental_Methylome_Browser/\nsource"
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Some of my public projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBC Child Care Vacancies Dashboard + Mastodon Bot\n\n\n\n\n\n\n\n\n\n\n\nJun 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nrbiotechsalary\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nplanet\n\n\n\n\n\n\n\n\n\n\n\nJan 1, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nPlacental Methylome Browser\n\n\n\n\n\n\n\n\n\n\n\nJan 1, 2019\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "posts/2024-02-24-read-1-gene-from-single-cell/index.html",
     "href": "posts/2024-02-24-read-1-gene-from-single-cell/index.html",
     "title": "Quickly reading 1 gene at a time from single cell data",
     "section": "",
     "text": "“Can you check gene x for me?” says every scientist I ever did RNAseq analysis for"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Victor Yuan",
+    "section": "",
+    "text": "For a large portion of my day, I am Bioinformatics Scientist, meaning that my job means to understand biological data through programming, statistics, and scientific methods.\nOutside of my day-job however, I like to sometimes explore other parts of my life, my interests, through the lens of a data scientist. Sometimes I like to explore tools and methods that are not necessarily directly related to my dayjob, in an environment without any pressures related to work.\nAnd on rare occasions, my explorations result in content that I find to reach an acceptable standard that I’m comfortable with making public. So welcome, this is where I decided that content lives - I hope some of the things I have worked on will be helpful to others."
+  },
+  {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Posts",
+    "section": "",
+    "text": "Some attempts have been made at blogging\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMaking a Twitter Bot in the Year 2024\n\n\n\n\n\n\n\n\n\n\n\nJun 12, 2024\n\n\nVictor Yuan\n\n\n\n\n\n\n\n\n\n\n\n\nQuickly reading 1 gene at a time from single cell data\n\n\n\n\n\n\n\n\n\n\n\nFeb 24, 2024\n\n\nVictor Yuan\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html",
@@ -49,45 +84,10 @@
     "text": "A data scientist finds childcare.\nThis 2 part project extracts and deliveries child care vacancies using open-source BC childcare dataset. It uses github actions to automatically pull the updated data every day to\n\npost to mastodon new vacancies, and\ndisplay vacancies in a webpage\n\n\nMastodon bot\nLast updated: 2024-06-09\n\nBlog post for the bot\nMastodon bot\nsource\n\n\n\nDashboard\nLast updated: 2025-03-20 (the source, but the data is updated every day)\n\nDashboard\nsource"
   },
   {
-    "objectID": "projects/rbiotechsalary/index.html",
-    "href": "projects/rbiotechsalary/index.html",
-    "title": "rbiotechsalary",
-    "section": "",
-    "text": "Salary data for the job search.\nA web app for exploring biotech/pharma salary data. Pulls from r/biotech. Built with R Shiny and Docker. Rshiny app / ojs static version / source"
-  },
-  {
-    "objectID": "projects/placentalmethylomebrowser/index.html",
-    "href": "projects/placentalmethylomebrowser/index.html",
-    "title": "Placental Methylome Browser",
-    "section": "",
-    "text": "A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.\nI no longer maintain this app, but it usually lives here:\nrobinsonlab.shinyapps.io/Placental_Methylome_Browser/\nsource"
-  },
-  {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Projects",
-    "section": "",
-    "text": "Some of my public projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBC Child Care Vacancies Dashboard + Mastodon Bot\n\n\n\n\n\n\n\n\n\n\n\nJun 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nrbiotechsalary\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nplanet\n\n\n\n\n\n\n\n\n\n\n\nJan 1, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nPlacental Methylome Browser\n\n\n\n\n\n\n\n\n\n\n\nJan 1, 2019\n\n\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "projects/planet/index.html",
     "href": "projects/planet/index.html",
     "title": "planet",
     "section": "",
     "text": "An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease (preeclampsia), all from using placental DNA methylation data as input.\n\nplanet R package\nsource"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Victor Yuan",
-    "section": "",
-    "text": "For a large portion of my day, I am Bioinformatics Scientist, meaning that my job means to understand biological data through programming, statistics, and scientific methods.\nOutside of my day-job however, I like to sometimes explore other parts of my life, my interests, through the lens of a data scientist. Sometimes I like to explore tools and methods that are not necessarily directly related to my dayjob, in an environment without any pressures related to work.\nAnd on rare occasions, my explorations result in content that I find to reach an acceptable standard that I’m comfortable with making public. So welcome, this is where I decided that content lives - I hope some of the things I have worked on will be helpful to others."
-  },
-  {
-    "objectID": "posts/index.html",
-    "href": "posts/index.html",
-    "title": "Posts",
-    "section": "",
-    "text": "Some attempts have been made at blogging\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMaking a Twitter Bot in the Year 2024\n\n\n\n\n\n\n\n\n\n\n\nJun 12, 2024\n\n\nVictor Yuan\n\n\n\n\n\n\n\n\n\n\n\n\nQuickly reading 1 gene at a time from single cell data\n\n\n\n\n\n\n\n\n\n\n\nFeb 24, 2024\n\n\nVictor Yuan\n\n\n\n\n\n\nNo matching items"
   }
 ]
