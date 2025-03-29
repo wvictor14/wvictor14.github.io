@@ -18,8 +18,8 @@ about:
       href: mailto:victor.2wy@gmail.com
 ---
 
-For a large portion of my day, I am **Bioinformatics Scientist**, meaning that my job means to understand biological data through programming, statistics, and scientific methods.
+I am a **Bioinformatics Scientist**, meaning that my job is to understand biological data through the usage of programming, statistics, and scientific methods.
 
-Outside of my day job however, I like to sometimes explore other parts of my life, my interests, through the lens of a data scientist. Sometimes I like to explore tools and methods that are not necessarily directly related to my day job, in an environment without any pressures related to work.
+I started this website initially for several reasons - like I have been interested in having a space to explore computational tools, or have wanted to create some of an online presence to increase my employability.
 
-And on rare occasions, my explorations result in content that I find to reach an acceptable standard that I'm comfortable with making public. So welcome, this is where I decided that content lives - I hope some of the things I have worked on will be helpful to others.
+That still remains mostly true. However, I find that after spending most of my day thinking and working on bioinformatics and clinical data, I prefer spending my spare time thinking about other things. So there is mostly content unrelated to bioinformatics here, but a lot of the tools that I cover are relevant to any data-related work.
