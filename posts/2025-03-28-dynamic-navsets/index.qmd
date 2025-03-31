@@ -16,7 +16,8 @@ filters:
 
 I recently was working on a web app and encountered a situation where I wanted 
 to create tabs based on some variable in a data frame. The tab names and content
-would change when the data was subsetted based on some input controls. 
+would change when the data was subsetted or modified from other functions in the 
+app. 
 
 Here is how to do that in shiny, using the [palmerpenguins](https://allisonhorst.github.io/palmerpenguins/) dataset as an example.
 
@@ -42,6 +43,9 @@ First I set up the ui with two components:
 - an input component that filters the dataset, and
 - a `uiOutput` component for the dynamic tabs which will be rendered server-side
 
+The filter component is just to demonstrate how the tabsets are generated based
+on different subsetted versions of the underlying data.
+
 ```{r}
 #| eval: false
 ui <- bslib::page_fillable(
@@ -62,6 +66,7 @@ Next is the server code. The server code does 3 things:
 2. dynamically render the ui component based on the `island` column in the 
 filter penguin dataset i.e. `penguin_filtered$island`
 3. Create content for each tab, here I chose a histogram over year. 
+
 
 ```{r}
 #| eval: false
@@ -106,6 +111,8 @@ I programmatically create the `id`s and then assign them content (plots) based
 on the relevant subset of data.
 
 # Shinylive app
+
+If I have shinylive set up correctly, then you can see a demonstration here:
 
 ```{shinylive-r}
 #| standalone: true
