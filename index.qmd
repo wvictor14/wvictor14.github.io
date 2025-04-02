@@ -20,6 +20,6 @@ about:
 
 I am a **Bioinformatics Scientist**, meaning that my job is to understand biological data through the usage of programming, statistics, and scientific methods.
 
-I started this website initially for several reasons - like I have been interested in having a space to explore computational tools, or have wanted to create some of an online presence to increase my employability.
+I started this website initially for several reasons - like I have been interested in having a space to explore computational tools, or have wanted to simply create a profile of my work and professional interests.
 
-That still remains mostly true. However, I find that after spending most of my day thinking and working on bioinformatics and clinical data, I prefer spending my spare time thinking about other things. So there is mostly content unrelated to bioinformatics here, but a lot of the tools that I cover are relevant to any data-related work.
+That still remains mostly true. However, I find that after spending most of my day thinking and working on bioinformatics and clinical data, I prefer spending my spare time thinking about other things. So, the data science content on here is actually *mostly* unrelated to bioinformatics.
