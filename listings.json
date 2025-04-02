@@ -1,19 +1,19 @@
 [
   {
-    "listing": "/posts/index.html",
-    "items": [
-      "/posts/2025-03-28-dynamic-navsets/index.html",
-      "/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html",
-      "/posts/2024-02-24-read-1-gene-from-single-cell/index.html"
-    ]
-  },
-  {
     "listing": "/projects/index.html",
     "items": [
       "/projects/bcchildcarebot/index.html",
       "/projects/rbiotechsalary/index.html",
       "/projects/planet/index.html",
       "/projects/placentalmethylomebrowser/index.html"
+    ]
+  },
+  {
+    "listing": "/posts/index.html",
+    "items": [
+      "/posts/2025-03-28-dynamic-navsets/index.html",
+      "/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html",
+      "/posts/2024-02-24-read-1-gene-from-single-cell/index.html"
     ]
   }
 ]
