@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Victor Yuan">
+<meta name="dcterms.date" content="2025-10-03">
+<meta name="description" content="My submissions to the 2025 plotnine and table contests: exploring the uncertain canadian job market with plotnine, and visualizing multiple sequence alignment with gt">
 
-<title>Projects – Victor Yuan</title>
+<title>2025 Posit Plotnine and Great Tables Contest Submission – Victor Yuan</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,26 +26,24 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-0b37c64f34216b628666a8dac638b53b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-0b37c64f34216b628666a8dac638b53b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -70,35 +71,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZLSXEBDXV5"></script>
 
 <script type="text/javascript">
@@ -109,37 +81,8 @@ gtag('js', new Date());
 gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -149,9 +92,9 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
     </a>
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Victor Yuan</span>
     </a>
   </div>
@@ -162,11 +105,11 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../projects"> 
+    <a class="nav-link" href="../../projects"> 
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../posts"> 
+    <a class="nav-link" href="../../posts"> 
 <span class="menu-text">Posts</span></a>
   </li>  
 </ul>
@@ -183,22 +126,46 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#exploring-canada-job-market-data-with-plotnine" id="toc-exploring-canada-job-market-data-with-plotnine" class="nav-link active" data-scroll-target="#exploring-canada-job-market-data-with-plotnine">Exploring Canada Job Market Data with <code>plotnine</code></a></li>
+  <li><a href="#coronavirus-spike-proteins-with-r-gt" id="toc-coronavirus-spike-proteins-with-r-gt" class="nav-link" data-scroll-target="#coronavirus-spike-proteins-with-r-gt">Coronavirus Spike Proteins with <code>r-gt</code></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Projects</h1>
+<h1 class="title">2025 Posit Plotnine and Great Tables Contest Submission</h1>
 </div>
 
+<div>
+  <div class="description">
+    My submissions to the 2025 plotnine and table contests: exploring the uncertain canadian job market with plotnine, and visualizing multiple sequence alignment with gt
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Victor Yuan </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 3, 2025</p>
+    </div>
+  </div>
   
     
   </div>
@@ -208,104 +175,26 @@ window.Quarto = {
 </header>
 
 
-<p>Some of my public projects.</p>
+<p>On August 21 2025, Posit announced the <a href="https://posit.co/blog/announcing-the-2025-table-and-plotnine-contests/">2025 Table and Plotnine contests</a>. I was always impressed with the resulting submissions from previous years, so this year I decided to participate.</p>
+<p>Initially, I decided that the <code>plotnine</code> contest sounded like a great opportunity to see how to use the python port of <code>ggplot2</code>. I had no experience with plotnine, but lots with ggplot2.</p>
+<p>However, after finishing my submission for <code>plotnine</code>, I turned my attention to the table contest. I wasn’t certain if I had the time to make another high quality submission. But I felt that I had a great idea that I haven’t seen done before. So I reconsidered and decided to make a smaller single post entry for the table contest.</p>
+<section id="exploring-canada-job-market-data-with-plotnine" class="level1">
+<h1>Exploring Canada Job Market Data with <code>plotnine</code></h1>
+<p>For the 2025 plotnine contest, I wanted to explore official Canadian labour statistics using Plotnine.</p>
+<p>Using quarto, I created a website, which hosts the <a href="https://victoryuan.com/labourcan/">final submitted visualization</a>, and a <a href="https://victoryuan.com/labourcan/02_develop_visualization.html">tutorial</a> on how I developed the visualization.</p>
+<p>The visualization uses the plotnine, which is a visualization library from python, heavily inspired by the grammar of graphics. I used <code>polars</code> to crunch the data.</p>
+<p><img src="labourcan.gif" class="img-fluid"></p>
+</section>
+<section id="coronavirus-spike-proteins-with-r-gt" class="level1">
+<h1>Coronavirus Spike Proteins with <code>r-gt</code></h1>
+<p>For the 2025 Posit Table contest I wanted to explore how MSAs can be effectively visualized using the r package gt. This has been something I have wanted to do for a long time, and felt like this would be great way to share some of the exploration with the community.</p>
+<p><a href="https://victoryuan.com/2025-posit-table-contest-gt-msa/">submission</a></p>
+<p><img src="msa.gif" class="img-fluid"></p>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1717891200000" data-listing-file-modified-sort="1759187162592" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="70">
-<div class="thumbnail"><a href="../projects/bcchildcarebot/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../projects/bcchildcarebot/index.html" class="no-external">BC Child Care Vacancies Dashboard + Mastodon Bot</a>
-</h3>
-<div class="delink listing-description"><a href="../projects/bcchildcarebot/index.html" class="no-external">
-A data scientist finds childcare.
-</a></div>
-</div>
-<div class="metadata">
-<a href="../projects/bcchildcarebot/index.html" class="no-external">
-<div class="listing-date">
-Jun 9, 2024
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1715731200000" data-listing-file-modified-sort="1759187162592" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="31">
-<div class="thumbnail"><a href="../projects/rbiotechsalary/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../projects/rbiotechsalary/index.html" class="no-external">rbiotechsalary</a>
-</h3>
-<div class="delink listing-description"><a href="../projects/rbiotechsalary/index.html" class="no-external">
-Salary data for the job search.
-</a></div>
-</div>
-<div class="metadata">
-<a href="../projects/rbiotechsalary/index.html" class="no-external">
-<div class="listing-date">
-May 15, 2024
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-listing-date-sort="1577836800000" data-listing-file-modified-sort="1759187162592" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="42">
-<div class="thumbnail"><a href="../projects/planet/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../projects/planet/index.html" class="no-external">planet</a>
-</h3>
-<div class="delink listing-description"><a href="../projects/planet/index.html" class="no-external">
-An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease…
-</a></div>
-</div>
-<div class="metadata">
-<a href="../projects/planet/index.html" class="no-external">
-<div class="listing-date">
-Jan 1, 2020
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-listing-date-sort="1546300800000" data-listing-file-modified-sort="1759187162592" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="34">
-<div class="thumbnail"><a href="../projects/placentalmethylomebrowser/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../projects/placentalmethylomebrowser/index.html" class="no-external">Placental Methylome Browser</a>
-</h3>
-<div class="delink listing-description"><a href="../projects/placentalmethylomebrowser/index.html" class="no-external">
-A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.
-</a></div>
-</div>
-<div class="metadata">
-<a href="../projects/placentalmethylomebrowser/index.html" class="no-external">
-<div class="listing-date">
-Jan 1, 2019
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div><script data-goatcounter="https://victor2wy.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script></main> <!-- /main -->
+<script data-goatcounter="https://victor2wy.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
