@@ -19,8 +19,12 @@ Using quarto, I created a website, which hosts the [final submitted visualizatio
 
 The visualization uses the plotnine, which is a visualization library from python, heavily inspired by the grammar of graphics. I used `polars` to crunch the data.
 
+![](labourcan.gif)
+
 # Coronavirus Spike Proteins with `r-gt`
 
 For the 2025 Posit Table contest I wanted to explore how MSAs can be effectively visualized using the r package gt. This has been something I have wanted to do for a long time, and felt like this would be great way to share some of the exploration with the community.
 
 [submission](https://victoryuan.com/2025-posit-table-contest-gt-msa/)
+
+![](msa.gif)
