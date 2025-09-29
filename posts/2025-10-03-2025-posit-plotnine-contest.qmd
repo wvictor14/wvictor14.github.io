@@ -1,0 +1,13 @@
+---
+title: "2025 Posit Plotnine Contest Submission"
+description: "Exploring the uncertain Canada job market with Plotnine"
+author: "Victor Yuan"
+date: "10/03/2025"
+draft: true
+---
+
+For the 2025 plotnine contest, I wanted to explore official Canadian labour statistics using Plotnine, a visualization library that brings the powerful Grammar of Graphics framework to Python.
+
+Using quarto, I created a website, which hosts the [final submitted visualization](https://victoryuan.com/labourcan/), and a [tutorial](https://victoryuan.com/labourcan/02_develop_visualization.html) on how I developed the visualization.
+
+The visualization uses the plotnine, which is a visualization library from python, heavily inspired by the grammar of graphics. I used `polars` to crunch the data.
