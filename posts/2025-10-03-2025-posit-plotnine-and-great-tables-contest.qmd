@@ -11,7 +11,7 @@ Initially, I decided that the `plotnine` contest sounded like a great opportunit
 
 However, after finishing my submission for `plotnine`, I turned my attention to the table contest. I wasn't certain if I had the time to make another high quality submission. But I felt that I had a great idea that I haven't seen done before. So I reconsidered and decided to make a smaller single post entry for the table contest. 
 
-# Exploring Canada Job Market Data with plotnine
+# Exploring Canada Job Market Data with `plotnine`
 
 For the 2025 plotnine contest, I wanted to explore official Canadian labour statistics using Plotnine.
 
