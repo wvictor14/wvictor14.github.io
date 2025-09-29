@@ -1,73 +1,10 @@
 [
   {
-    "objectID": "posts/2025-03-28-dynamic-navsets/index.html",
-    "href": "posts/2025-03-28-dynamic-navsets/index.html",
-    "title": "Programmatically creating tabsets in R",
+    "objectID": "posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest.html",
+    "href": "posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest.html",
+    "title": "2025 Posit Plotnine and Great Tables Contest Submission",
     "section": "",
-    "text": "I recently was working on a web app and encountered a situation where I wanted to create tabs based on some variable in a data frame. The tab names and content would change when the data was subsetted based on some input controls.\nHere is how to do that in shiny, using the palmerpenguins dataset as an example.\n\nlibrary(bslib)\nlibrary(dplyr)\nlibrary(purrr)\nlibrary(shiny)\nlibrary(reactable)\nlibrary(glue)\nlibrary(ggplot2)\nlibrary(palmerpenguins)\ndata(penguins)\nggplot2::theme_set(theme_bw(15))"
-  },
-  {
-    "objectID": "posts/2025-03-28-dynamic-navsets/index.html#dynamic-render",
-    "href": "posts/2025-03-28-dynamic-navsets/index.html#dynamic-render",
-    "title": "Programmatically creating tabsets in R",
-    "section": "Dynamic render",
-    "text": "Dynamic render\nNext is the server code. The server code does 3 things:\n\nfilter the penguins dataset penguin_filtered, based on the radio buttons\ndynamically render the ui component based on the island column in the filter penguin dataset i.e. penguin_filtered$island\nCreate content for each tab, here I chose a histogram over year.\n\n\nserver &lt;- function(session, input, output) {\n  # 1. filter by species\n  penguins_filtered &lt;- reactive({\n    req(input$select_species)\n    penguins |&gt;  filter(species == input$select_species)\n  })\n  \n  # 2. create the ui based on the `island` column\n  output$dynamic_navset_card &lt;- renderUI({\n    nav_items &lt;- unique(penguins_filtered()$island) |&gt; purrr::map(\n      ~nav_panel(\n        title = .x,\n        plotOutput(glue(\"plot_{.x}\"))\n      ))\n    navset_card_pill(!!!nav_items)\n  })\n  \n  # 3. create the plots\n  observe({\n    walk(\n      unique(penguins_filtered()$island), \n      function(x) {\n        id &lt;- glue(\"plot_{x}\")\n        output[[id]] &lt;- renderPlot({\n          penguins_filtered() |&gt;  \n            filter(island == x) |&gt; \n            ggplot(aes(x = year)) + \n            geom_histogram(stat = 'count') +\n            labs(title = glue('Number of penguins by year for island {x}')) \n        })\n      }\n    ) \n  })\n}\n\nThe tricky part is figuring out how to dynamically assign the output ids. Here, I programmatically create the ids and then assign them content (plots) based on the relevant subset of data."
-  },
-  {
-    "objectID": "posts/2024-02-24-read-1-gene-from-single-cell/index.html",
-    "href": "posts/2024-02-24-read-1-gene-from-single-cell/index.html",
-    "title": "Quickly reading 1 gene at a time from single cell data",
-    "section": "",
-    "text": "“Can you check gene x for me?” says every scientist I ever did RNAseq analysis for"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Victor Yuan",
-    "section": "",
-    "text": "I am a Bioinformatics Data Scientist that uses programming, statistics, and scientific methods to understand complex genomic and biological data. I did PhD in Genome Sciences and Technology at University of British Columbia, before becoming a Data Scientist at Sonoma, a cell therapy biotech company in San Francisco."
-  },
-  {
-    "objectID": "projects/planet/index.html",
-    "href": "projects/planet/index.html",
-    "title": "planet",
-    "section": "",
-    "text": "An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease (preeclampsia), all from using placental DNA methylation data as input.\n\nplanet R package\nsource"
-  },
-  {
-    "objectID": "projects/bcchildcarebot/index.html",
-    "href": "projects/bcchildcarebot/index.html",
-    "title": "BC Child Care Vacancies Dashboard + Mastodon Bot",
-    "section": "",
-    "text": "A data scientist finds childcare.\nThis 2 part project extracts and deliveries child care vacancies using open-source BC childcare dataset. It uses github actions to automatically pull the updated data every day to\n\npost to mastodon new vacancies, and\ndisplay vacancies in a webpage\n\n\nMastodon bot\nLast updated: 2024-06-09\n\nBlog post for the bot\nMastodon bot\nsource\n\n\n\nDashboard\nLast updated: 2025-03-20 (the source, but the data is updated every day)\n\nDashboard\nsource"
-  },
-  {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Projects",
-    "section": "",
-    "text": "Some of my public projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBC Child Care Vacancies Dashboard + Mastodon Bot\n\n\n\n\n\n\n\n\nJun 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nrbiotechsalary\n\n\n\n\n\n\n\n\nMay 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nplanet\n\n\n\n\n\n\n\n\nJan 1, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nPlacental Methylome Browser\n\n\n\n\n\n\n\n\nJan 1, 2019\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "projects/rbiotechsalary/index.html",
-    "href": "projects/rbiotechsalary/index.html",
-    "title": "rbiotechsalary",
-    "section": "",
-    "text": "Salary data for the job search.\nA web app for exploring biotech/pharma salary data. Pulls from r/biotech. Built with R Shiny and Docker. Rshiny app / ojs static version / source"
-  },
-  {
-    "objectID": "projects/placentalmethylomebrowser/index.html",
-    "href": "projects/placentalmethylomebrowser/index.html",
-    "title": "Placental Methylome Browser",
-    "section": "",
-    "text": "A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.\nI no longer maintain this app, but it usually lives here:\nrobinsonlab.shinyapps.io/Placental_Methylome_Browser/\nsource"
-  },
-  {
-    "objectID": "posts/index.html",
-    "href": "posts/index.html",
-    "title": "Posts",
-    "section": "",
-    "text": "Some attempts have been made at blogging\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nProgrammatically creating tabsets in R\n\n\n\n\n\n\n\n\nMar 28, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nMaking a Twitter Bot in the Year 2024\n\n\n\n\n\n\n\n\nJun 12, 2024\n\n\nVictor Yuan\n\n\n\n\n\n\n\n\n\n\n\n\nQuickly reading 1 gene at a time from single cell data\n\n\n\n\n\n\n\n\nFeb 24, 2024\n\n\nVictor Yuan\n\n\n\n\n\nNo matching items"
+    "text": "On August 21 2025, Posit announced the 2025 Table and Plotnine contests. I was always impressed with the resulting submissions from previous years, so this year I decided to participate.\nInitially, I decided that the plotnine contest sounded like a great opportunity to see how to use the python port of ggplot2. I had no experience with plotnine, but lots with ggplot2.\nHowever, after finishing my submission for plotnine, I turned my attention to the table contest. I wasn’t certain if I had the time to make another high quality submission. But I felt that I had a great idea that I haven’t seen done before. So I reconsidered and decided to make a smaller single post entry for the table contest.\n\nExploring Canada Job Market Data with plotnine\nFor the 2025 plotnine contest, I wanted to explore official Canadian labour statistics using Plotnine.\nUsing quarto, I created a website, which hosts the final submitted visualization, and a tutorial on how I developed the visualization.\nThe visualization uses the plotnine, which is a visualization library from python, heavily inspired by the grammar of graphics. I used polars to crunch the data.\n\n\nCoronavirus Spike Proteins with r-gt\nFor the 2025 Posit Table contest I wanted to explore how MSAs can be effectively visualized using the r package gt. This has been something I have wanted to do for a long time, and felt like this would be great way to share some of the exploration with the community.\nsubmission"
   },
   {
     "objectID": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html",
@@ -103,5 +40,75 @@
     "title": "Making a Twitter Bot in the Year 2024",
     "section": "How",
     "text": "How\n\nGithub Actions\nI followed this post closely to learn how to make my own workflow. Essentially it uses github actions to run an R script in the github repository on a daily basis (a cron job).\nThis is the section that configures the cron job. I also set it up so that on a certain branch named “test”, the script will run. I use this for testing that the workflow works, without having to change the cron schedule everytime.\non:\n  push:\n    branches: ['test'] # push to this branch to test toots\n  schedule:\n    - cron: '41 15 * * *'  # trigger at 3pm UTC  every day\nThe other necessary component is to add mastdon API token to github repository as a “github secret”. Then in the workflow, the token is used with the following syntax:\n${{ secrets.RTOOT_DEFAULT_TOKEN}}\n\n\nYay for open source\nThe last component is making the R script to: pull data, identify NEW vacancies, create a tweet / toot to send.\nI pulled data from BC gov’s open data portal, and figured out a way to ID new vacancies. Then, a message is crafted accounting for the character limits (500) for mastodon toots.\nActually the character limit is quite restrictive. Every day there can be 50-150 new vacancies over BC, depending on child care age group. But we only have 1 child (thank) so currently the bot only reports facilities with vacancy for children aged &lt;36 months.\nEvery day this dataset is updated at this URL. The whole script depends on whether this URL stays the same. If it changes, the bot will stop working. Fingers crossed!"
+  },
+  {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Posts",
+    "section": "",
+    "text": "Some attempts have been made at blogging\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2025 Posit Plotnine and Great Tables Contest Submission\n\n\nMy submissions to the 2025 plotnine and table contests: exploring the uncertain canadian job market with plotnine, and visualizing multiple sequence alignment with gt\n\n\n\n\n\nOct 3, 2025\n\n\nVictor Yuan\n\n\n\n\n\n\n\n\n\n\n\n\nProgrammatically creating tabsets in R\n\n\n\n\n\n\n\n\nMar 28, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nMaking a Twitter Bot in the Year 2024\n\n\n\n\n\n\n\n\nJun 12, 2024\n\n\nVictor Yuan\n\n\n\n\n\n\n\n\n\n\n\n\nQuickly reading 1 gene at a time from single cell data\n\n\n\n\n\n\n\n\nFeb 24, 2024\n\n\nVictor Yuan\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects/placentalmethylomebrowser/index.html",
+    "href": "projects/placentalmethylomebrowser/index.html",
+    "title": "Placental Methylome Browser",
+    "section": "",
+    "text": "A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.\nI no longer maintain this app, but it usually lives here:\nrobinsonlab.shinyapps.io/Placental_Methylome_Browser/\nsource"
+  },
+  {
+    "objectID": "projects/rbiotechsalary/index.html",
+    "href": "projects/rbiotechsalary/index.html",
+    "title": "rbiotechsalary",
+    "section": "",
+    "text": "Salary data for the job search.\nA web app for exploring biotech/pharma salary data. Pulls from r/biotech. Built with R Shiny and Docker. Rshiny app / ojs static version / source"
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Some of my public projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBC Child Care Vacancies Dashboard + Mastodon Bot\n\n\n\n\n\n\n\n\nJun 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nrbiotechsalary\n\n\n\n\n\n\n\n\nMay 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nplanet\n\n\n\n\n\n\n\n\nJan 1, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nPlacental Methylome Browser\n\n\n\n\n\n\n\n\nJan 1, 2019\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects/bcchildcarebot/index.html",
+    "href": "projects/bcchildcarebot/index.html",
+    "title": "BC Child Care Vacancies Dashboard + Mastodon Bot",
+    "section": "",
+    "text": "A data scientist finds childcare.\nThis 2 part project extracts and deliveries child care vacancies using open-source BC childcare dataset. It uses github actions to automatically pull the updated data every day to\n\npost to mastodon new vacancies, and\ndisplay vacancies in a webpage\n\n\nMastodon bot\nLast updated: 2024-06-09\n\nBlog post for the bot\nMastodon bot\nsource\n\n\n\nDashboard\nLast updated: 2025-03-20 (the source, but the data is updated every day)\n\nDashboard\nsource"
+  },
+  {
+    "objectID": "projects/planet/index.html",
+    "href": "projects/planet/index.html",
+    "title": "planet",
+    "section": "",
+    "text": "An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease (preeclampsia), all from using placental DNA methylation data as input.\n\nplanet R package\nsource"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Victor Yuan",
+    "section": "",
+    "text": "I am a Bioinformatics Data Scientist that uses programming, statistics, and scientific methods to understand complex genomic and biological data. I did PhD in Genome Sciences and Technology at University of British Columbia, before becoming a Data Scientist at Sonoma, a cell therapy biotech company in San Francisco."
+  },
+  {
+    "objectID": "posts/2024-02-24-read-1-gene-from-single-cell/index.html",
+    "href": "posts/2024-02-24-read-1-gene-from-single-cell/index.html",
+    "title": "Quickly reading 1 gene at a time from single cell data",
+    "section": "",
+    "text": "“Can you check gene x for me?” says every scientist I ever did RNAseq analysis for"
+  },
+  {
+    "objectID": "posts/2025-03-28-dynamic-navsets/index.html",
+    "href": "posts/2025-03-28-dynamic-navsets/index.html",
+    "title": "Programmatically creating tabsets in R",
+    "section": "",
+    "text": "I recently was working on a web app and encountered a situation where I wanted to create tabs based on some variable in a data frame. The tab names and content would change when the data was subsetted based on some input controls.\nHere is how to do that in shiny, using the palmerpenguins dataset as an example.\n\nlibrary(bslib)\nlibrary(dplyr)\nlibrary(purrr)\nlibrary(shiny)\nlibrary(reactable)\nlibrary(glue)\nlibrary(ggplot2)\nlibrary(palmerpenguins)\ndata(penguins)\nggplot2::theme_set(theme_bw(15))"
+  },
+  {
+    "objectID": "posts/2025-03-28-dynamic-navsets/index.html#dynamic-render",
+    "href": "posts/2025-03-28-dynamic-navsets/index.html#dynamic-render",
+    "title": "Programmatically creating tabsets in R",
+    "section": "Dynamic render",
+    "text": "Dynamic render\nNext is the server code. The server code does 3 things:\n\nfilter the penguins dataset penguin_filtered, based on the radio buttons\ndynamically render the ui component based on the island column in the filter penguin dataset i.e. penguin_filtered$island\nCreate content for each tab, here I chose a histogram over year.\n\n\nserver &lt;- function(session, input, output) {\n  # 1. filter by species\n  penguins_filtered &lt;- reactive({\n    req(input$select_species)\n    penguins |&gt;  filter(species == input$select_species)\n  })\n  \n  # 2. create the ui based on the `island` column\n  output$dynamic_navset_card &lt;- renderUI({\n    nav_items &lt;- unique(penguins_filtered()$island) |&gt; purrr::map(\n      ~nav_panel(\n        title = .x,\n        plotOutput(glue(\"plot_{.x}\"))\n      ))\n    navset_card_pill(!!!nav_items)\n  })\n  \n  # 3. create the plots\n  observe({\n    walk(\n      unique(penguins_filtered()$island), \n      function(x) {\n        id &lt;- glue(\"plot_{x}\")\n        output[[id]] &lt;- renderPlot({\n          penguins_filtered() |&gt;  \n            filter(island == x) |&gt; \n            ggplot(aes(x = year)) + \n            geom_histogram(stat = 'count') +\n            labs(title = glue('Number of penguins by year for island {x}')) \n        })\n      }\n    ) \n  })\n}\n\nThe tricky part is figuring out how to dynamically assign the output ids. Here, I programmatically create the ids and then assign them content (plots) based on the relevant subset of data."
   }
 ]
