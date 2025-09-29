@@ -2,6 +2,7 @@ project:
   type: website
 
 website:
+  favicon: images/favicon.svg
   site-url: victoryuan.com
   google-analytics: G-ZLSXEBDXV5
   title: "Victor Yuan"

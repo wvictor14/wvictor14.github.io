@@ -1,0 +1,7 @@
+<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- V Letter -->
+  <path d="M 35 20 L 55 80 L 58 80 L 78 20 L 73 20 L 56.5 72 L 40 20 Z" fill="#000000"/>
+  
+  <!-- Y Letter -->
+  <path d="M 85 20 L 102 50 L 119 20 L 124 20 L 104.5 54 L 104.5 80 L 99.5 80 L 99.5 54 L 80 20 Z" fill="#000000"/>
+</svg>
