@@ -7,7 +7,7 @@ format:
     from: "markdown+emoji"
 about:
   template: trestles
-  image: images/bw_abstract_fixed_author.jpg
+  image: "images/Yuan, Victor - Nov 2018 Headshots (2).jpg"
   image-shape: round
   links:
     - icon: github
