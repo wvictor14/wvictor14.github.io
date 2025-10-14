@@ -1,0 +1,105 @@
+---
+title: "dev_function"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Setup
+
+## Libraries
+
+```{r}
+library(Seurat)
+library(SeuratData) # devtools::install_github('satijalab/seurat-data')
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+library(bench)
+library(dittoSeq)
+library(scCustomize)
+ggplot2::theme_set(ggplot2::theme_bw())
+```
+
+## Parameters
+
+```{r}
+features <- c(
+  "MS4A1", # B cell
+  "CD14",  # monocytes
+  "LYZ",   # monocytes
+  "GNLY",  # NK
+  "FCER1A",  # dc
+  "CD3E",  # T cell
+  "CD4",   # CD4
+  "CD8B",  # CD8
+  "FOXP3"  # Treg 
+)
+```
+
+## Datasets
+
+### Load seurat
+
+```{r}
+seu <- readRDS( here('posts', '2025-10-13-fast-umap-plots-in-r', 'pbmcsca.rds'))
+```
+
+# Fast UMAP plots
+
+Under the hood, Seurat, and scCustomize leverage `scattermore` to plot a raster image of cell expression on UMAP plots. Seurat conditionally triggers this at >100k cells. This is great speed up, however plots suffer from following drawbacks:
+
+- Hard to see low number of expressing cells
+- Points are so small, difficult to appreciate smaller clusters
+
+
+```{r}
+library(scattermore)
+plt_data <- FetchData(
+  object = seu_small,
+  vars = c(c("UMAP_1", "UMAP_2"), 'ident', c('CD4'))
+)
+plt_data <- plt_data |>
+  tidyr::pivot_longer(
+    cols = matches(features),
+    names_to = '.feature',
+    values_to = '.abundance'
+  )
+
+p_cd4 <- plt_data |>
+  ggplot(aes(x = UMAP_1, y = UMAP_2, color = .abundance)) +
+  geom_scattermore() +
+  theme_void() +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis')
+p_cd4
+
+plot_umap <- function(seu, features, pointsize = 0) {
+  plt_data <- FetchData(
+    object = seu,
+    vars = c(c("UMAP_1", "UMAP_2"), 'ident', features)
+  )
+  plt_data <- plt_data |>
+    tidyr::pivot_longer(
+      cols = matches(features),
+      names_to = '.feature',
+      values_to = '.abundance'
+    )
+  
+  plt_data |>
+    ggplot(aes(x = UMAP_1, y = UMAP_2, color = .abundance)) +
+    geom_scattermore(pointsize = pointsize) +
+    theme_void() +
+    facet_wrap(vars(.feature)) +
+    scale_color_continuous(palette = 'viridis')
+}
+bnch_custom <- bench::mark(
+  custom = plot_umap(seu_small, features = features[1]),
+  iterations = 10,
+  check = FALSE,
+  memory = FALSE
+)
+
+bnch_custom
+```
