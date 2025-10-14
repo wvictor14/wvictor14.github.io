@@ -13,3 +13,4 @@ _site
 index-listing.json
 
 *:Zone.Identifier
+**/*.quarto_ipynb
