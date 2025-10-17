@@ -78,4 +78,15 @@ features <- intersect(
 )
 
 InstallData('pbmc3k')
+
+seu <- LoadData('pbmc3k')
+seu <- seu |> 
+  NormalizeData() |>
+  FindVariableFeatures() |>
+  ScaleData() |> 
+  RunPCA() |> 
+  RunUMAP(dims = 1:30)
+
+seu |>  saveRDS(here('pbmc.rds'))
+
 InstallData('hcabm40k')
