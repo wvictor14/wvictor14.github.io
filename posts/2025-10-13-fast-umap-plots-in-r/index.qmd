@@ -1,39 +1,66 @@
 ---
-title: "Fast UMAP plots in R"
-description: "Speed up UMAP gene expression plots for single cell RNAseq analysis in R"
-author: "Victor Yuan"
-date: "10/13/2025"
-execute:
-  freeze: true
+title: "Fast UMAP plots for scRNAseq"
+format: 
+  html: 
+    fig-width: 7
+    fig-height: 5
+    fig-dpi: 100
+    code-fold: true
 editor_options: 
   chunk_output_type: console
 ---
 
-One part of single cell RNAseq (scRNAseq) analysis is to quickly plot gene expression on top of a UMAP/TSNE plots. Currently, the most popular package for generating these plots is `Seurat`, with `scCustomize` and `dittoSeq` being alternatives.
+Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as `Seurat::DimPlot` are inefficient, limiting exploratory analysis. 
 
-However, the functions for plotting gene expression on top of UMAPs are slow, especially for large single cell datasets. 
+For example, this is how long it takes to visualize 10 genes on a 14,000 cell dataset. 
 
-Let's compare the time it takes to plot 9 genes, across 3000, 40 000, and 150 000 cells.
+::: {.hidden .unlisted}
 
-# Setup
+# Setup 
 
 ## Libraries
 
 ```{r}
+#| message: false
+#| warning: false
 library(Seurat)
-library(SeuratData) # devtools::install_github('satijalab/seurat-data')
 library(ggplot2)
 library(dplyr)
 library(patchwork)
 library(bench)
-library(dittoSeq)
-library(scCustomize)
-ggplot2::theme_se
+library(ggrastr)
+library(here)
+library(scattermore)
+library(ggpointdensity)
+library(purrr)
+library(glue)
+library(gt)
+library(tidyr)
+library(tictoc)
+ggplot2::theme_set(
+  ggplot2::theme_bw()
+)
 ```
 
 ## Parameters
 
+## Datasets
+
+### Load seurat
+
 ```{r}
+#| message: false
+
+seu <- readRDS( here('ifnb.rds'))
+rownames(seu)
+
+xy <- FetchData(seu, vars = c('umap_1', 'umap_2', 'seurat_annotations', rownames(seu)))
+```
+
+:::
+
+```{r bench1}
+#| include: false
 features <- c(
   "MS4A1", # B cell
   "CD14",  # monocytes
@@ -45,194 +72,221 @@ features <- c(
   "CD8B",  # CD8
   "FOXP3"  # Treg 
 )
-```
 
-## Datasets
-
-Download and load pbmc3k and hcabm40k datasets from `Seurat`
-
-```{r}
-#| eval: false
-# Run once
-ad <- AvailableData()
-ad
-InstallData('pbmc3k')
-InstallData('hcabm40k')
-```
-
-### Load pbmc3k
-
-```{r}
-library(SeuratData)
-seu_small <- LoadData("pbmc3k", type = 'pbmc3k.final')
-seu_small$groups <- sample(
-  c("group1", "group2"),
-  size = ncol(seu_small),
-  replace = TRUE
-)
-```
-
-### Load hcabm40k
-
-```{r}
-#| eval: false
-seu_medium <- LoadData('hcabm40k')
-seu_medium <- UpdateSeuratObject(seu_medium)
-seu_medium <- seu_medium |>
-  NormalizeData() |>
-  FindVariableFeatures() |>
-  ScaleData() |>
-  RunPCA()
-seu_medium <- seu_medium |> RunUMAP(dims = 1:10)
-```
-
-
-# Benchmarking speed
-
-```{r}
-bnch_small <- bench::mark(
-  Seurat::FeaturePlot(seu_small, features = features),
-  dittoSeq::multi_dittoDimPlot(seu_small, vars = features),
-  scCustomize::FeaturePlot_scCustom(seu_small, features = features),
-  iterations = 10,
-  check = FALSE,
+bnch <- bench::mark(
+  `Seurat, not sampled` = seu |> Seurat::FeaturePlot(features = features) |> plot(),
+  iterations = 3,
   memory = FALSE
 )
 
-bnch_small
-bnch_small |>  
-  ggplot(aes(x = total_time, y = expression)) +
-  geom_bar(stat = 'identity')
+#tic();seu |> Seurat::FeaturePlot(features = features);toc()
+#system.time(seu |> Seurat::FeaturePlot(features = features) |>  plot())
 ```
 
+```{r}
+bnch |> dplyr::select(-c(result:gc), -mem_alloc) |>   gt::gt()
+```
+
+It takes `r bnch$median` seconds to plot 10 features with a 14,000 single cell dataset (number of cells = 14,000). This dataset is on the smaller side - considering that single cell datasets often reach the hundreds of thousands, the speed of plotting is a significant hamper on single cell analysis. 
+
+# Sampling to speed up plotting 
 
 ```{r}
-#| eval: false
-bnch_med <- bench::mark(
-  Seurat::FeaturePlot(seu_medium, features = features),
-  dittoSeq::multi_dittoDimPlot(seu_medium, vars = features),
-  scCustomize::FeaturePlot_scCustom(seu_medium, features = features),
-  iterations = 2,
-  check = FALSE,
+#| fig-height: 8
+#| fig-width: 10
+seu_sampled <- seu[,sample(1:ncol(seu), size = 0.1*ncol(seu))]
+plots <- list(
+  seu |> Seurat::FeaturePlot(features = c('CD8A', 'FOXP3'), order = TRUE) & coord_equal(),
+  seu_sampled |> Seurat::FeaturePlot(features = c('CD8A', 'FOXP3'), order = TRUE) & coord_equal()
+) 
+(plots[[1]] & labs(subtitle = 'Not sampled')) / 
+  (plots[[2]] & labs(subtitle = 'Sampled 10%'))
+```
+
+```{r}
+#| include: false
+bnch_sampled <- bench::mark(
+  `Seurat, sampled 10% (n=1,400)` = seu_sampled |> 
+    Seurat::FeaturePlot(features = features) |> plot(),
+  iterations = 3,
   memory = FALSE
 )
-
-bnch_med
 ```
 
-
-## all
-
 ```{r}
-#| eval: false
-bench_results <- bench::press(
-  seu = list(seu_small, seu_medium),
-  {
-    bench::mark(
-      Seurat::FeaturePlot(seu, features = features),
-      dittoSeq::multi_dittoDimPlot(seu, vars = features),
-      scCustomize::FeaturePlot_scCustom(seu, features = features),
-      iterations = 3,
-      check = FALSE,
-      memory = FALSE
-    )
-  }
-)
+bind_rows(bnch, bnch_sampled) |> 
+  select(expression, min, median, n_itr) |>  
+  gt::gt()
 ```
 
-# Fast UMAP plots
+Sampling is often used as a solution to long plotting times. The improvement in speed is also slightly better. 
 
-Under the hood, Seurat, and scCustomize leverage `scattermore` to plot a raster image of cell expression on UMAP plots. Seurat conditionally triggers this at >100k cells. This is great speed up, however plots suffer from following drawbacks:
+In terms of accurately representing the data, highly expressed markers, like CD8 in this immune cell dataset, are reasonably accurate. But sampling can result in missing cells with expression of lowly expressed genes entirely. Although this is expected due to the sampling method, this is a detriment to exploratory single cell analysis, where genes with low expression (e.g. transcription factors, cytokines) are often of great interest to a broad range of scientific questions. 
 
-- Hard to see low number of expressing cells
-- Points are so small, difficult to appreciate smaller clusters
+In this post, I'm going to try and develop a custom plotting function to address these 2 issues:
 
+1) slow plotting speed
+2) undersampling lowly expressed genes
+
+## Slow plotting
+
+For each gene expression umap plot, non expressing cells are typically plotted as a background, as context to which cluster expressing cells belong to. Therefore, the expression variation (there is none) and local point density (how close each point is to each other) is not of importance to gene expression analysis.
+
+Therefore, we can try to represent the background with a sample sufficient enough to capture the shape of the underlying cell clusters on the umap plot. 
 
 ```{r}
-library(scattermore)
-plt_data <- FetchData(
-  object = seu_small,
-  vars = c(c("UMAP_1", "UMAP_2"), 'ident', c('CD4'))
-)
-plt_data <- plt_data |>
-  tidyr::pivot_longer(
-    cols = matches(features),
-    names_to = '.feature',
-    values_to = '.abundance'
-  )
-
-p_cd4 <- plt_data |>
-  ggplot(aes(x = UMAP_1, y = UMAP_2, color = .abundance)) +
-  geom_scattermore() +
-  theme_void() +
-  facet_wrap(vars(.feature)) +
-  scale_color_continuous(palette = 'viridis')
-p_cd4
-
-plot_umap <- function(seu, features, pointsize = 0) {
-  plt_data <- FetchData(
-    object = seu,
-    vars = c(c("UMAP_1", "UMAP_2"), 'ident', features)
-  )
-  plt_data <- plt_data |>
-    tidyr::pivot_longer(
-      cols = matches(features),
-      names_to = '.feature',
-      values_to = '.abundance'
-    )
+custom_umap <- function(
+    s, 
+    ptsize = 1, 
+    alpha = 1,
+    layer_point = ggplot2::geom_point(size = ptsize, color = '#a6a6a6', alpha = alpha)
+) {
   
-  plt_data |>
-    ggplot(aes(x = UMAP_1, y = UMAP_2, color = .abundance)) +
-    geom_scattermore(pointsize = pointsize) +
-    theme_void() +
-    facet_wrap(vars(.feature)) +
-    scale_color_continuous(palette = 'viridis')
+  xy <- FetchData(s, vars = c('umap_1', 'umap_2'))
+  xy |> 
+    ggplot(aes(umap_1, umap_2)) +
+    layer_point +
+    ggplot2::theme_void() +
+    theme(
+      axis.title.y = element_text(angle = 90),
+      axis.title.x = element_text(),
+      panel.border = element_rect(color = 'black', fill = NA, linewidth = 0.5, linetype = "solid"),
+      strip.text.x = element_text(size = rel(1.5)),
+      plot.margin = margin_auto(6, unit = "pt")
+    ) + 
+    coord_equal() 
 }
-bnch_custom <- bench::mark(
-  custom = plot_umap(seu_small, features = features[1]),
-  Seurat = Seurat::FeaturePlot(seu_small, features = features[1]),
-  scCustomize = scCustomize::FeaturePlot_scCustom(seu_small, features = features[1]),
-  iterations = 10,
+
+sample_uniform <- function(s, size) {
+  s[,sample(1:ncol(s), size = size)]
+}
+
+plot_samples <- function(
+    sample_n = c(13999, 8000, 5000, 2500, 1000, 500), 
+    sampler = sample_uniform,
+    size = 1
+) {
+  plots <- sample_n |> 
+    purrr::map(
+      ~seu |> 
+        sampler(.x) |> 
+        custom_umap(ptsize = size) +
+        labs(title = glue::glue("{.x} cells"))
+    )
+  plots |> wrap_plots() + plot_annotation(tag_level = 'A')
+}
+plot_samples()
+```
+
+Plotting the full dataset results in overplotting, the points overlap each other significantly. at 500 cells, the smaller clusters appear as noise. Somewhere in the middle is the optimal number of points. The optimal number of points, however, is dependent on the point size:
+
+### Tiny points (pointsize = 0.05)
+
+```{r}
+plot_samples(size = 0.05)
+```
+
+With a pointsize of `0.05` we can see that the optimal number of points is now 2500 or even 5000.
+
+## Other sampling approaches
+
+```{r}
+sample_grid <- function(s, nbin, nbin_pt = 1) {
+  
+  xy <- FetchData(s, vars = c('umap_1', 'umap_2'))
+  
+  cellids <- xy |> 
+    as_tibble(rownames = 'rownames') |> 
+    mutate(x_cut = cut(umap_1, nbin), y_cut = cut(umap_1, nbin)) |> 
+    group_by(x_cut, y_cut) |> 
+    slice_sample(n = nbin_pt) |> 
+    ungroup() |> 
+    pull(rownames)
+  
+  s[,cellids]
+}
+#plot_samples(size = 0.05, sampler = sample_grid)
+.n <- 3000
+set.seed(1)
+seu_grid <-  seu |> 
+  sample_grid(.n*1.5)
+plts <- list(
+  custom_umap(seu, layer_point = geom_pointdensity(size = 0.1)) +
+    scale_color_viridis_c(guide = 'none') +
+    labs(title = '2d density'),
+  
+  seu |> 
+    sample_uniform(.n*1.1) |> 
+    custom_umap(ptsize  = 0.1)  +
+    labs(title = glue('Uniform n={.n*1.1}')),
+  
+  seu_grid |> 
+    custom_umap(ptsize  = 0.1) +
+    labs(title = glue('Grid n={ncol(seu_grid)}'))
+) 
+plts |> 
+  wrap_plots() +
+  plot_annotation(tag_levels = 'a')
+```
+
+Rather than simple uniform sampling, where every point is equally likely to be sampled, we can sample over a grid such that each point is more evenly spaced out. The results are mixed. There is  slightly better representation of more the branches in the bottom right cluster in grid-based sampling **c** compared to uniform **b**. But we also see some variation in sparsity that isn't accurately capturing the real density shown in **a**.
+
+
+```{r}
+seu_grid2 <-  seu|> 
+    sample_grid(nbin = 1400, nbin_pt = 3)
+append(
+  plts,
+  seu_grid2 |> 
+    custom_umap(ptsize  = 0.1, alpha = 0.34) +
+    labs(title = glue('Grid with alpha n={ncol(seu_grid2)}'))
+) |> 
+  wrap_plots() +
+  plot_annotation(tag_levels = 'a') 
+
+```
+
+But the cool thing about grid-based sampling is we can sample more from more dense regions, and less from the sparse regions. Here, I implement an approach where each axes is cut into bins, and each 2 dimensional bin is sampled up to 3 times. In sparse regions, each bin will have at least 1 data point, but in sparse regions there can be 3. To address oversampling in these denser regions, we can set an alpha of 0.33 ( 1 / max points), ensuring that there will always be a proportional amount of saturation for overlapping points.
+
+The result is a better representation of the local point density than uniform sampling.
+
+# Layering gene expression
+
+To address the drop out issue, we can overlay the gene expression of cells with nonzero expression, on top of this background plot.
+
+```{r}
+
+```
+
+We can combine this with our density-biased grid sampling, to better reflect not just the expression values of individual cells, but their local density on the umap plot.
+
+# Summary
+
+- `Seurat::FeaturePlot` is really slow for plotting umaps of large datasets over many features, impeding efficient analysis of single cell data
+
+- Sampling is often used to speed up plotting, but is tricky because we can miss important features, and depends on a number of very dataset-specific features, like number of data points, point size, and alpha.
+
+- Sampling can be done smartly to address some of these shortcomings
+
+
+::: {.hidden}
+
+Slightly faster
+
+Let's benchmark them over 6 iterations:
+
+```{r}
+#| eval: false
+#| include: false
+#| cache: true
+bnch_compare <- bench::mark(
+  Seurat_sampled = seu_sampled |> Seurat::FeaturePlot(features = features) |> plot(),
+  Custom_sampled = seu_sampled |> custom_umap() |> plot(),
   check = FALSE,
+  iterations = 3,
   memory = FALSE
 )
+bnch_compare
 
-bnch_custom
 ```
 
-We already see a significant speed up
-
-but we can't see the points
-
-increase size
-
-```{r}
-bnch_pointsize <- bench::press(
-  .pointsize = c(0, 0.5, 1, 1.5, 2.5, 5, 10),
-  bench::mark(
-    custom = plot_umap(seu_small, features = features[1], pointsize = .pointsize) |> print(),
-    iterations = 10,
-    check = FALSE,
-    memory = FALSE
-  )
-)
-
-bnch_pointsize
-```
-
-
-
-```{r}
-plot_umap(seu_small, features = features[1])
-
-plt_data |>
-  ggplot(aes(x = UMAP_1, y = UMAP_2, color = .abundance)) +
-  geom_scattermore(data = plt_data |> filter(.abundance == 0), color = 'grey') +
-  geom_scattermore(data = plt_data |> filter(.abundance > 0)) +
-  theme_void() +
-  facet_wrap(vars(.feature)) +
-  scale_color_continuous(palette = 'viridis')
-
-FeaturePlot(seu_small, features = 'CD4')
-FeaturePlot_scCustom(seu_small, features = 'CD4')
-```
