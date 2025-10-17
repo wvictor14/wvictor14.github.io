@@ -1,0 +1,125 @@
+---
+title: "datashader"
+format: html
+---
+
+
+# plotting time vs points
+
+```{r}
+sample_gaussian <- function(num = 500000/4, x = 0, y = 0, z = 'a', sd = 1) {
+  
+  tibble(
+    x = rnorm(num, mean = x, sd = sd),
+    y = rnorm(num, mean = y, sd = sd),
+    z = z
+  )
+}
+# usage: sample_gaussian()
+
+# 4 distributions
+samples <- bind_rows(
+  #2,2,0.03), (2,-2,0.1), (-2,-2,0.5), (-2,2,1.0), (0,0,3)
+  sample_gaussian(x = 2, y = 2, sd = 0.03, z = 'a'),
+  sample_gaussian(x = -2, y = -2, sd = 0.5, z = 'b'),
+  sample_gaussian(x = -2, y = 2, sd = 1, z = 'c'),
+  sample_gaussian(x = 0, y = 0, sd = 3, z = 'c')
+)
+
+plot_sample <- function(n = 1000) {
+  samples |> 
+    slice_sample(n = n) |> 
+    ggplot(aes(x = x, y = y)) +
+    coord_equal(xlim = c(-15, 15), ylim = c(-15, 15))
+}
+# plot_sample(50000) + geom_point()
+# plot_sample(50000) + geom_scattermore()
+# plot_sample(50000) + geom_point_rast()
+```
+
+```{r}
+#| cache: true
+.n <- 500000
+results_r_packages <- bench::mark(
+  geom_point = print(plot_sample(.n) + geom_point()),
+  scattermore = print(plot_sample(.n) + geom_scattermore()),
+  ggrastr = print(plot_sample(.n) + geom_point_rast()),
+  iterations = 3,
+  memory = FALSE
+)
+```
+
+```{r}
+results_r_packages |> 
+  ggplot(aes(x = median, y = expression)) +
+  geom_bar(stat = 'identity')
+```
+
+scattermore is fastest at 1 seconds for 500000 data points. That's very reasonable, however which plot is the most representative of the data? Let's look at all three:
+
+```{r}
+plot_packages <- function(.n = 10000) {
+  (plot_sample(n = .n) + geom_scattermore() + labs(title = 'scattermore')) +
+    (plot_sample(n = .n) + geom_point_rast(size = 0.25) + labs(title = 'ggrastr')) +
+    (plot_sample(n = .n) + geom_point(size = 0.25) + labs(title = 'geom_point')) + plot_annotation(tag_levels = 'A')
+}
+```
+
+```{r}
+#| cache: true
+plot_packages(500000)
+```
+
+None of these provide an accurate representation of the data. We know there are 4 populations in this dataset, but it is impoosible to tell looking at these plots. This is because we are **overplotting**
+
+If we take  a subsample we can see the data better
+
+
+::: {.panel-tabset .nav-pills}
+
+## 10000
+
+```{r}
+plot_packages(10000)
+```
+
+## 5000
+
+```{r}
+plot_packages(5000)
+```
+
+## 1000
+
+```{r}
+plot_packages(1000)
+```
+
+:::
+
+As sample sizes increase, plotting can become a significant challenge for software, limiting strategies such as `scattermore` which restricts point size to small pixels, or sampling. Both of these strategies can result in obscuring the shape of the data:
+
+`scattermore` works well for large point sizes, but for our full dataset it is impossible to see the underlying four distributions due to oversampling.
+
+If we sample the dataset, this problem is alleviated. However, the optimal choice of number of samples is related to the point size. This is a trial and error problem, which means discovering patterns like this are easily missed in analysis of large datasets.
+
+
+
+
+
+```{r }
+#| eval: false
+results <- bench::press(
+  sample_n = c(100, 1000, 10000, 100000, 300000, 500000),
+  {
+    bench::mark(
+      plot_sample(n = sample_n) |>  plot(),
+      memory = FALSE,
+      iterations = 5
+    )
+  }
+)
+
+```
+
+

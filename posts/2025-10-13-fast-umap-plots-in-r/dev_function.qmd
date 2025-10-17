@@ -14,6 +14,8 @@ editor_options:
 ## Libraries
 
 ```{r}
+#| message: false
+#| warning: false
 library(Seurat)
 library(SeuratData) # devtools::install_github('satijalab/seurat-data')
 library(ggplot2)
@@ -136,6 +138,18 @@ p_not_sampled <- plt_data |>
 p_not_sampled
 ```
 
+## No Sampling + ggrastr
+
+```{r}
+p_not_sampled_ggrastr <- plt_data |>
+  ggplot(aes(x = umap_1, y = umap_2, color = .abundance)) +
+  geom_point_rast() +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis', na.value = 'lightgrey')
+p_not_sampled_ggrastr
+```
+
+
 ## Uniform + scattermore
 
 ```{r}
@@ -164,3 +178,21 @@ p_sampled_ggrastr
 ```
 
 :::
+
+# Benchmarking
+
+```{r}
+#| include: false
+library(bench)
+bch <- bench::mark(
+  p_not_sampled |>  print(),
+  p_not_sampled_ggrastr|>  print(),
+  p_sampled_scattermore|>  print(),
+  p_sampled_ggrastr|>  print(),
+    iterations = 5,
+  check = FALSE,
+  memory = FALSE
+)
+bch
+```
+

@@ -1,0 +1,154 @@
+---
+title: "dev_background"
+format: 
+  html: 
+    fig-width: 7
+    fig-height: 5
+    fig-dpi: 150
+    code-fold: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Setup
+
+## Libraries
+
+```{r}
+#| message: false
+#| warning: false
+library(Seurat)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+library(bench)
+library(ggrastr)
+library(here)
+library(scattermore)
+library(purrr)
+library(glue)
+ggplot2::theme_set(
+  ggplot2::theme_void() +
+    theme(
+      panel.border = element_rect(color = 'black', fill = NA, size = 0.5, linetype = "solid"),
+      strip.text.x = element_text(size = rel(1.2)),
+      plot.margin = margin_auto(6, unit = "pt"),
+      legend.position = 'none',
+      palette.colour.discrete = paletteer::paletteer_d("ggsci::default_ucscgb", n = 14) |> as.character()
+    ) 
+)
+```
+
+## Parameters
+
+## Datasets
+
+### Load seurat
+
+```{r}
+seu <- readRDS( here('ifnb.rds'))
+ncol(seu)
+```
+
+# Background
+
+```{r}
+xy <- FetchData(seu, vars = c('umap_1', 'umap_2', 'seurat_annotations'))
+```
+
+```{r}
+base <- xy |> ggplot(aes(umap_1, umap_2, color = seurat_annotations)) 
+list(
+  base + geom_point(size = 0.1) + labs(title = 'geom_point'),
+  base + geom_scattermore() + labs(title = 'scattermore'),
+  base + rasterize(geom_point(size = 0.1)) + labs(title = 'ggrastr')
+) |> 
+  patchwork::wrap_plots() & coord_equal()
+```
+
+# Sampling
+
+## Uniform
+
+```{r}
+# set up plotting function
+scatter <- function(df) {
+  df |> 
+    ggplot(aes(umap_1, umap_2)) +
+    geom_point(size = 0.4) +
+    coord_equal()
+}
+# usage: xy |> scatter()
+
+# set up sampling n
+samples <- c(100, 300, 1000, 3000, 10000, nrow(xy))
+```
+
+```{r}
+uniform <- samples |> map(
+  ~xy |> dplyr::slice_sample(n = .x) |> scatter() + labs(title = glue('n={.x}'))
+)
+wrap_plots(uniform)
+```
+
+## Density sampler
+
+```{r}
+library(MASS)
+
+# get probability estimates using kde2d, and map back to points
+calculate_density <- function(x, y) {
+  
+  dens <- MASS::kde2d(x, y, n = 400) 
+  
+  #image(dens)
+  ix <- base::findInterval(x, dens$x)
+  iy <- base::findInterval(y, dens$y)
+  ii <- cbind(ix, iy)
+  
+  out <- dens$z[ii]
+  out <- base::pmax(out, .Machine$double.eps, na.rm = TRUE)
+  out
+}
+xy <- xy |> 
+  as_tibble() |> 
+  mutate(inverted_density = (1-calculate_density(umap_1, umap_2))^2)
+
+xy |> summarize(.by = seurat_annotations, median(inverted_density))
+
+# sample by 1 - density to sample less dense space more than high dense space
+probability_based <- samples |> map(
+  ~xy |> 
+    dplyr::slice_sample(n = .x, weight_by = inverted_density) |> 
+    scatter() + labs(title = glue('n={.x}'))
+)
+wrap_plots(probability_based)
+```
+
+Let's take a closer look at the n=1000 case, to see the differences
+
+```{r}
+uniform[[3]] + probability_based[[3]]
+```
+
+## Grid sample
+
+```{r}
+sample_grid <- function(df, x, y, n) {
+  # n cells is x * y
+  dim1 <- sqrt(n) 
+  
+  df |> 
+    mutate(x_cut = cut({{x}}, dim1), y_cut = cut({{y}}, dim1)) |> 
+    group_by(x_cut, y_cut) |> 
+    sample_n(1) |> 
+    ungroup() 
+}
+
+grid <- samples |> map(
+  ~xy |> 
+    sample_grid(x = umap_1, y = umap_2, n = .x) |> 
+    scatter() + labs(title = glue('n={.x}'))
+)
+wrap_plots(grid)
+```
