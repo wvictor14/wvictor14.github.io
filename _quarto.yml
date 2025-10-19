@@ -36,3 +36,6 @@ format:
 execute:
   freeze: auto
 
+comments:
+  giscus: 
+    repo: quarto-dev/quarto-docs
