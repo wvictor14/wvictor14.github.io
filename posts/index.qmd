@@ -1,6 +1,7 @@
 ---
 title: Posts
 listing:
+  type: default
   contents:
    - '*.qmd'
   sort:
@@ -8,7 +9,7 @@ listing:
     - "title desc"
   feed: true
   categories: true
-  fields: [image, date, title, description, reading-time]
+  fields: [image, date, title, description, categories, reading-time]
 comments: false
 ---
 
