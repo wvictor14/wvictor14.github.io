@@ -28,15 +28,11 @@ library(ggplot2)
 library(dplyr)
 library(patchwork)
 library(bench)
-library(ggrastr)
 library(here)
-library(scattermore)
-library(ggpointdensity)
 library(purrr)
 library(glue)
 library(gt)
 library(tidyr)
-library(tictoc)
 theme_custom <- function() {
   ggplot2::theme_void() +
     theme(
@@ -119,7 +115,6 @@ plots <- list(
 
 ```{r}
 #| include: false
-#| cache: true
 bnch_sampled <- bench::mark(
   `Seurat, sampled 10% (n=1,400)` = seu_sampled |> 
     Seurat::FeaturePlot(features = features) |> plot(),
@@ -136,7 +131,6 @@ The improvement in speed is also slightly better, but still very slow. `Seurat::
 
 ```{r bench_naive}
 #| include: false
-#| cache: true
 extract_and_pivot <- function(.seu, features) {
   seu_expr <- FetchData(.seu, vars = c('umap_1', 'umap_2', features))
   seu_expr_long <- seu_expr |>  pivot_longer(
@@ -309,7 +303,8 @@ list(
 Finally, let's compare our solution with `Seurat::FeaturePlot` over 10 genes for 14000 cells:
 
 ```{r}
-bench::mark(
+#| eval: false
+bnch_final <- bench::mark(
   `Seurat, not sampled` = Seurat::FeaturePlot(seu, features = features) |> plot(),
   `Custom solution` = naive_plot3(seu, features) |>  plot(),
   memory = FALSE,
@@ -317,4 +312,31 @@ bench::mark(
   iterations = 4
 ) |> select(expression, min, median, n_itr)
 ```
+
+
+We improved the speed by `r times` times for a 14,000 cell dataset. I expect relative performance to be even greater for larger single cell datasets, since our sampling approach plots the same number of points regardless of dataset size.
+
+We accomplish while improving the ability to detect lowly expressed / sparse genes. See the results yourself:
+
+::: {.panel-tabset .nav-pills}
+
+## Seurat::FeaturePlot
+
+```{r}
+#| fig-height: 8
+#| fig-width: 10
+Seurat::FeaturePlot(seu, features = features) 
+```
+
+## Custom Plot
+
+```{r}
+#| fig-height: 8
+#| fig-width: 10
+naive_plot3(seu, features)
+```
+
+:::
+
+The drawback of this increased sensitivity is there is more noise. Especially for the higher expressed genes, there's a lot of lowly expressed cells that that appear highlighted, which might be distracting.
 
