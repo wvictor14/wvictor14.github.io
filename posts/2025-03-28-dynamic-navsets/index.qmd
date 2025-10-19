@@ -10,6 +10,9 @@ editor_options:
   chunk_output_type: console
 filters:
   - shinylive
+categories:
+  - R
+  - quarto
 ---
 
 # Introduction
@@ -50,11 +53,11 @@ on different subsetted versions of the underlying data.
 #| eval: false
 ui <- bslib::page_fillable(
   radioButtons(
-    'select_species', 
-    'Filter by species', 
+    "select_species",
+    "Filter by species",
     choices = unique(penguins$species)
   ),
-  shiny::uiOutput('dynamic_navset_card')
+  shiny::uiOutput("dynamic_navset_card")
 )
 ```
 
@@ -74,34 +77,35 @@ server <- function(session, input, output) {
   # 1. filter by species
   penguins_filtered <- reactive({
     req(input$select_species)
-    penguins |>  filter(species == input$select_species)
+    penguins |> filter(species == input$select_species)
   })
-  
+
   # 2. create the ui based on the `island` column
   output$dynamic_navset_card <- renderUI({
     nav_items <- unique(penguins_filtered()$island) |> purrr::map(
-      ~nav_panel(
+      ~ nav_panel(
         title = .x,
         plotOutput(glue("plot_{.x}"))
-      ))
+      )
+    )
     navset_card_pill(!!!nav_items)
   })
-  
+
   # 3. create the plots
   observe({
     walk(
-      unique(penguins_filtered()$island), 
+      unique(penguins_filtered()$island),
       function(x) {
         id <- glue("plot_{x}")
         output[[id]] <- renderPlot({
-          penguins_filtered() |>  
-            filter(island == x) |> 
-            ggplot(aes(x = year)) + 
-            geom_histogram(stat = 'count') +
-            labs(title = glue('Number of penguins by year for island {x}')) 
+          penguins_filtered() |>
+            filter(island == x) |>
+            ggplot(aes(x = year)) +
+            geom_histogram(stat = "count") +
+            labs(title = glue("Number of penguins by year for island {x}"))
         })
       }
-    ) 
+    )
   })
 }
 ```
@@ -130,46 +134,47 @@ ggplot2::theme_set(theme_bw(15))
 ui <- bslib::page_sidebar(
   sidebar = sidebar(
     radioButtons(
-      'select_species', 
-      'Filter by species', 
+      "select_species",
+      "Filter by species",
       choices = unique(penguins$species)
     )
   ),
-  shiny::uiOutput('dynamic_navset_card')
+  shiny::uiOutput("dynamic_navset_card")
 )
 
 server <- function(session, input, output) {
   # 1. filter by species
   penguins_filtered <- reactive({
     req(input$select_species)
-    penguins |>  filter(species == input$select_species)
+    penguins |> filter(species == input$select_species)
   })
-  
+
   # 2. create the ui based on the `island` column
   output$dynamic_navset_card <- renderUI({
     nav_items <- unique(penguins_filtered()$island) |> purrr::map(
-      ~nav_panel(
+      ~ nav_panel(
         title = .x,
         plotOutput(glue("plot_{.x}"), width = "80%")
-      ))
+      )
+    )
     navset_card_pill(!!!nav_items, height = 360)
   })
-  
+
   # 3. create the plots
   observe({
     walk(
-      unique(penguins_filtered()$island), 
+      unique(penguins_filtered()$island),
       function(x) {
         id <- glue("plot_{x}")
         output[[id]] <- renderPlot({
-          penguins_filtered() |>  
-            filter(island == x) |> 
-            ggplot(aes(x = year)) + 
-            geom_histogram(stat = 'count') +
-            labs(title = glue('Number of penguins by year for island {x}')) 
+          penguins_filtered() |>
+            filter(island == x) |>
+            ggplot(aes(x = year)) +
+            geom_histogram(stat = "count") +
+            labs(title = glue("Number of penguins by year for island {x}"))
         })
       }
-    ) 
+    )
   })
 }
 shiny::shinyApp(ui, server)

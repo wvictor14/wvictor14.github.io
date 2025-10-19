@@ -8,6 +8,7 @@ listing:
     - "title desc"
   feed: true
   categories: true
+  fields: [image, date, title, description, reading-time]
 ---
 
 Some attempts have been made at blogging

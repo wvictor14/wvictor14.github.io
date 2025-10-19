@@ -3,6 +3,10 @@ title: "2025 Posit Plotnine and Great Tables Contest Submission"
 description: "My submissions to the 2025 plotnine and table contests: exploring the uncertain canadian job market with plotnine, and visualizing multiple sequence alignment with gt"
 author: "Victor Yuan"
 date: "10/03/2025"
+categories:
+  - R
+  - data visualization
+  - bioinformatics
 ---
 
 On August 21 2025, Posit announced the [2025 Table and Plotnine contests](https://posit.co/blog/announcing-the-2025-table-and-plotnine-contests/). I was always impressed with the resulting submissions from previous years, so this year I decided to participate.
