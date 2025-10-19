@@ -6,7 +6,7 @@ format:
     toc: false
     from: "markdown+emoji"
 about:
-  template: trestles
+  template: jolla
   image: "images/Yuan, Victor - Nov 2018 Headshots (2).jpg"
   image-shape: round
   links:
@@ -18,4 +18,6 @@ about:
       href: mailto:victor.2wy@gmail.com
 ---
 
-I am a  **Bioinformatics Data Scientist** that uses programming, statistics, and scientific methods to understand complex genomic and biological data. I did PhD in Genome Sciences and Technology at University of British Columbia, before becoming a Data Scientist at Sonoma, a cell therapy biotech company in San Francisco.
+Hello! It's nice to meet you. I am a  **bioinformatics data scientist** at [Sonoma Biotherapeutics](https://sonomabio.com/) where I use data science to help develop cell therapies to cure autoimmune diseases. I love making beautiful charts,  developing scientific articles, climbing rocks, and specialty coffees.
+
+I studied epigenetics and placental biology, completing my PhD at University of British Columbia, Canada in 2022. 
