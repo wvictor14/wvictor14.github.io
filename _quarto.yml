@@ -15,7 +15,7 @@ website:
       - href: posts
         text: Posts
       - icon: rss
-        href: index.xml
+        href: posts/index.xml
     tools:
       - icon: github
         href: https://www.github.com/wvictor14
