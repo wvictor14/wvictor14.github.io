@@ -2,3 +2,7 @@
 
 # freeze computational output
 freeze: true
+
+comments:
+  giscus: 
+    repo: wvictor14/wvictor14.github.io

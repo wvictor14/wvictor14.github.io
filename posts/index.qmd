@@ -9,6 +9,7 @@ listing:
   feed: true
   categories: true
   fields: [image, date, title, description, reading-time]
+comments: false
 ---
 
 Some attempts have been made at blogging

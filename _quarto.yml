@@ -35,7 +35,3 @@ format:
 
 execute:
   freeze: auto
-
-comments:
-  giscus: 
-    repo: wvictor14/wvictor14.github.io
