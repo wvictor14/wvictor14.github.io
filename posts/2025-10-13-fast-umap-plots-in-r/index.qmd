@@ -1,5 +1,5 @@
 ---
-title: "Faster Gene Expression UMAP Plots for scRNAseq"
+title: "Speeding up UMAP plots for single cell gene expression analysis"
 format: 
   html: 
     fig-width: 7
@@ -8,11 +8,15 @@ format:
     code-fold: true
 editor_options: 
   chunk_output_type: console
+categories:
+  - R
+  - data visualization
+  - bioinformatics
 ---
 
 Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as `Seurat::DimPlot` are limited by long plotting times, impeding efficient exploratory analysis. 
 
-For example, this is how long it takes to visualize 10 genes on a 14,000 cell dataset. 
+For example, this is how long it takes to visualize 10 genes on a 14,000 single cell RNAseq (scRNAseq) dataset. 
 
 ::: {.hidden .unlisted}
 
@@ -38,10 +42,10 @@ theme_custom <- function() {
     theme(
       axis.title.y = element_text(angle = 90),
       axis.title.x = element_text(),
-      panel.border = element_rect(color = 'black', fill = NA, linewidth = 0.5, linetype = "solid"),
+      panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5, linetype = "solid"),
       strip.text.x = element_text(size = rel(1.5)),
       plot.margin = margin_auto(6, unit = "pt")
-    ) 
+    )
 }
 ggplot2::theme_set(
   theme_custom()
@@ -57,11 +61,10 @@ ggplot2::theme_set(
 
 ```{r}
 #| message: false
-
-seu <- readRDS( here('ifnb.rds'))
+seu <- readRDS(here("posts", "2025-10-13-fast-umap-plots-in-r", "ifnb.rds"))
 rownames(seu)
 
-xy <- FetchData(seu, vars = c('umap_1', 'umap_2', 'seurat_annotations', rownames(seu)))
+xy <- FetchData(seu, vars = c("umap_1", "umap_2", "seurat_annotations", rownames(seu)))
 ```
 
 :::
@@ -70,14 +73,14 @@ xy <- FetchData(seu, vars = c('umap_1', 'umap_2', 'seurat_annotations', rownames
 #| include: false
 features <- c(
   "MS4A1", # B cell
-  "CD14",  # monocytes
-  "LYZ",   # monocytes
-  "GNLY",  # NK
-  "FCER1A",  # dc
-  "CD3E",  # T cell
-  "CD4",   # CD4
-  "CD8B",  # CD8
-  "FOXP3"  # Treg 
+  "CD14", # monocytes
+  "LYZ", # monocytes
+  "GNLY", # NK
+  "FCER1A", # dc
+  "CD3E", # T cell
+  "CD4", # CD4
+  "CD8B", # CD8
+  "FOXP3" # Treg
 )
 
 bnch <- bench::mark(
@@ -86,8 +89,8 @@ bnch <- bench::mark(
   memory = FALSE
 )
 
-#tic();seu |> Seurat::FeaturePlot(features = features);toc()
-#system.time(seu |> Seurat::FeaturePlot(features = features) |>  plot())
+# tic();seu |> Seurat::FeaturePlot(features = features);toc()
+# system.time(seu |> Seurat::FeaturePlot(features = features) |>  plot())
 ```
 
 ```{r}
@@ -104,19 +107,19 @@ Plotting tens to hundreds of thousands of cells is likely not completely necessa
 ```{r}
 #| fig-height: 8
 #| fig-width: 10
-seu_sampled <- seu[,sample(1:ncol(seu), size = 0.1*ncol(seu))]
+seu_sampled <- seu[, sample(1:ncol(seu), size = 0.1 * ncol(seu))]
 plots <- list(
-  seu |> Seurat::FeaturePlot(features = c('CD8A', 'FOXP3'), order = TRUE) & coord_equal(),
-  seu_sampled |> Seurat::FeaturePlot(features = c('CD8A', 'FOXP3'), order = TRUE) & coord_equal()
-) 
-(plots[[1]] & labs(subtitle = 'Not sampled')) / 
-  (plots[[2]] & labs(subtitle = 'Sampled 10%'))
+  seu |> Seurat::FeaturePlot(features = c("CD8A", "FOXP3"), order = TRUE) & coord_equal(),
+  seu_sampled |> Seurat::FeaturePlot(features = c("CD8A", "FOXP3"), order = TRUE) & coord_equal()
+)
+(plots[[1]] & labs(subtitle = "Not sampled")) /
+  (plots[[2]] & labs(subtitle = "Sampled 10%"))
 ```
 
 ```{r}
 #| include: false
 bnch_sampled <- bench::mark(
-  `Seurat, sampled 10% (n=1,400)` = seu_sampled |> 
+  `Seurat, sampled 10% (n=1,400)` = seu_sampled |>
     Seurat::FeaturePlot(features = features) |> plot(),
   iterations = 3,
   memory = FALSE
@@ -124,7 +127,7 @@ bnch_sampled <- bench::mark(
 ```
 
 ```{r}
-bind_rows(bnch, bnch_sampled)  |> select(expression, min, median, n_itr)
+bind_rows(bnch, bnch_sampled) |> select(expression, min, median, n_itr)
 ```
 
 The improvement in speed is also slightly better, but still very slow. `Seurat::FeaturePlot` may have some processes that are slow. Let's try a naive solution:
@@ -132,30 +135,30 @@ The improvement in speed is also slightly better, but still very slow. `Seurat::
 ```{r bench_naive}
 #| include: false
 extract_and_pivot <- function(.seu, features) {
-  seu_expr <- FetchData(.seu, vars = c('umap_1', 'umap_2', features))
-  seu_expr_long <- seu_expr |>  pivot_longer(
+  seu_expr <- FetchData(.seu, vars = c("umap_1", "umap_2", features))
+  seu_expr_long <- seu_expr |> pivot_longer(
     all_of(features),
-    names_to = 'feature',
-    values_to = '.abundance'
-  ) 
+    names_to = "feature",
+    values_to = ".abundance"
+  )
   seu_expr_long
 }
 
 
 naive_plot <- function(seu, features) {
   expr_long <- extract_and_pivot(seu, features)
-  p <- expr_long |> 
+  p <- expr_long |>
     ggplot(aes(x = umap_1, y = umap_2)) +
-    geom_point(color = 'grey') +
+    geom_point(color = "grey") +
     geom_point(size = 1, aes(color = .abundance)) +
     scale_color_viridis_c() +
-    facet_wrap(vars(feature)) 
+    facet_wrap(vars(feature))
   p
 }
 
-seu_sampled <- seu[,sample(1:ncol(seu), size = round(ncol(seu)*0.1))]
+seu_sampled <- seu[, sample(1:ncol(seu), size = round(ncol(seu) * 0.1))]
 bnch_naive <- bench::mark(
-  naive = naive_plot(seu_sampled, features) |>  print(),
+  naive = naive_plot(seu_sampled, features) |> print(),
   memory = FALSE,
   iterations = 3
 )
@@ -190,26 +193,26 @@ Here we adjust this over total number of cells * total number of features.
 
 naive_plot2 <- function(seu, features, ptsize = NULL) {
   expr_long <- extract_and_pivot(seu, features)
-  
+
   # From Seurat:
   if (is.null(ptsize)) {
     ptsize <- min(3000 / nrow(expr_long), 1)
   }
-  
+
   p <- expr_long |>
-    filter(.abundance > 0) |> 
+    filter(.abundance > 0) |>
     ggplot(aes(x = umap_1, y = umap_2)) +
     geom_point(
-      data = expr_long |> filter(.abundance == 0), 
+      data = expr_long |> filter(.abundance == 0),
       size = ptsize,
-      color = 'lightgrey'
+      color = "lightgrey"
     ) +
     geom_point(
-      size = ptsize, 
+      size = ptsize,
       aes(color = .abundance)
     ) +
     scale_color_viridis_c() +
-    facet_wrap(vars(feature)) 
+    facet_wrap(vars(feature))
   p
 }
 ```
@@ -219,7 +222,7 @@ naive_plot2 <- function(seu, features, ptsize = NULL) {
 ## number of cells (Seurat)
 
 ```{r}
-naive_plot2(seu_sampled, features, ptsize =min(1583 / nrow(seu_sampled), 1) )
+naive_plot2(seu_sampled, features, ptsize = min(1583 / nrow(seu_sampled), 1))
 ```
 
 ## number of cells * features
@@ -239,18 +242,19 @@ The question is at what level of sparseness do we decide to keep all cells.
 
 ```{r}
 prepare_plot_data <- function(seu, features, .n = 1400) {
-  seu_expr <- FetchData(seu, vars = c('umap_1', 'umap_2', features))
-  background_data <- seu_expr[,c('umap_1','umap_2')] |> 
-    slice_sample(n = .n) 
-  
-  seu_expr_long <- seu_expr |>  pivot_longer(
-    all_of(features),
-    names_to = 'feature',
-    values_to = '.abundance'
-  ) |> 
-    filter(.abundance != 0) |> 
-    slice_sample(by = feature, n = .n/2)
-  
+  seu_expr <- FetchData(seu, vars = c("umap_1", "umap_2", features))
+  background_data <- seu_expr[, c("umap_1", "umap_2")] |>
+    slice_sample(n = .n)
+
+  seu_expr_long <- seu_expr |>
+    pivot_longer(
+      all_of(features),
+      names_to = "feature",
+      values_to = ".abundance"
+    ) |>
+    filter(.abundance != 0) |>
+    slice_sample(by = feature, n = .n / 2)
+
   return(
     list(
       background = background_data, abundance = seu_expr_long
@@ -260,14 +264,14 @@ prepare_plot_data <- function(seu, features, .n = 1400) {
 
 naive_plot3 <- function(seu, features, ptsize = NULL, .n = 1400) {
   plot_data <- prepare_plot_data(seu, features, .n = .n)
-  
+
   # From Seurat:
   if (is.null(ptsize)) {
     ptsize <- min(3000 / nrow(plot_data$abundance), 1)
   }
-  plot_data$background |>   
+  plot_data$background |>
     ggplot(aes(x = umap_1, y = umap_2)) +
-    geom_point(size = ptsize, color = 'grey') +
+    geom_point(size = ptsize, color = "grey") +
     geom_point(
       data = plot_data$abundance,
       size = ptsize,
@@ -288,13 +292,13 @@ Here are the exact number of cells sampled for each gene:
 list(
   with_sampling = prepare_plot_data(seu, features, .n = 1400)$abundance,
   without_sampling = prepare_plot_data(seu, features, .n = 14000)$abundance
-)  |> 
-  purrr::map(~count(.x, feature)) |> 
-  bind_rows(.id = 'type') |> 
+) |>
+  purrr::map(~ count(.x, feature)) |>
+  bind_rows(.id = "type") |>
   pivot_wider(
     names_from = type, values_from = n
-  ) |> 
-  gt() |>  
+  ) |>
+  gt() |>
   grand_summary_rows(-feature, fns = list(sum ~ sum(.)))
 ```
 
@@ -306,7 +310,7 @@ Finally, let's compare our solution with `Seurat::FeaturePlot` over 10 genes for
 #| eval: false
 bnch_final <- bench::mark(
   `Seurat, not sampled` = Seurat::FeaturePlot(seu, features = features) |> plot(),
-  `Custom solution` = naive_plot3(seu, features) |>  plot(),
+  `Custom solution` = naive_plot3(seu, features) |> plot(),
   memory = FALSE,
   check = FALSE,
   iterations = 4
@@ -325,7 +329,7 @@ We accomplish while improving the ability to detect lowly expressed / sparse gen
 ```{r}
 #| fig-height: 8
 #| fig-width: 10
-Seurat::FeaturePlot(seu, features = features) 
+Seurat::FeaturePlot(seu, features = features)
 ```
 
 ## Custom Plot
