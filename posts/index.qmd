@@ -5,6 +5,7 @@ listing:
   sort:
     - "date desc"
     - "title desc"
+  feed: true
 title: Posts
 ---
 

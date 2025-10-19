@@ -3,7 +3,8 @@ project:
 
 website:
   favicon: images/favicon.svg
-  site-url: victoryuan.com
+  site-url: https://victoryuan.com
+  description: "Victor's blog"
   google-analytics: G-ZLSXEBDXV5
   title: "Victor Yuan"
   navbar:
