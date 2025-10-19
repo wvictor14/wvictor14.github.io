@@ -9,6 +9,7 @@ Thumbs.db
 .quarto
 _site
 /.quarto/
+site-libs
 
 index-listing.json
 
