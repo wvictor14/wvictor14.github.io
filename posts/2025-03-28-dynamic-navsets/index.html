@@ -152,7 +152,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../posts/index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -176,11 +176,11 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#the-ui" id="toc-the-ui" class="nav-link" data-scroll-target="#the-ui">The UI</a>
+  <li><a href="#setting-up-the-ui" id="toc-setting-up-the-ui" class="nav-link" data-scroll-target="#setting-up-the-ui">Setting up the UI</a>
   <ul class="collapse">
-  <li><a href="#dynamic-render" id="toc-dynamic-render" class="nav-link" data-scroll-target="#dynamic-render">Dynamic render</a></li>
+  <li><a href="#render-the-tab-names-and-content-server-side" id="toc-render-the-tab-names-and-content-server-side" class="nav-link" data-scroll-target="#render-the-tab-names-and-content-server-side">Render the tab names and content server-side</a></li>
   </ul></li>
-  <li><a href="#the-app" id="toc-the-app" class="nav-link" data-scroll-target="#the-app">The app</a></li>
+  <li><a href="#shinylive-app" id="toc-shinylive-app" class="nav-link" data-scroll-target="#shinylive-app">Shinylive app</a></li>
   </ul>
 </nav>
     </div>
@@ -190,7 +190,11 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Programmatically creating tabsets in R</h1>
-</div>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">quarto</div>
+  </div>
+  </div>
 
 
 
@@ -212,42 +216,43 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </header>
 
 
+<p><img src="shinylive.gif" class="img-fluid"></p>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>I recently was working on a web app and encountered a situation where I wanted to create tabs based on some variable in a data frame. The tab names and content would change when the data was subsetted based on some input controls.</p>
+<p>I recently was working on a web app and encountered a situation where I wanted to create tabs based on some variable in a data frame. The tab names and content would change when the data was subsetted or modified from other functions in the app.</p>
 <p>Here is how to do that in shiny, using the <a href="https://allisonhorst.github.io/palmerpenguins/">palmerpenguins</a> dataset as an example.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bslib)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reactable)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(palmerpenguins)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(penguins)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="dv">15</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(palmerpenguins)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(penguins)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="dv">15</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="the-ui" class="level1">
-<h1>The UI</h1>
+<section id="setting-up-the-ui" class="level1">
+<h1>Setting up the UI</h1>
 <p>First I set up the ui with two components:</p>
 <ul>
 <li>an input component that filters the dataset, and</li>
 <li>a <code>uiOutput</code> component for the dynamic tabs which will be rendered server-side</li>
 </ul>
+<p>The filter component is just to demonstrate how the tabsets are generated based on different subsetted versions of the underlying data.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> bslib<span class="sc">::</span><span class="fu">page_fillable</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">radioButtons</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'select_species'</span>, </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Filter by species'</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"select_species"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Filter by species"</span>,</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">choices =</span> <span class="fu">unique</span>(penguins<span class="sc">$</span>species)</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  shiny<span class="sc">::</span><span class="fu">uiOutput</span>(<span class="st">'dynamic_navset_card'</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  shiny<span class="sc">::</span><span class="fu">uiOutput</span>(<span class="st">"dynamic_navset_card"</span>)</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<section id="dynamic-render" class="level2">
-<h2 class="anchored" data-anchor-id="dynamic-render">Dynamic render</h2>
+<section id="render-the-tab-names-and-content-server-side" class="level2">
+<h2 class="anchored" data-anchor-id="render-the-tab-names-and-content-server-side">Render the tab names and content server-side</h2>
 <p>Next is the server code. The server code does 3 things:</p>
 <ol type="1">
 <li>filter the penguins dataset <code>penguin_filtered</code>, based on the radio buttons</li>
@@ -259,42 +264,44 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 1. filter by species</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  penguins_filtered <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(input<span class="sc">$</span>select_species)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    penguins <span class="sc">|&gt;</span>  <span class="fu">filter</span>(species <span class="sc">==</span> input<span class="sc">$</span>select_species)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    penguins <span class="sc">|&gt;</span> <span class="fu">filter</span>(species <span class="sc">==</span> input<span class="sc">$</span>select_species)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. create the ui based on the `island` column</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  output<span class="sc">$</span>dynamic_navset_card <span class="ot">&lt;-</span> <span class="fu">renderUI</span>({</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    nav_items <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">penguins_filtered</span>()<span class="sc">$</span>island) <span class="sc">|&gt;</span> purrr<span class="sc">::</span><span class="fu">map</span>(</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span><span class="fu">nav_panel</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> <span class="fu">nav_panel</span>(</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> .x,</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotOutput</span>(<span class="fu">glue</span>(<span class="st">"plot_{.x}"</span>))</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      ))</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">navset_card_pill</span>(<span class="sc">!!!</span>nav_items)</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. create the plots</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observe</span>({</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">walk</span>(</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">unique</span>(<span class="fu">penguins_filtered</span>()<span class="sc">$</span>island), </span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(x) {</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        id <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"plot_{x}"</span>)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        output[[id]] <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>          <span class="fu">penguins_filtered</span>() <span class="sc">|&gt;</span>  </span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(island <span class="sc">==</span> x) <span class="sc">|&gt;</span> </span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span> </span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_histogram</span>(<span class="at">stat =</span> <span class="st">'count'</span>) <span class="sc">+</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">glue</span>(<span class="st">'Number of penguins by year for island {x}'</span>)) </span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        })</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    ) </span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">navset_card_pill</span>(<span class="sc">!!!</span>nav_items)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3. create the plots</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observe</span>({</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">walk</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">unique</span>(<span class="fu">penguins_filtered</span>()<span class="sc">$</span>island),</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      <span class="cf">function</span>(x) {</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        id <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"plot_{x}"</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        output[[id]] <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>          <span class="fu">penguins_filtered</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(island <span class="sc">==</span> x) <span class="sc">|&gt;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> year)) <span class="sc">+</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_histogram</span>(<span class="at">stat =</span> <span class="st">"count"</span>) <span class="sc">+</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">glue</span>(<span class="st">"Number of penguins by year for island {x}"</span>))</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The tricky part is figuring out how to dynamically assign the output ids. Here, I programmatically create the <code>id</code>s and then assign them content (plots) based on the relevant subset of data.</p>
 </section>
 </section>
-<section id="the-app" class="level1">
-<h1>The app</h1>
+<section id="shinylive-app" class="level1">
+<h1>Shinylive app</h1>
+<p>Here is a demonstration with a shinylive app</p>
 <pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
 #|   shinylive does not work in self-contained HTML documents.
 #|   Please set `embed-resources: false` in your metadata.
@@ -304,7 +311,6 @@ library(bslib)
 library(dplyr)
 library(purrr)
 library(shiny)
-library(reactable)
 library(glue)
 library(ggplot2)
 library(palmerpenguins)
@@ -314,46 +320,47 @@ ggplot2::theme_set(theme_bw(15))
 ui &lt;- bslib::page_sidebar(
   sidebar = sidebar(
     radioButtons(
-      'select_species', 
-      'Filter by species', 
+      "select_species",
+      "Filter by species",
       choices = unique(penguins$species)
     )
   ),
-  shiny::uiOutput('dynamic_navset_card')
+  shiny::uiOutput("dynamic_navset_card")
 )
 
 server &lt;- function(session, input, output) {
   # 1. filter by species
   penguins_filtered &lt;- reactive({
     req(input$select_species)
-    penguins |&gt;  filter(species == input$select_species)
+    penguins |&gt; filter(species == input$select_species)
   })
-  
+
   # 2. create the ui based on the `island` column
   output$dynamic_navset_card &lt;- renderUI({
     nav_items &lt;- unique(penguins_filtered()$island) |&gt; purrr::map(
-      ~nav_panel(
+      ~ nav_panel(
         title = .x,
         plotOutput(glue("plot_{.x}"), width = "80%")
-      ))
+      )
+    )
     navset_card_pill(!!!nav_items, height = 360)
   })
-  
+
   # 3. create the plots
   observe({
     walk(
-      unique(penguins_filtered()$island), 
+      unique(penguins_filtered()$island),
       function(x) {
         id &lt;- glue("plot_{x}")
         output[[id]] &lt;- renderPlot({
-          penguins_filtered() |&gt;  
-            filter(island == x) |&gt; 
-            ggplot(aes(x = year)) + 
-            geom_histogram(stat = 'count') +
-            labs(title = glue('Number of penguins by year for island {x}')) 
+          penguins_filtered() |&gt;
+            filter(island == x) |&gt;
+            ggplot(aes(x = year)) +
+            geom_histogram(stat = "count") +
+            labs(title = glue("Number of penguins by year for island {x}"))
         })
       }
-    ) 
+    )
   })
 }
 shiny::shinyApp(ui, server)</code></pre>
