@@ -1,0 +1,198 @@
+---
+title: "dev_function"
+format: 
+  html:
+    fig-height: 7
+    fig-width: 8
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Setup
+
+## Libraries
+
+```{r}
+#| message: false
+#| warning: false
+library(Seurat)
+library(SeuratData) # devtools::install_github('satijalab/seurat-data')
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+library(bench)
+library(dittoSeq)
+library(scCustomize)
+library(here)
+ggplot2::theme_set(
+  ggplot2::theme_void() +
+    theme(
+      panel.border = element_rect(color = 'black', fill = NA, size = 0.5, linetype = "solid"),
+      strip.text.x = element_text(size = rel(1.2)),
+      plot.margin = margin_auto(6, unit = "pt")
+    ) 
+)
+```
+
+## Parameters
+
+```{r}
+features <- c(
+  "MS4A1", # B cell
+  "CD14",  # monocytes
+  "LYZ",   # monocytes
+  "GNLY",  # NK
+  "FCER1A",  # dc
+  "CD3E",  # T cell
+  "CD4",   # CD4
+  "CD8B",  # CD8
+  "FOXP3"  # Treg 
+)
+```
+
+## Datasets
+
+### Load seurat
+
+```{r}
+seu <- readRDS( here('ifnb.rds'))
+```
+
+# Compared to other packages
+
+::: {.panel-tabset .nav-pills}
+
+## Custom
+
+```{r}
+library(scattermore)
+features <- c(
+  "MS4A1", # B cell
+  "CD14",  # monocytes
+  "LYZ",   # monocytes
+  "GNLY",  # NK
+  "FCER1A",  # dc
+  "CD3E",  # T cell
+  "CD4",   # CD4
+  "CD8B",  # CD8
+  "FOXP3"  # Treg 
+)
+
+plt_data <- FetchData(
+  object = seu,
+  vars = c(c("umap_1", "umap_2"), 'ident', features)
+)
+plt_data <- plt_data |>
+  tidyr::pivot_longer(
+    cols = matches(features),
+    names_to = '.feature',
+    values_to = '.abundance'
+  ) |> 
+  
+  ## expressing cells on top
+  arrange(.abundance) |> 
+  
+  ## make non-expressing cells NA, to give custom color
+  mutate(.abundance = ifelse(.abundance == 0, NA, .abundance)) 
+
+p_cd4 <- plt_data |>
+  mutate(.abundance = ifelse(.abundance == 0, NA, .abundance)) |> 
+  ggplot(aes(x = umap_1, y = umap_2, color = .abundance)) +
+  geom_scattermore() +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis')
+p_cd4
+```
+
+## Seurat
+
+```{r}
+Seurat::FeaturePlot(seu, features)
+```
+
+## scCustomize
+
+```{r}
+scCustomize::FeaturePlot_scCustom(seu, features)
+```
+
+:::
+
+# sampling
+
+`r nrow(seu)` cells * 9 genes = `r nrow(seu) * 9` data points
+
+Try No sampling, and then sampled to 3000 cells
+
+::: {.panel-tabset .nav-pills}
+
+## No Sampling
+
+```{r}
+p_not_sampled <- plt_data |>
+  ggplot(aes(x = umap_1, y = umap_2, color = .abundance)) +
+  geom_point() +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis', na.value = 'lightgrey')
+p_not_sampled
+```
+
+## No Sampling + ggrastr
+
+```{r}
+p_not_sampled_ggrastr <- plt_data |>
+  ggplot(aes(x = umap_1, y = umap_2, color = .abundance)) +
+  geom_point_rast() +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis', na.value = 'lightgrey')
+p_not_sampled_ggrastr
+```
+
+
+## Uniform + scattermore
+
+```{r}
+p_sampled_scattermore <- plt_data |>
+  slice_sample(n = 3000) |> 
+  mutate(.abundance = ifelse(.abundance == 0, NA, .abundance)) |> 
+  ggplot(aes(x = umap_1, y = umap_2, color = .abundance)) +
+  geom_scattermore(pointsize = 2) +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis')
+p_sampled_scattermore
+```
+
+## Uniform + ggrastr
+
+```{r}
+library(ggrastr)
+p_sampled_ggrastr <- plt_data |>
+  slice_sample(n = 3000) |> 
+  mutate(.abundance = ifelse(.abundance == 0, NA, .abundance)) |> 
+  ggplot(aes(x = umap_1, y = umap_2, color = .abundance)) +
+  geom_point_rast(size = 1) +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis', na.value = 'lightgrey')
+p_sampled_ggrastr
+```
+
+:::
+
+# Benchmarking
+
+```{r}
+#| include: false
+library(bench)
+bch <- bench::mark(
+  p_not_sampled |>  print(),
+  p_not_sampled_ggrastr|>  print(),
+  p_sampled_scattermore|>  print(),
+  p_sampled_ggrastr|>  print(),
+    iterations = 5,
+  check = FALSE,
+  memory = FALSE
+)
+bch
+```
+

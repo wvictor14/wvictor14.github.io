@@ -1,0 +1,352 @@
+---
+title: "Fast UMAP plots for scRNAseq"
+format: 
+  html: 
+    fig-width: 7
+    fig-height: 5
+    fig-dpi: 100
+    code-fold: true
+editor_options: 
+  chunk_output_type: console
+---
+
+Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as `Seurat::DimPlot` are limited by long plotting times, impeding efficient exploratory analysis. 
+
+For example, this is how long it takes to visualize 10 genes on a 14,000 cell dataset. 
+
+::: {.hidden .unlisted}
+
+# Setup 
+
+## Libraries
+
+```{r}
+#| message: false
+#| warning: false
+library(Seurat)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+library(bench)
+library(ggrastr)
+library(here)
+library(scattermore)
+library(ggpointdensity)
+library(purrr)
+library(glue)
+library(gt)
+library(tidyr)
+library(tictoc)
+theme_custom <- function() {
+  ggplot2::theme_void() +
+    theme(
+      axis.title.y = element_text(angle = 90),
+      axis.title.x = element_text(),
+      panel.border = element_rect(color = 'black', fill = NA, linewidth = 0.5, linetype = "solid"),
+      strip.text.x = element_text(size = rel(1.5)),
+      plot.margin = margin_auto(6, unit = "pt")
+    ) 
+}
+ggplot2::theme_set(
+  theme_custom()
+)
+
+```
+
+## Parameters
+
+## Datasets
+
+### Load seurat
+
+```{r}
+#| message: false
+
+seu <- readRDS( here('ifnb.rds'))
+rownames(seu)
+
+xy <- FetchData(seu, vars = c('umap_1', 'umap_2', 'seurat_annotations', rownames(seu)))
+```
+
+:::
+
+```{r bench1}
+#| include: false
+features <- c(
+  "MS4A1", # B cell
+  "CD14",  # monocytes
+  "LYZ",   # monocytes
+  "GNLY",  # NK
+  "FCER1A",  # dc
+  "CD3E",  # T cell
+  "CD4",   # CD4
+  "CD8B",  # CD8
+  "FOXP3"  # Treg 
+)
+```
+
+#
+
+In terms of accurately representing the data, highly expressed markers, like CD8 in this immune cell dataset, are reasonably accurate. But sampling can result in missing cells with expression of lowly expressed genes entirely. Although this is expected due to the sampling method, this is a detriment to exploratory single cell analysis, where genes with low expression (e.g. transcription factors, cytokines) are often of great interest to a broad range of scientific questions. 
+
+In this post, I'm going to try and develop a custom plotting function to address these 2 issues:
+
+1) slow plotting speed
+2) undersampling lowly expressed genes
+
+## Slow plotting
+
+For each gene expression umap plot, non expressing cells are typically plotted as a background, as context to which cluster expressing cells belong to. Therefore, the expression variation (there is none) and local point density (how close each point is to each other) is not of importance to gene expression analysis.
+
+Therefore, we can try to represent the background with a sample sufficient enough to capture the shape of the underlying cell clusters on the umap plot. But how much is "sufficient" enough to capture the shape of underlying cell clusters?
+
+```{r}
+custom_umap <- function(
+    s, 
+    ptsize = 1, 
+    alpha = 1,
+    color = '#a6a6a6',
+    layer_point = ggplot2::geom_point(size = ptsize, color = color, alpha = alpha)
+) {
+  
+  xy <- FetchData(s, vars = c('umap_1', 'umap_2'))
+  xy |> 
+    ggplot(aes(umap_1, umap_2)) +
+    layer_point +
+    theme_custom() +
+    coord_equal() 
+}
+
+sample_uniform <- function(s, size) {
+  if (size > ncol(s)) size <- ncol(s) # truncate if too high
+  
+  s[,sample(1:ncol(s), size = size)]
+}
+
+plot_samples <- function(
+    sample_n = c(13999, 8000, 5000, 2500, 1000, 500), 
+    sampler = sample_uniform,
+    size = 1
+) {
+  plots <- sample_n |> 
+    purrr::map(
+      ~seu |> 
+        sampler(.x) |> 
+        custom_umap(ptsize = size) +
+        labs(title = glue::glue("{.x} cells"))
+    )
+  plots |> wrap_plots() + plot_annotation(tag_level = 'A')
+}
+plot_samples()
+```
+
+Plotting the full dataset results in overplotting, the points overlap each other significantly. at 500 cells, the smaller clusters appear as noise. Somewhere in the middle is the optimal number of points. The optimal number of points, however, is dependent on the point size:
+
+### Tiny points (pointsize = 0.05)
+
+```{r}
+plot_samples(size = 0.05)
+```
+
+With a pointsize of `0.05` we can see that the optimal number of points is now 2500 or even 5000.
+
+## Other sampling approaches
+
+```{r}
+sample_grid <- function(s, nbin, nbin_pt = 1) {
+  
+  xy <- FetchData(s, vars = c('umap_1', 'umap_2'))
+  
+  cellids <- xy |> 
+    as_tibble(rownames = 'rownames') |> 
+    mutate(x_cut = cut(umap_1, nbin), y_cut = cut(umap_1, nbin)) |> 
+    group_by(x_cut, y_cut) |> 
+    slice_sample(n = nbin_pt) |> 
+    ungroup() |> 
+    pull(rownames)
+  
+  s[,cellids]
+}
+#plot_samples(size = 0.05, sampler = sample_grid)
+.n <- 3000
+set.seed(1)
+seu_grid <-  seu |> 
+  sample_grid(.n*1.5)
+plts <- list(
+  custom_umap(seu, layer_point = geom_pointdensity(size = 0.1)) +
+    scale_color_viridis_c(guide = 'none') +
+    labs(title = '2d density'),
+  
+  seu |> 
+    sample_uniform(.n*1.1) |> 
+    custom_umap(ptsize  = 0.1)  +
+    labs(title = glue('Uniform n={.n*1.1}')),
+  
+  seu_grid |> 
+    custom_umap(ptsize  = 0.1) +
+    labs(title = glue('Grid n={ncol(seu_grid)}'))
+) 
+plts |> 
+  wrap_plots() +
+  plot_annotation(tag_levels = 'a')
+```
+
+Rather than simple uniform sampling, where every point is equally likely to be sampled, we can sample over a grid such that each point is more evenly spaced out. The results are mixed. There is  slightly better representation of more the branches in the bottom right cluster in grid-based sampling **c** compared to uniform **b**. But we also see some variation in sparsity that isn't accurately capturing the real density shown in **a**.
+
+
+```{r}
+seu_grid2 <-  seu|> 
+  sample_grid(nbin = 1400, nbin_pt = 3)
+append(
+  plts,
+  seu_grid2 |> 
+    custom_umap(ptsize  = 0.1, alpha = 0.34) +
+    labs(title = glue('Grid with alpha n={ncol(seu_grid2)}'))
+) |> 
+  wrap_plots() +
+  plot_annotation(tag_levels = 'a') 
+
+```
+
+But the cool thing about grid-based sampling is we can sample more from more dense regions, and less from the sparse regions. Here, I implement an approach where each axes is cut into bins, and each 2 dimensional bin is sampled up to 3 times. In sparse regions, each bin will have at least 1 data point, but in sparse regions there can be 3. To address oversampling in these denser regions, we can set an alpha of 0.33 ( 1 / max points), ensuring that there will always be a proportional amount of saturation for overlapping points.
+
+The result is a better representation of the local point density **d** than uniform sampling **b** and uniform grid sampling **c**.
+
+# Layering gene expression
+
+To address the drop out issue, we can overlay the gene expression of cells with nonzero expression, on top of this background plot.
+
+```{r}
+umap_gene_expression <- function(.seu, features, ptsize = NULL) {
+  seu_expr_long <- extract_and_pivot(.seu, features)
+  
+  if (is.null(ptsize))  ptsize <- 2/length(features)
+  
+  .seu |> 
+    sample_uniform(3000) |> 
+    custom_umap(ptsize  = ptsize, color = 'lightgrey') +
+    geom_point(data = seu_expr_long, size = ptsize, aes(color = .abundance)) +
+    scale_color_viridis_c() +
+    facet_wrap(vars(feature))
+}
+umap_gene_expression(seu, c('CD4', 'FOXP3')) 
+```
+
+```{r}
+#| eval: false
+#| include: false
+seu_expr <- extract_and_pivot(seu, c('CD4', 'FOXP3'))
+seu_expr |> 
+  mutate(cluster = case_when(
+    umap_1 < -1 & umap_2 < 10 ~ 'left cluster',
+    umap_1 > 0 & umap_2 < 5 ~ 'bottom-right cluster',
+  )) |> 
+  summarize(.by = c(feature, cluster), n_expr = sum(.abundance > 0)) |> 
+  mutate(p_expr = n_expr / sum(n_expr))
+```
+
+
+```{r}
+#| fig-height: 8
+#| fig-width: 10
+sample_grid <- function(s, nbin, nbin_pt = 1) {
+  
+  xy <- FetchData(s, vars = c('umap_1', 'umap_2'))
+  
+  cellids <- xy |> 
+    as_tibble(rownames = 'rownames') |> 
+    mutate(x_cut = cut(umap_1, nbin), y_cut = cut(umap_1, nbin)) |> 
+    group_by(x_cut, y_cut) |> 
+    slice_sample(n = nbin_pt) |> 
+    ungroup() |> 
+    pull(rownames)
+  
+  s[,cellids]
+}
+
+# find top gene
+top_genes <- rowSums(seu@assays$RNA$data > 0) |>  sort(decreasing = TRUE)
+
+# grid sampler
+plot_1_feature <- function(feature, .ptsize = 0.1) {
+  
+  grid_sampled <- seu[,seu@assays$RNA$data[feature, ] > 0] |> 
+    sample_grid(nbin = 5000, 3)
+  seu_expr_grid <- FetchData(grid_sampled, vars = c('umap_1', 'umap_2', feature))
+  
+  
+  p_grid <- seu |> 
+    sample_uniform(3000) |> 
+    custom_umap(ptsize  = .ptsize, color = 'lightgrey')  +
+    geom_point(data = seu_expr_grid, size = .ptsize, aes(color = .data[[feature]]), alpha = 0.33) +
+    scale_color_viridis_c() +
+    labs(title = 'Grid sampled')
+  
+  # uniform
+  unif_sampled <- seu[,seu@assays$RNA$data[feature, ] > 0] |> 
+    sample_uniform(4000)
+  seu_expr <- FetchData(unif_sampled, vars = c('umap_1', 'umap_2', feature))
+  
+  p_unif <- seu |> 
+    sample_uniform(3000) |> 
+    custom_umap(ptsize  = .ptsize, color = 'lightgrey')  +
+    geom_point(data = seu_expr, size = .ptsize, aes(color = .data[[feature]])) +
+    scale_color_viridis_c()  +
+    labs(title = 'Uniform sampled')
+  
+  umap_gene_expression(seu, feature, ptsize = .ptsize) + labs(title = 'Not sampled') + 
+    p_unif +
+    p_grid + 
+    plot_annotation(tag_level = 'A') &
+    theme(legend.position = 'none')
+}
+plot_1_feature('CD4', .ptsize = 2) / 
+  plot_1_feature('FOXP3', .ptsize = 2)
+```
+
+```{r}
+#| fig-height: 4
+#| fig-width: 10
+plot_1_feature('LYZ')
+```
+
+We can combine this with our density-biased grid sampling, to try to represent not just the expression values of individual cells, but their local density on the umap plot. **a** and **b** give the impression that LYZ is expressed very highly in the left cluster, but also that there is non-zero low expression in the other clusters. On the other hand, **c** better captures that the expression in the other two clusters is sparse.
+
+
+```{r}
+#| fig-height: 4
+#| fig-width: 10
+plot_1_feature('CD3E')
+```
+
+
+# Summary
+
+- `Seurat::FeaturePlot` is really slow for plotting umaps of large datasets over many features, impeding efficient analysis of single cell data
+
+- Sampling is often used to speed up plotting, but is tricky because we can miss important features. The optimal number of data points depends on dataset specific attributes like density, and also plotting-specific parameters like point size.
+
+- Layering gene expression on top of a background can be useful identifying nonzero expression, but can also be misleading. Low but prevalent nonzero expression can be interpreted as widespread low expression when in reality only a small % of cells actually are expressing these genes.
+
+
+::: {.hidden}
+
+Slightly faster
+
+Let's benchmark them over 6 iterations:
+
+```{r}
+#| eval: false
+#| include: false
+#| cache: true
+bnch_compare <- bench::mark(
+  Seurat_sampled = seu_sampled |> Seurat::FeaturePlot(features = features) |> plot(),
+  Custom_sampled = seu_sampled |> custom_umap() |> plot(),
+  check = FALSE,
+  iterations = 3,
+  memory = FALSE
+)
+bnch_compare
+
+```
+

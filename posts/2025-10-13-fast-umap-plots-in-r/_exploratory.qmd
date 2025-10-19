@@ -1,0 +1,238 @@
+---
+title: "Fast UMAP plots in R"
+description: "Speed up UMAP gene expression plots for single cell RNAseq analysis in R"
+author: "Victor Yuan"
+date: "10/13/2025"
+execute:
+  freeze: true
+editor_options: 
+  chunk_output_type: console
+---
+
+One part of single cell RNAseq (scRNAseq) analysis is to quickly plot gene expression on top of a UMAP/TSNE plots. Currently, the most popular package for generating these plots is `Seurat`, with `scCustomize` and `dittoSeq` being alternatives.
+
+However, the functions for plotting gene expression on top of UMAPs are slow, especially for large single cell datasets. 
+
+Let's compare the time it takes to plot 9 genes, across 3000, 40 000, and 150 000 cells.
+
+# Setup
+
+## Libraries
+
+```{r}
+library(Seurat)
+library(SeuratData) # devtools::install_github('satijalab/seurat-data')
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+library(bench)
+library(dittoSeq)
+library(scCustomize)
+ggplot2::theme_se
+```
+
+## Parameters
+
+```{r}
+features <- c(
+  "MS4A1", # B cell
+  "CD14",  # monocytes
+  "LYZ",   # monocytes
+  "GNLY",  # NK
+  "FCER1A",  # dc
+  "CD3E",  # T cell
+  "CD4",   # CD4
+  "CD8B",  # CD8
+  "FOXP3"  # Treg 
+)
+```
+
+## Datasets
+
+Download and load pbmc3k and hcabm40k datasets from `Seurat`
+
+```{r}
+#| eval: false
+# Run once
+ad <- AvailableData()
+ad
+InstallData('pbmc3k')
+InstallData('hcabm40k')
+```
+
+### Load pbmc3k
+
+```{r}
+library(SeuratData)
+seu_small <- LoadData("pbmc3k", type = 'pbmc3k.final')
+seu_small$groups <- sample(
+  c("group1", "group2"),
+  size = ncol(seu_small),
+  replace = TRUE
+)
+```
+
+### Load hcabm40k
+
+```{r}
+#| eval: false
+seu_medium <- LoadData('hcabm40k')
+seu_medium <- UpdateSeuratObject(seu_medium)
+seu_medium <- seu_medium |>
+  NormalizeData() |>
+  FindVariableFeatures() |>
+  ScaleData() |>
+  RunPCA()
+seu_medium <- seu_medium |> RunUMAP(dims = 1:10)
+```
+
+
+# Benchmarking speed
+
+```{r}
+bnch_small <- bench::mark(
+  Seurat::FeaturePlot(seu_small, features = features),
+  dittoSeq::multi_dittoDimPlot(seu_small, vars = features),
+  scCustomize::FeaturePlot_scCustom(seu_small, features = features),
+  iterations = 10,
+  check = FALSE,
+  memory = FALSE
+)
+
+bnch_small
+bnch_small |>  
+  ggplot(aes(x = total_time, y = expression)) +
+  geom_bar(stat = 'identity')
+```
+
+
+```{r}
+#| eval: false
+bnch_med <- bench::mark(
+  Seurat::FeaturePlot(seu_medium, features = features),
+  dittoSeq::multi_dittoDimPlot(seu_medium, vars = features),
+  scCustomize::FeaturePlot_scCustom(seu_medium, features = features),
+  iterations = 2,
+  check = FALSE,
+  memory = FALSE
+)
+
+bnch_med
+```
+
+
+## all
+
+```{r}
+#| eval: false
+bench_results <- bench::press(
+  seu = list(seu_small, seu_medium),
+  {
+    bench::mark(
+      Seurat::FeaturePlot(seu, features = features),
+      dittoSeq::multi_dittoDimPlot(seu, vars = features),
+      scCustomize::FeaturePlot_scCustom(seu, features = features),
+      iterations = 3,
+      check = FALSE,
+      memory = FALSE
+    )
+  }
+)
+```
+
+# Fast UMAP plots
+
+Under the hood, Seurat, and scCustomize leverage `scattermore` to plot a raster image of cell expression on UMAP plots. Seurat conditionally triggers this at >100k cells. This is great speed up, however plots suffer from following drawbacks:
+
+- Hard to see low number of expressing cells
+- Points are so small, difficult to appreciate smaller clusters
+
+
+```{r}
+library(scattermore)
+plt_data <- FetchData(
+  object = seu_small,
+  vars = c(c("UMAP_1", "UMAP_2"), 'ident', c('CD4'))
+)
+plt_data <- plt_data |>
+  tidyr::pivot_longer(
+    cols = matches(features),
+    names_to = '.feature',
+    values_to = '.abundance'
+  )
+
+p_cd4 <- plt_data |>
+  ggplot(aes(x = UMAP_1, y = UMAP_2, color = .abundance)) +
+  geom_scattermore() +
+  theme_void() +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis')
+p_cd4
+
+plot_umap <- function(seu, features, pointsize = 0) {
+  plt_data <- FetchData(
+    object = seu,
+    vars = c(c("UMAP_1", "UMAP_2"), 'ident', features)
+  )
+  plt_data <- plt_data |>
+    tidyr::pivot_longer(
+      cols = matches(features),
+      names_to = '.feature',
+      values_to = '.abundance'
+    )
+  
+  plt_data |>
+    ggplot(aes(x = UMAP_1, y = UMAP_2, color = .abundance)) +
+    geom_scattermore(pointsize = pointsize) +
+    theme_void() +
+    facet_wrap(vars(.feature)) +
+    scale_color_continuous(palette = 'viridis')
+}
+bnch_custom <- bench::mark(
+  custom = plot_umap(seu_small, features = features[1]),
+  Seurat = Seurat::FeaturePlot(seu_small, features = features[1]),
+  scCustomize = scCustomize::FeaturePlot_scCustom(seu_small, features = features[1]),
+  iterations = 10,
+  check = FALSE,
+  memory = FALSE
+)
+
+bnch_custom
+```
+
+We already see a significant speed up
+
+but we can't see the points
+
+increase size
+
+```{r}
+bnch_pointsize <- bench::press(
+  .pointsize = c(0, 0.5, 1, 1.5, 2.5, 5, 10),
+  bench::mark(
+    custom = plot_umap(seu_small, features = features[1], pointsize = .pointsize) |> print(),
+    iterations = 10,
+    check = FALSE,
+    memory = FALSE
+  )
+)
+
+bnch_pointsize
+```
+
+
+
+```{r}
+plot_umap(seu_small, features = features[1])
+
+plt_data |>
+  ggplot(aes(x = UMAP_1, y = UMAP_2, color = .abundance)) +
+  geom_scattermore(data = plt_data |> filter(.abundance == 0), color = 'grey') +
+  geom_scattermore(data = plt_data |> filter(.abundance > 0)) +
+  theme_void() +
+  facet_wrap(vars(.feature)) +
+  scale_color_continuous(palette = 'viridis')
+
+FeaturePlot(seu_small, features = 'CD4')
+FeaturePlot_scCustom(seu_small, features = 'CD4')
+```

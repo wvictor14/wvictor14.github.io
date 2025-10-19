@@ -9,7 +9,8 @@ Thumbs.db
 .quarto
 _site
 /.quarto/
-*site_libs*
+
 index-listing.json
 
 *:Zone.Identifier
+**/*.quarto_ipynb
