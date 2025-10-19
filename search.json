@@ -93,30 +93,30 @@
   {
     "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html",
     "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html",
-    "title": "Faster Gene Expression UMAP Plots for scRNAseq",
+    "title": "Speeding up UMAP plots for single cell gene expression analysis",
     "section": "",
-    "text": "Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as Seurat::DimPlot are limited by long plotting times, impeding efficient exploratory analysis.\nFor example, this is how long it takes to visualize 10 genes on a 14,000 cell dataset.\nCode\nbnch |&gt; select(expression, min, median, n_itr)\n\n\n# A tibble: 1 × 3\n  expression               min   median\n  &lt;bch:expr&gt;          &lt;bch:tm&gt; &lt;bch:tm&gt;\n1 Seurat, not sampled    4.42s    4.62s\nIt takes 4.6186666 seconds to plot 10 features with a 14,000 single cell dataset (number of cells = 14,000). This dataset is on the smaller side - considering that single cell datasets often reach the hundreds of thousands, the speed of plotting is a significant hamper on single cell analysis."
+    "text": "Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as Seurat::DimPlot are limited by long plotting times, impeding efficient exploratory analysis.\nFor example, this is how long it takes to visualize 10 genes on a 14,000 single cell RNAseq (scRNAseq) dataset.\nCode\nbnch |&gt; select(expression, min, median, n_itr)\n\n\n# A tibble: 1 × 3\n  expression               min   median\n  &lt;bch:expr&gt;          &lt;bch:tm&gt; &lt;bch:tm&gt;\n1 Seurat, not sampled    4.86s    5.53s\nIt takes 5.5272883 seconds to plot 10 features with a 14,000 single cell dataset (number of cells = 14,000). This dataset is on the smaller side - considering that single cell datasets often reach the hundreds of thousands, the speed of plotting is a significant hamper on single cell analysis."
   },
   {
     "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#libraries",
     "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#libraries",
-    "title": "Faster Gene Expression UMAP Plots for scRNAseq",
+    "title": "Speeding up UMAP plots for single cell gene expression analysis",
     "section": "Libraries",
-    "text": "Libraries\n\n\nCode\nlibrary(Seurat)\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(patchwork)\nlibrary(bench)\nlibrary(here)\nlibrary(purrr)\nlibrary(glue)\nlibrary(gt)\nlibrary(tidyr)\ntheme_custom &lt;- function() {\n  ggplot2::theme_void() +\n    theme(\n      axis.title.y = element_text(angle = 90),\n      axis.title.x = element_text(),\n      panel.border = element_rect(color = 'black', fill = NA, linewidth = 0.5, linetype = \"solid\"),\n      strip.text.x = element_text(size = rel(1.5)),\n      plot.margin = margin_auto(6, unit = \"pt\")\n    ) \n}\nggplot2::theme_set(\n  theme_custom()\n)"
+    "text": "Libraries\n\n\nCode\nlibrary(Seurat)\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(patchwork)\nlibrary(bench)\nlibrary(here)\nlibrary(purrr)\nlibrary(glue)\nlibrary(gt)\nlibrary(tidyr)\ntheme_custom &lt;- function() {\n  ggplot2::theme_void() +\n    theme(\n      axis.title.y = element_text(angle = 90),\n      axis.title.x = element_text(),\n      panel.border = element_rect(color = \"black\", fill = NA, linewidth = 0.5, linetype = \"solid\"),\n      strip.text.x = element_text(size = rel(1.5)),\n      plot.margin = margin_auto(6, unit = \"pt\")\n    )\n}\nggplot2::theme_set(\n  theme_custom()\n)"
   },
   {
     "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#parameters",
     "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#parameters",
-    "title": "Faster Gene Expression UMAP Plots for scRNAseq",
+    "title": "Speeding up UMAP plots for single cell gene expression analysis",
     "section": "Parameters",
     "text": "Parameters"
   },
   {
     "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#datasets",
     "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#datasets",
-    "title": "Faster Gene Expression UMAP Plots for scRNAseq",
+    "title": "Speeding up UMAP plots for single cell gene expression analysis",
     "section": "Datasets",
-    "text": "Datasets\n\nLoad seurat\n\n\nCode\nseu &lt;- readRDS( here('ifnb.rds'))\nrownames(seu)\n\n\n [1] \"S100A9\"   \"FCER1A\"   \"FCGR3A\"   \"SELL\"     \"CACYBP\"   \"GNLY\"    \n [7] \"CD8A\"     \"CD8B\"     \"IGJ\"      \"PPBP\"     \"CD14\"     \"HLA-DQA1\"\n[13] \"TSPAN13\"  \"GNG11\"    \"GIMAP5\"   \"IL3RA\"    \"FOXP3\"    \"CREM\"    \n[19] \"HBB\"      \"MS4A1\"    \"CD3E\"     \"CD3D\"     \"CD4\"      \"LYZ\"     \n[25] \"HSPH1\"    \"GPR183\"   \"HBA2\"     \"VMO1\"     \"CCL2\"     \"CCL5\"    \n[31] \"NME1\"     \"PRSS57\"   \"CD79A\"    \"NKG7\"     \"MIR155HG\"\n\n\nCode\nxy &lt;- FetchData(seu, vars = c('umap_1', 'umap_2', 'seurat_annotations', rownames(seu)))"
+    "text": "Datasets\n\nLoad seurat\n\n\nCode\nseu &lt;- readRDS(here(\"posts\", \"2025-10-13-fast-umap-plots-in-r\", \"ifnb.rds\"))\nrownames(seu)\n\n\n [1] \"S100A9\"   \"FCER1A\"   \"FCGR3A\"   \"SELL\"     \"CACYBP\"   \"GNLY\"    \n [7] \"CD8A\"     \"CD8B\"     \"IGJ\"      \"PPBP\"     \"CD14\"     \"HLA-DQA1\"\n[13] \"TSPAN13\"  \"GNG11\"    \"GIMAP5\"   \"IL3RA\"    \"FOXP3\"    \"CREM\"    \n[19] \"HBB\"      \"MS4A1\"    \"CD3E\"     \"CD3D\"     \"CD4\"      \"LYZ\"     \n[25] \"HSPH1\"    \"GPR183\"   \"HBA2\"     \"VMO1\"     \"CCL2\"     \"CCL5\"    \n[31] \"NME1\"     \"PRSS57\"   \"CD79A\"    \"NKG7\"     \"MIR155HG\"\n\n\nCode\nxy &lt;- FetchData(seu, vars = c(\"umap_1\", \"umap_2\", \"seurat_annotations\", rownames(seu)))"
   },
   {
     "objectID": "index.html",

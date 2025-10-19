@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Faster Gene Expression UMAP Plots for scRNAseq – Victor Yuan</title>
+<title>Speeding up UMAP plots for single cell gene expression analysis – Victor Yuan</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -190,7 +190,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Faster Gene Expression UMAP Plots for scRNAseq</h1>
+<h1 class="title">Speeding up UMAP plots for single cell gene expression analysis</h1>
   <div class="quarto-categories">
     <div class="quarto-category">R</div>
     <div class="quarto-category">data visualization</div>
@@ -213,7 +213,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 
 
 <p>Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as <code>Seurat::DimPlot</code> are limited by long plotting times, impeding efficient exploratory analysis.</p>
-<p>For example, this is how long it takes to visualize 10 genes on a 14,000 cell dataset.</p>
+<p>For example, this is how long it takes to visualize 10 genes on a 14,000 single cell RNAseq (scRNAseq) dataset.</p>
 <section id="setup" class="level1 hidden unlisted">
 <h1>Setup</h1>
 <section id="libraries" class="level2">
@@ -236,10 +236,10 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>),</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(),</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">'black'</span>, <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">panel.border =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>, <span class="at">linetype =</span> <span class="st">"solid"</span>),</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">strip.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">1.5</span>)),</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.margin =</span> <span class="fu">margin_auto</span>(<span class="dv">6</span>, <span class="at">unit =</span> <span class="st">"pt"</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    ) </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">theme_set</span>(</span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_custom</span>()</span>
@@ -257,7 +257,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>seu <span class="ot">&lt;-</span> <span class="fu">readRDS</span>( <span class="fu">here</span>(<span class="st">'ifnb.rds'</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>seu <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">here</span>(<span class="st">"posts"</span>, <span class="st">"2025-10-13-fast-umap-plots-in-r"</span>, <span class="st">"ifnb.rds"</span>))</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(seu)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
@@ -270,7 +270,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(seu, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">'umap_1'</span>, <span class="st">'umap_2'</span>, <span class="st">'seurat_annotations'</span>, <span class="fu">rownames</span>(seu)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(seu, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"umap_1"</span>, <span class="st">"umap_2"</span>, <span class="st">"seurat_annotations"</span>, <span class="fu">rownames</span>(seu)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
@@ -285,23 +285,23 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <pre><code># A tibble: 1 × 3
   expression               min   median
   &lt;bch:expr&gt;          &lt;bch:tm&gt; &lt;bch:tm&gt;
-1 Seurat, not sampled    4.42s    4.62s</code></pre>
+1 Seurat, not sampled    4.86s    5.53s</code></pre>
 </div>
 </div>
-<p>It takes 4.6186666 seconds to plot 10 features with a 14,000 single cell dataset (number of cells = 14,000). This dataset is on the smaller side - considering that single cell datasets often reach the hundreds of thousands, the speed of plotting is a significant hamper on single cell analysis.</p>
+<p>It takes 5.5272883 seconds to plot 10 features with a 14,000 single cell dataset (number of cells = 14,000). This dataset is on the smaller side - considering that single cell datasets often reach the hundreds of thousands, the speed of plotting is a significant hamper on single cell analysis.</p>
 <section id="sampling-to-speed-up-plotting" class="level1">
 <h1>Sampling to speed up plotting</h1>
 <p>Plotting tens to hundreds of thousands of cells is likely not completely necessary. We can explore whether plotting a sample of the dataset will be sufficient to maintain a faithful representation of the entire dataset, while improving speed.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>seu_sampled <span class="ot">&lt;-</span> seu[,<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(seu), <span class="at">size =</span> <span class="fl">0.1</span><span class="sc">*</span><span class="fu">ncol</span>(seu))]</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>seu_sampled <span class="ot">&lt;-</span> seu[, <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(seu), <span class="at">size =</span> <span class="fl">0.1</span> <span class="sc">*</span> <span class="fu">ncol</span>(seu))]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plots <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  seu <span class="sc">|&gt;</span> Seurat<span class="sc">::</span><span class="fu">FeaturePlot</span>(<span class="at">features =</span> <span class="fu">c</span>(<span class="st">'CD8A'</span>, <span class="st">'FOXP3'</span>), <span class="at">order =</span> <span class="cn">TRUE</span>) <span class="sc">&amp;</span> <span class="fu">coord_equal</span>(),</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  seu_sampled <span class="sc">|&gt;</span> Seurat<span class="sc">::</span><span class="fu">FeaturePlot</span>(<span class="at">features =</span> <span class="fu">c</span>(<span class="st">'CD8A'</span>, <span class="st">'FOXP3'</span>), <span class="at">order =</span> <span class="cn">TRUE</span>) <span class="sc">&amp;</span> <span class="fu">coord_equal</span>()</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>) </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>(plots[[<span class="dv">1</span>]] <span class="sc">&amp;</span> <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">'Not sampled'</span>)) <span class="sc">/</span> </span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  (plots[[<span class="dv">2</span>]] <span class="sc">&amp;</span> <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">'Sampled 10%'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  seu <span class="sc">|&gt;</span> Seurat<span class="sc">::</span><span class="fu">FeaturePlot</span>(<span class="at">features =</span> <span class="fu">c</span>(<span class="st">"CD8A"</span>, <span class="st">"FOXP3"</span>), <span class="at">order =</span> <span class="cn">TRUE</span>) <span class="sc">&amp;</span> <span class="fu">coord_equal</span>(),</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  seu_sampled <span class="sc">|&gt;</span> Seurat<span class="sc">::</span><span class="fu">FeaturePlot</span>(<span class="at">features =</span> <span class="fu">c</span>(<span class="st">"CD8A"</span>, <span class="st">"FOXP3"</span>), <span class="at">order =</span> <span class="cn">TRUE</span>) <span class="sc">&amp;</span> <span class="fu">coord_equal</span>()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>(plots[[<span class="dv">1</span>]] <span class="sc">&amp;</span> <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Not sampled"</span>)) <span class="sc">/</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  (plots[[<span class="dv">2</span>]] <span class="sc">&amp;</span> <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Sampled 10%"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -314,14 +314,14 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(bnch, bnch_sampled)  <span class="sc">|&gt;</span> <span class="fu">select</span>(expression, min, median, n_itr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(bnch, bnch_sampled) <span class="sc">|&gt;</span> <span class="fu">select</span>(expression, min, median, n_itr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 3
   expression                         min   median
   &lt;bch:expr&gt;                    &lt;bch:tm&gt; &lt;bch:tm&gt;
-1 Seurat, not sampled              4.42s    4.62s
-2 Seurat, sampled 10% (n=1,400)    2.97s    3.03s</code></pre>
+1 Seurat, not sampled              4.86s    5.53s
+2 Seurat, sampled 10% (n=1,400)    4.03s    4.68s</code></pre>
 </div>
 </div>
 <p>The improvement in speed is also slightly better, but still very slow. <code>Seurat::FeaturePlot</code> may have some processes that are slow. Let’s try a naive solution:</p>
@@ -345,10 +345,10 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <pre><code># A tibble: 1 × 3
   expression      min   median
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;
-1 naive         1.03s    1.08s</code></pre>
+1 naive         1.03s    1.03s</code></pre>
 </div>
 </div>
-<p>The naive plot takes 1.08 seconds or 4.29x faster.</p>
+<p>The naive plot takes 1.03 seconds or 5.36x faster.</p>
 <p>But there are drawbacks with this naive solution. Notably it’s missing some of features that <code>Seurat</code> smartly incorporates:</p>
 <ul>
 <li>point sizing based on number of points. When plotting larger datasets, the optimal point size is smaller to avoid overplotting</li>
@@ -365,26 +365,26 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>naive_plot2 <span class="ot">&lt;-</span> <span class="cf">function</span>(seu, features, <span class="at">ptsize =</span> <span class="cn">NULL</span>) {</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  expr_long <span class="ot">&lt;-</span> <span class="fu">extract_and_pivot</span>(seu, features)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># From Seurat:</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(ptsize)) {</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    ptsize <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="dv">3000</span> <span class="sc">/</span> <span class="fu">nrow</span>(expr_long), <span class="dv">1</span>)</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> expr_long <span class="sc">|&gt;</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.abundance <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.abundance <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> umap_1, <span class="at">y =</span> umap_2)) <span class="sc">+</span></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> expr_long <span class="sc">|&gt;</span> <span class="fu">filter</span>(.abundance <span class="sc">==</span> <span class="dv">0</span>), </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> expr_long <span class="sc">|&gt;</span> <span class="fu">filter</span>(.abundance <span class="sc">==</span> <span class="dv">0</span>),</span>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> ptsize,</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">'lightgrey'</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">"lightgrey"</span></span>
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> ptsize, </span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> ptsize,</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(<span class="at">color =</span> .abundance)</span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(feature)) </span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(feature))</span>
 <span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  p</span>
 <span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -396,7 +396,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">naive_plot2</span>(seu_sampled, features, <span class="at">ptsize =</span><span class="fu">min</span>(<span class="dv">1583</span> <span class="sc">/</span> <span class="fu">nrow</span>(seu_sampled), <span class="dv">1</span>) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">naive_plot2</span>(seu_sampled, features, <span class="at">ptsize =</span> <span class="fu">min</span>(<span class="dv">1583</span> <span class="sc">/</span> <span class="fu">nrow</span>(seu_sampled), <span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -433,45 +433,46 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>prepare_plot_data <span class="ot">&lt;-</span> <span class="cf">function</span>(seu, features, <span class="at">.n =</span> <span class="dv">1400</span>) {</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  seu_expr <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(seu, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">'umap_1'</span>, <span class="st">'umap_2'</span>, features))</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  background_data <span class="ot">&lt;-</span> seu_expr[,<span class="fu">c</span>(<span class="st">'umap_1'</span>,<span class="st">'umap_2'</span>)] <span class="sc">|&gt;</span> </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_sample</span>(<span class="at">n =</span> .n) </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  seu_expr_long <span class="ot">&lt;-</span> seu_expr <span class="sc">|&gt;</span>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">all_of</span>(features),</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">'feature'</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">'.abundance'</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.abundance <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_sample</span>(<span class="at">by =</span> feature, <span class="at">n =</span> .n<span class="sc">/</span><span class="dv">2</span>)</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">background =</span> background_data, <span class="at">abundance =</span> seu_expr_long</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>naive_plot3 <span class="ot">&lt;-</span> <span class="cf">function</span>(seu, features, <span class="at">ptsize =</span> <span class="cn">NULL</span>, <span class="at">.n =</span> <span class="dv">1400</span>) {</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  plot_data <span class="ot">&lt;-</span> <span class="fu">prepare_plot_data</span>(seu, features, <span class="at">.n =</span> .n)</span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># From Seurat:</span></span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(ptsize)) {</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    ptsize <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="dv">3000</span> <span class="sc">/</span> <span class="fu">nrow</span>(plot_data<span class="sc">$</span>abundance), <span class="dv">1</span>)</span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>  plot_data<span class="sc">$</span>background <span class="sc">|&gt;</span>   </span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> umap_1, <span class="at">y =</span> umap_2)) <span class="sc">+</span></span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> ptsize, <span class="at">color =</span> <span class="st">'grey'</span>) <span class="sc">+</span></span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> plot_data<span class="sc">$</span>abundance,</span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> ptsize,</span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(<span class="at">color =</span> .abundance)</span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(feature))</span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="fu">naive_plot3</span>(seu, features)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  seu_expr <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(seu, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"umap_1"</span>, <span class="st">"umap_2"</span>, features))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  background_data <span class="ot">&lt;-</span> seu_expr[, <span class="fu">c</span>(<span class="st">"umap_1"</span>, <span class="st">"umap_2"</span>)] <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_sample</span>(<span class="at">n =</span> .n)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  seu_expr_long <span class="ot">&lt;-</span> seu_expr <span class="sc">|&gt;</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">all_of</span>(features),</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">names_to =</span> <span class="st">"feature"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_to =</span> <span class="st">".abundance"</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.abundance <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_sample</span>(<span class="at">by =</span> feature, <span class="at">n =</span> .n <span class="sc">/</span> <span class="dv">2</span>)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">background =</span> background_data, <span class="at">abundance =</span> seu_expr_long</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>naive_plot3 <span class="ot">&lt;-</span> <span class="cf">function</span>(seu, features, <span class="at">ptsize =</span> <span class="cn">NULL</span>, <span class="at">.n =</span> <span class="dv">1400</span>) {</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  plot_data <span class="ot">&lt;-</span> <span class="fu">prepare_plot_data</span>(seu, features, <span class="at">.n =</span> .n)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># From Seurat:</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(ptsize)) {</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    ptsize <span class="ot">&lt;-</span> <span class="fu">min</span>(<span class="dv">3000</span> <span class="sc">/</span> <span class="fu">nrow</span>(plot_data<span class="sc">$</span>abundance), <span class="dv">1</span>)</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>  plot_data<span class="sc">$</span>background <span class="sc">|&gt;</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> umap_1, <span class="at">y =</span> umap_2)) <span class="sc">+</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size =</span> ptsize, <span class="at">color =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> plot_data<span class="sc">$</span>abundance,</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> ptsize,</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(<span class="at">color =</span> .abundance)</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(feature))</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="fu">naive_plot3</span>(seu, features)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -489,13 +490,13 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">with_sampling =</span> <span class="fu">prepare_plot_data</span>(seu, features, <span class="at">.n =</span> <span class="dv">1400</span>)<span class="sc">$</span>abundance,</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">without_sampling =</span> <span class="fu">prepare_plot_data</span>(seu, features, <span class="at">.n =</span> <span class="dv">14000</span>)<span class="sc">$</span>abundance</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)  <span class="sc">|&gt;</span> </span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(<span class="sc">~</span><span class="fu">count</span>(.x, feature)) <span class="sc">|&gt;</span> </span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="at">.id =</span> <span class="st">'type'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">map</span>(<span class="sc">~</span> <span class="fu">count</span>(.x, feature)) <span class="sc">|&gt;</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="at">.id =</span> <span class="st">"type"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from =</span> type, <span class="at">values_from =</span> n</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span>  </span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span></span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grand_summary_rows</span>(<span class="sc">-</span>feature, <span class="at">fns =</span> <span class="fu">list</span>(sum <span class="sc">~</span> <span class="fu">sum</span>(.)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
@@ -1034,14 +1035,14 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>bnch_final <span class="ot">&lt;-</span> bench<span class="sc">::</span><span class="fu">mark</span>(</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Seurat, not sampled</span><span class="st">`</span> <span class="ot">=</span> Seurat<span class="sc">::</span><span class="fu">FeaturePlot</span>(seu, <span class="at">features =</span> features) <span class="sc">|&gt;</span> <span class="fu">plot</span>(),</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Custom solution</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">naive_plot3</span>(seu, features) <span class="sc">|&gt;</span>  <span class="fu">plot</span>(),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Custom solution</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">naive_plot3</span>(seu, features) <span class="sc">|&gt;</span> <span class="fu">plot</span>(),</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">memory =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">check =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">iterations =</span> <span class="dv">4</span></span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span> <span class="fu">select</span>(expression, min, median, n_itr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>We improved the speed by 4.29 times for a 14,000 cell dataset. I expect relative performance to be even greater for larger single cell datasets, since our sampling approach plots the same number of points regardless of dataset size.</p>
+<p>We improved the speed by 5.36 times for a 14,000 cell dataset. I expect relative performance to be even greater for larger single cell datasets, since our sampling approach plots the same number of points regardless of dataset size.</p>
 <p>We accomplish while improving the ability to detect lowly expressed / sparse genes. See the results yourself:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Seurat::FeaturePlot</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">Custom Plot</a></li></ul>
@@ -1050,7 +1051,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Seurat<span class="sc">::</span><span class="fu">FeaturePlot</span>(seu, <span class="at">features =</span> features) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Seurat<span class="sc">::</span><span class="fu">FeaturePlot</span>(seu, <span class="at">features =</span> features)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
