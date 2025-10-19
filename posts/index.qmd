@@ -1,4 +1,5 @@
 ---
+title: Posts
 listing:
   contents:
    - '*.qmd'
@@ -6,7 +7,7 @@ listing:
     - "date desc"
     - "title desc"
   feed: true
-title: Posts
+  categories: true
 ---
 
 Some attempts have been made at blogging
