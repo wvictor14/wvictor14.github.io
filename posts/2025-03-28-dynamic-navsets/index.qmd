@@ -15,7 +15,7 @@ categories:
   - quarto
 ---
 
-![](posts/2025-03-28-dynamic-navsets/shinylive.gif)
+![](shinylive.gif)
 
 # Introduction
 
