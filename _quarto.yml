@@ -5,7 +5,6 @@ website:
   title: "Victor Yuan"
   site-url: https://victoryuan.com
   description: "Victor's website"
-  favicon: images/favicon.svg
   google-analytics: G-ZLSXEBDXV5
   navbar:
     search: true
