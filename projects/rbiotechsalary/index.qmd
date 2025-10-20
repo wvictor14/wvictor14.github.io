@@ -1,12 +1,21 @@
 ---
 title: rbiotechsalary
 date: 2024-05-15
+last-modified: 2025-10-19
 format:
   html:
     page-layout: full
     toc: false
 ---
 
-Salary data for the job search.
+![](image.png)
 
-A web app for exploring biotech/pharma salary data. Pulls from [r/biotech](https://reddit.com/rbiotech). Built with R Shiny and Docker. [Rshiny app](https://app.victoryuan.com/rbiotechsalary/) / [ojs static version](/rbiotechsalary/) /  [source](https://github.com/wvictor14/rbiotechsalary)
+In 2022 I pulled reddit's [r/biotech](https://www.reddit.com/r/biotech/comments/1i1rgxm/rbiotech_salary_and_company_survey_2025/) salary survey data to inform my job search. It involved extensive data cleaning, and ultimately was very useful information for a new graduate job seeker. Over time, I used this dataset to explore software, data visualization, and data science methods for my own personal interest. Some of these explorations I've shared here.
+
+The raw data is a live google excel file connected to a google form survey. The excel file is automatically pulled every week using github actions, and an ETL script ([source](https://github.com/wvictor14/rbiotechsalarydata)) publishes the dataset to github as a flat file ([csv](https://github.com/wvictor14/rbiotechsalarydata/blob/main/salary_results_cleaned.csv)). The ETL script (quarto markdown document) also publishes the *rendered* ETL script using quarto [here](https://victoryuan.com/rbiotechsalarydata/), which can be conveniently used to examine the different steps of the ETL pipeline in detail if needed.
+
+To explore the data, I built a [shiny app](https://app.victoryuan.com/rbiotechsalary/), which is a deployed docker container hosted on a digital ocean droplet. The app reads in the data from the flat file hosted on github. The app has interactive controls to filter the data and examine salary and other survey response information.
+
+I also have used this dataset to explore [using observable js to build dashboards](/rbiotechsalary/) 
+
+
