@@ -23,6 +23,6 @@ typography:
       source: google
   base: Work Sans
   headings:
-    color: gray-100
+    color: gray
   link:
     color: blue
