@@ -1,0 +1,28 @@
+meta:
+  name: Victor Yuan
+  link:
+    home: https://victoryuan.com/
+
+logo: 
+  small: favicon.svg
+
+color:
+  palette:
+    black: "#1A1A1A"
+    white: "#F9F9F9"
+    orange: "#FF6F20"
+    pink: "#FF3D7F"
+  foreground: black
+  background: white
+  primary: orange
+  danger: pink
+
+typography:
+  fonts:
+    - family: Work Sans
+      source: google
+  base: Work Sans
+  headings:
+    color: gray-100
+  link:
+    color: blue
