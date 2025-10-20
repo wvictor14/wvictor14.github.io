@@ -11,7 +11,7 @@
     "href": "projects/rbiotechsalary/index.html",
     "title": "rbiotechsalary",
     "section": "",
-    "text": "Salary data for the job search.\nA web app for exploring biotech/pharma salary data. Pulls from r/biotech. Built with R Shiny and Docker. Rshiny app / ojs static version / source"
+    "text": "In 2022 I pulled reddit’s r/biotech salary survey data to inform my job search. It involved extensive data cleaning, and ultimately was very useful information for a new graduate job seeker. Over time, I used this dataset to explore software, data visualization, and data science methods for my own personal interest. Some of these explorations I’ve shared here.\nThe raw data is a live google excel file connected to a google form survey. The excel file is automatically pulled every week using github actions, and an ETL script (source) publishes the dataset to github as a flat file (csv). The ETL script (quarto markdown document) also publishes the rendered ETL script using quarto here, which can be conveniently used to examine the different steps of the ETL pipeline in detail if needed.\nTo explore the data, I built a shiny app, which is a deployed docker container hosted on a digital ocean droplet. The app reads in the data from the flat file hosted on github. The app has interactive controls to filter the data and examine salary and other survey response information.\nI also have used this dataset to explore using observable js to build dashboards"
   },
   {
     "objectID": "projects/placentalmethylomebrowser/index.html",
@@ -88,7 +88,7 @@
     "href": "index.html",
     "title": "Victor Yuan",
     "section": "",
-    "text": "Hello! It’s nice to meet you. I am a bioinformatics data scientist at Sonoma Biotherapeutics where I use data science to help develop cell therapies to cure autoimmune diseases. I love making beautiful charts, developing scientific articles, climbing rocks, and specialty coffees.\nI studied epigenetics and placental biology, completing my PhD at University of British Columbia, Canada in 2022."
+    "text": "Hello! It’s nice to meet you. I am a bioinformatics data scientist at Sonoma Biotherapeutics where I use data science to help develop cell therapies to cure autoimmune diseases. I love making beautiful charts, developing reproducible scientific content, climbing boulders, and drinking specialty coffees.\nI studied epigenetics and placental biology, completing my PhD at University of British Columbia, Canada in 2022. Before that I did my BSc in molecular biology at Concordia University, Montreal."
   },
   {
     "objectID": "projects/bcchildcarebot/index.html",

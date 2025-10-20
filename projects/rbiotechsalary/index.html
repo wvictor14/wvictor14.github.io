@@ -31,7 +31,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../images/favicon.svg" rel="icon" type="image/svg+xml">
+<link href="../../favicon.svg" rel="icon" type="image/svg+xml">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -44,9 +44,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-44caba622533f63bde610db490d6122d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-44caba622533f63bde610db490d6122d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-44caba622533f63bde610db490d6122d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-ba08b4a5849d8833e707ef581e93cdcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-ba08b4a5849d8833e707ef581e93cdcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-ba08b4a5849d8833e707ef581e93cdcc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -165,8 +165,11 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </header>
 
 
-<p>Salary data for the job search.</p>
-<p>A web app for exploring biotech/pharma salary data. Pulls from <a href="https://reddit.com/rbiotech">r/biotech</a>. Built with R Shiny and Docker. <a href="https://app.victoryuan.com/rbiotechsalary/">Rshiny app</a> / <a href="../../rbiotechsalary/">ojs static version</a> / <a href="https://github.com/wvictor14/rbiotechsalary">source</a></p>
+<p><img src="image.png" class="img-fluid"></p>
+<p>In 2022 I pulled reddit’s <a href="https://www.reddit.com/r/biotech/comments/1i1rgxm/rbiotech_salary_and_company_survey_2025/">r/biotech</a> salary survey data to inform my job search. It involved extensive data cleaning, and ultimately was very useful information for a new graduate job seeker. Over time, I used this dataset to explore software, data visualization, and data science methods for my own personal interest. Some of these explorations I’ve shared here.</p>
+<p>The raw data is a live google excel file connected to a google form survey. The excel file is automatically pulled every week using github actions, and an ETL script (<a href="https://github.com/wvictor14/rbiotechsalarydata">source</a>) publishes the dataset to github as a flat file (<a href="https://github.com/wvictor14/rbiotechsalarydata/blob/main/salary_results_cleaned.csv">csv</a>). The ETL script (quarto markdown document) also publishes the <em>rendered</em> ETL script using quarto <a href="https://victoryuan.com/rbiotechsalarydata/">here</a>, which can be conveniently used to examine the different steps of the ETL pipeline in detail if needed.</p>
+<p>To explore the data, I built a <a href="https://app.victoryuan.com/rbiotechsalary/">shiny app</a>, which is a deployed docker container hosted on a digital ocean droplet. The app reads in the data from the flat file hosted on github. The app has interactive controls to filter the data and examine salary and other survey response information.</p>
+<p>I also have used this dataset to explore <a href="../../rbiotechsalary/">using observable js to build dashboards</a></p>
 
 
 
