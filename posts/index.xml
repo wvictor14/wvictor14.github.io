@@ -10,7 +10,1522 @@
 <atom:link href="https://victoryuan.com/posts/index.xml" rel="self" type="application/rss+xml"/>
 <description>Victor&#39;s website</description>
 <generator>quarto-1.8.25</generator>
-<lastBuildDate>Fri, 03 Oct 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 21 Oct 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Speeding up UMAP plots for single cell gene expression analysis</title>
+  <link>https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as <code>Seurat::DimPlot</code> are limited by long plotting times, impeding efficient exploratory analysis.</p>
+<p>For example, this is how long it takes to visualize 10 genes on a 14,000 single cell RNAseq (scRNAseq) dataset.</p>
+<section id="setup" class="level1 hidden unlisted">
+<h1>Setup</h1>
+<section id="libraries" class="level2">
+<h2 class="anchored" data-anchor-id="libraries">Libraries</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(Seurat)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(ggplot2)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(dplyr)</span>
+<span id="cb1-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(patchwork)</span>
+<span id="cb1-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(bench)</span>
+<span id="cb1-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(here)</span>
+<span id="cb1-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(purrr)</span>
+<span id="cb1-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(glue)</span>
+<span id="cb1-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(gt)</span>
+<span id="cb1-10"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyr)</span>
+<span id="cb1-11">theme_custom <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>() {</span>
+<span id="cb1-12">  ggplot2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_void</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb1-13">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme</span>(</span>
+<span id="cb1-14">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">axis.title.y =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">angle =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">90</span>),</span>
+<span id="cb1-15">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">axis.title.x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(),</span>
+<span id="cb1-16">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">panel.border =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_rect</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"black"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linetype =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"solid"</span>),</span>
+<span id="cb1-17">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">strip.text.x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">element_text</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rel</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>)),</span>
+<span id="cb1-18">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">plot.margin =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">margin_auto</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">unit =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pt"</span>)</span>
+<span id="cb1-19">    )</span>
+<span id="cb1-20">}</span>
+<span id="cb1-21">ggplot2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_set</span>(</span>
+<span id="cb1-22">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_custom</span>()</span>
+<span id="cb1-23">)</span></code></pre></div></div>
+</details>
+</div>
+</section>
+<section id="parameters" class="level2">
+<h2 class="anchored" data-anchor-id="parameters">Parameters</h2>
+</section>
+<section id="datasets" class="level2">
+<h2 class="anchored" data-anchor-id="datasets">Datasets</h2>
+<section id="load-seurat" class="level3">
+<h3 class="anchored" data-anchor-id="load-seurat">Load seurat</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">seu <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">readRDS</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">here</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"posts"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2025-10-13-fast-umap-plots-in-r"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ifnb.rds"</span>))</span>
+<span id="cb2-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rownames</span>(seu)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "S100A9"   "FCER1A"   "FCGR3A"   "SELL"     "CACYBP"   "GNLY"    
+ [7] "CD8A"     "CD8B"     "IGJ"      "PPBP"     "CD14"     "HLA-DQA1"
+[13] "TSPAN13"  "GNG11"    "GIMAP5"   "IL3RA"    "FOXP3"    "CREM"    
+[19] "HBB"      "MS4A1"    "CD3E"     "CD3D"     "CD4"      "LYZ"     
+[25] "HSPH1"    "GPR183"   "HBA2"     "VMO1"     "CCL2"     "CCL5"    
+[31] "NME1"     "PRSS57"   "CD79A"    "NKG7"     "MIR155HG"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">xy <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">FetchData</span>(seu, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">vars =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"umap_1"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"umap_2"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"seurat_annotations"</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rownames</span>(seu)))</span></code></pre></div></div>
+</details>
+</div>
+</section>
+</section>
+</section>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">bnch <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(expression, min, median, n_itr)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  expression               min   median
+  &lt;bch:expr&gt;          &lt;bch:tm&gt; &lt;bch:tm&gt;
+1 Seurat, not sampled    5.31s    6.32s</code></pre>
+</div>
+</div>
+<p>It takes 6.3216542 seconds to plot 10 features with a 14,000 single cell dataset (number of cells = 14,000). This dataset is on the smaller side - considering that single cell datasets often reach the hundreds of thousands, the speed of plotting is a significant hamper on single cell analysis.</p>
+<section id="sampling-to-speed-up-plotting" class="level1">
+<h1>Sampling to speed up plotting</h1>
+<p>Plotting tens to hundreds of thousands of cells is likely not completely necessary. We can explore whether plotting a sample of the dataset will be sufficient to maintain a faithful representation of the entire dataset, while improving speed.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">seu_sampled <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> seu[, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ncol</span>(seu), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ncol</span>(seu))]</span>
+<span id="cb7-2">plots <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(</span>
+<span id="cb7-3">  seu <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> Seurat<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">FeaturePlot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">features =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"CD8A"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"FOXP3"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">order =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coord_equal</span>(),</span>
+<span id="cb7-4">  seu_sampled <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> Seurat<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">FeaturePlot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">features =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"CD8A"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"FOXP3"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">order =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coord_equal</span>()</span>
+<span id="cb7-5">)</span>
+<span id="cb7-6">(plots[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">subtitle =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Not sampled"</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span></span>
+<span id="cb7-7">  (plots[[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">subtitle =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Sampled 10%"</span>))</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="1000"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bind_rows</span>(bnch, bnch_sampled) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(expression, min, median, n_itr)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  expression                         min   median
+  &lt;bch:expr&gt;                    &lt;bch:tm&gt; &lt;bch:tm&gt;
+1 Seurat, not sampled              5.31s    6.32s
+2 Seurat, sampled 10% (n=1,400)    3.61s     3.8s</code></pre>
+</div>
+</div>
+<p>The improvement in speed is also slightly better, but still very slow. <code>Seurat::FeaturePlot</code> may have some processes that are slow. Let’s try a naive solution:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">naive_plot</span>(seu_sampled, features)</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="700"></p>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">bnch_naive <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(expression, min, median, n_itr)</span></code></pre></div></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+  expression      min   median
+  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;
+1 naive         1.24s    1.25s</code></pre>
+</div>
+</div>
+<p>The naive plot takes 1.25 seconds or 5.05x faster.</p>
+<p>But there are drawbacks with this naive solution. Notably it’s missing some of features that <code>Seurat</code> smartly incorporates:</p>
+<ul>
+<li>point sizing based on number of points. When plotting larger datasets, the optimal point size is smaller to avoid overplotting</li>
+<li>Hard to see sparsely and low-expressed genes e.g.&nbsp;FOXP3 and CD4. This is introduced by the combined color scale, mapping low/highe xpression to one common color scale across all genes. Seurat maintains an independent color scale for each gene</li>
+</ul>
+<p>Let’s see if we can address these shortcomings without trading off speed.</p>
+</section>
+<section id="point-sizing" class="level1">
+<h1>Point sizing</h1>
+<p><code>Seurat::FeaturePlot</code> uses a simple formula to calculate point size in relation to number of cells. But it doesn’t take into account when visualizing multiple features.</p>
+<p>Here we adjust this over total number of cells * total number of features.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1">naive_plot2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(seu, features, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ptsize =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span>) {</span>
+<span id="cb13-2">  expr_long <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">extract_and_pivot</span>(seu, features)</span>
+<span id="cb13-3"></span>
+<span id="cb13-4">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># From Seurat:</span></span>
+<span id="cb13-5">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.null</span>(ptsize)) {</span>
+<span id="cb13-6">    ptsize <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3000</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nrow</span>(expr_long), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb13-7">  }</span>
+<span id="cb13-8"></span>
+<span id="cb13-9">  p <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> expr_long <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb13-10">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(.abundance <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb13-11">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> umap_1, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> umap_2)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb13-12">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(</span>
+<span id="cb13-13">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> expr_long <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(.abundance <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>),</span>
+<span id="cb13-14">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> ptsize,</span>
+<span id="cb13-15">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"lightgrey"</span></span>
+<span id="cb13-16">    ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb13-17">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(</span>
+<span id="cb13-18">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> ptsize,</span>
+<span id="cb13-19">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> .abundance)</span>
+<span id="cb13-20">    ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb13-21">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_color_viridis_c</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb13-22">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_wrap</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vars</span>(feature))</span>
+<span id="cb13-23">  p</span>
+<span id="cb13-24">}</span></code></pre></div></div>
+</details>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">number of cells (Seurat)</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">number of cells * features</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">naive_plot2</span>(seu_sampled, features, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ptsize =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1583</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nrow</span>(seu_sampled), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="700"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">naive_plot2</span>(seu_sampled, features)</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="700"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="lowly-expressed-genes" class="level1">
+<h1>Lowly expressed genes</h1>
+<p>To address missing lowly expressed genes when sampling, we can write some logic where when a gene is sparsely expressed, we keep all cells.</p>
+<p>The question is at what level of sparseness do we decide to keep all cells.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1">prepare_plot_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(seu, features, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1400</span>) {</span>
+<span id="cb16-2">  seu_expr <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">FetchData</span>(seu, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">vars =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"umap_1"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"umap_2"</span>, features))</span>
+<span id="cb16-3">  background_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> seu_expr[, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"umap_1"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"umap_2"</span>)] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb16-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">slice_sample</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> .n)</span>
+<span id="cb16-5"></span>
+<span id="cb16-6">  seu_expr_long <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> seu_expr <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb16-7">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pivot_longer</span>(</span>
+<span id="cb16-8">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">all_of</span>(features),</span>
+<span id="cb16-9">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">names_to =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"feature"</span>,</span>
+<span id="cb16-10">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">values_to =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">".abundance"</span></span>
+<span id="cb16-11">    ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb16-12">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(.abundance <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb16-13">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">slice_sample</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> feature, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> .n <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb16-14"></span>
+<span id="cb16-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">return</span>(</span>
+<span id="cb16-16">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(</span>
+<span id="cb16-17">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">background =</span> background_data, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">abundance =</span> seu_expr_long</span>
+<span id="cb16-18">    )</span>
+<span id="cb16-19">  )</span>
+<span id="cb16-20">}</span>
+<span id="cb16-21"></span>
+<span id="cb16-22">naive_plot3 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(seu, features, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ptsize =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1400</span>) {</span>
+<span id="cb16-23">  plot_data <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">prepare_plot_data</span>(seu, features, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.n =</span> .n)</span>
+<span id="cb16-24"></span>
+<span id="cb16-25">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># From Seurat:</span></span>
+<span id="cb16-26">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.null</span>(ptsize)) {</span>
+<span id="cb16-27">    ptsize <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3000</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nrow</span>(plot_data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>abundance), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb16-28">  }</span>
+<span id="cb16-29">  plot_data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>background <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb16-30">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> umap_1, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> umap_2)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb16-31">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> ptsize, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"grey"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb16-32">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(</span>
+<span id="cb16-33">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> plot_data<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>abundance,</span>
+<span id="cb16-34">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> ptsize,</span>
+<span id="cb16-35">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> .abundance)</span>
+<span id="cb16-36">    ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb16-37">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_color_viridis_c</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb16-38">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_wrap</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vars</span>(feature))</span>
+<span id="cb16-39">}</span>
+<span id="cb16-40"></span>
+<span id="cb16-41"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">naive_plot3</span>(seu, features)</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="700"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We implemented some conditional sampling based on the total number of expressed genes, and the desired sample size. All cells are retained for genes that have less than half of the desired sample (1400/2 = 700). This results in a visualization where highly expressed genes are sampled proportionally, and sparsely expressed genes are retained. This can be helpful in identifying cells that express these lowly expressed genes.</p>
+<p>Here are the exact number of cells sampled for each gene:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(</span>
+<span id="cb17-2">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">with_sampling =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">prepare_plot_data</span>(seu, features, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1400</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>abundance,</span>
+<span id="cb17-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">without_sampling =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">prepare_plot_data</span>(seu, features, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">14000</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>abundance</span>
+<span id="cb17-4">) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb17-5">  purrr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">map</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">count</span>(.x, feature)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb17-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bind_rows</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.id =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"type"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb17-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pivot_wider</span>(</span>
+<span id="cb17-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">names_from =</span> type, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">values_from =</span> n</span>
+<span id="cb17-9">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb17-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">gt</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb17-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">grand_summary_rows</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>feature, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fns =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">list</span>(sum <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(.)))</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div id="merkqscunw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#merkqscunw table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#merkqscunw thead, #merkqscunw tbody, #merkqscunw tfoot, #merkqscunw tr, #merkqscunw td, #merkqscunw th {
+  border-style: none;
+}
+
+#merkqscunw p {
+  margin: 0;
+  padding: 0;
+}
+
+#merkqscunw .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#merkqscunw .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#merkqscunw .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#merkqscunw .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#merkqscunw .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#merkqscunw .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#merkqscunw .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#merkqscunw .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#merkqscunw .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#merkqscunw .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#merkqscunw .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#merkqscunw .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#merkqscunw .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#merkqscunw .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#merkqscunw .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#merkqscunw .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#merkqscunw .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#merkqscunw .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#merkqscunw .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#merkqscunw .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#merkqscunw .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#merkqscunw .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#merkqscunw .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#merkqscunw .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#merkqscunw .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#merkqscunw .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#merkqscunw .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#merkqscunw .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#merkqscunw .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#merkqscunw .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#merkqscunw .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#merkqscunw .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#merkqscunw .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#merkqscunw .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#merkqscunw .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#merkqscunw .gt_left {
+  text-align: left;
+}
+
+#merkqscunw .gt_center {
+  text-align: center;
+}
+
+#merkqscunw .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#merkqscunw .gt_font_normal {
+  font-weight: normal;
+}
+
+#merkqscunw .gt_font_bold {
+  font-weight: bold;
+}
+
+#merkqscunw .gt_font_italic {
+  font-style: italic;
+}
+
+#merkqscunw .gt_super {
+  font-size: 65%;
+}
+
+#merkqscunw .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#merkqscunw .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#merkqscunw .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#merkqscunw .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#merkqscunw .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#merkqscunw .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#merkqscunw .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#merkqscunw .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#merkqscunw div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="feature" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">feature</th>
+<th id="with_sampling" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">with_sampling</th>
+<th id="without_sampling" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">without_sampling</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<th id="stub_1_1" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_1 feature">CD14</td>
+<td class="gt_row gt_right" headers="stub_1_1 with_sampling">700</td>
+<td class="gt_row gt_right" headers="stub_1_1 without_sampling">2888</td>
+</tr>
+<tr class="even">
+<th id="stub_1_2" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_2 feature">CD3E</td>
+<td class="gt_row gt_right" headers="stub_1_2 with_sampling">700</td>
+<td class="gt_row gt_right" headers="stub_1_2 without_sampling">2198</td>
+</tr>
+<tr class="odd">
+<th id="stub_1_3" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_3 feature">CD4</td>
+<td class="gt_row gt_right" headers="stub_1_3 with_sampling">251</td>
+<td class="gt_row gt_right" headers="stub_1_3 without_sampling">251</td>
+</tr>
+<tr class="even">
+<th id="stub_1_4" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_4 feature">CD8B</td>
+<td class="gt_row gt_right" headers="stub_1_4 with_sampling">700</td>
+<td class="gt_row gt_right" headers="stub_1_4 without_sampling">925</td>
+</tr>
+<tr class="odd">
+<th id="stub_1_5" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_5 feature">FCER1A</td>
+<td class="gt_row gt_right" headers="stub_1_5 with_sampling">101</td>
+<td class="gt_row gt_right" headers="stub_1_5 without_sampling">101</td>
+</tr>
+<tr class="even">
+<th id="stub_1_6" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_6 feature">FOXP3</td>
+<td class="gt_row gt_right" headers="stub_1_6 with_sampling">13</td>
+<td class="gt_row gt_right" headers="stub_1_6 without_sampling">13</td>
+</tr>
+<tr class="odd">
+<th id="stub_1_7" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_7 feature">GNLY</td>
+<td class="gt_row gt_right" headers="stub_1_7 with_sampling">700</td>
+<td class="gt_row gt_right" headers="stub_1_7 without_sampling">1299</td>
+</tr>
+<tr class="even">
+<th id="stub_1_8" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_8 feature">LYZ</td>
+<td class="gt_row gt_right" headers="stub_1_8 with_sampling">700</td>
+<td class="gt_row gt_right" headers="stub_1_8 without_sampling">4973</td>
+</tr>
+<tr class="odd">
+<th id="stub_1_9" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row"></th>
+<td class="gt_row gt_left" headers="stub_1_9 feature">MS4A1</td>
+<td class="gt_row gt_right" headers="stub_1_9 with_sampling">700</td>
+<td class="gt_row gt_right" headers="stub_1_9 without_sampling">742</td>
+</tr>
+<tr class="even">
+<th id="grand_summary_stub_1" class="gt_row gt_left gt_stub gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row" data-quarto-table-cell-role="th" scope="row">sum</th>
+<td class="gt_row gt_left gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row" headers="grand_summary_stub_1 feature">—</td>
+<td class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row" headers="grand_summary_stub_1 with_sampling">4565</td>
+<td class="gt_row gt_right gt_grand_summary_row gt_first_grand_summary_row gt_last_summary_row" headers="grand_summary_stub_1 without_sampling">13390</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="final-comparison" class="level1">
+<h1>Final comparison</h1>
+<p>Finally, let’s compare our solution with <code>Seurat::FeaturePlot</code> over 10 genes for 14000 cells:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1">bnch_final <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> bench<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mark</span>(</span>
+<span id="cb18-2">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Seurat, not sampled</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> Seurat<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">FeaturePlot</span>(seu, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">features =</span> features) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot</span>(),</span>
+<span id="cb18-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Custom solution</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">naive_plot3</span>(seu, features) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot</span>(),</span>
+<span id="cb18-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">memory =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>,</span>
+<span id="cb18-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">check =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>,</span>
+<span id="cb18-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">iterations =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span></span>
+<span id="cb18-7">) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(expression, min, median, n_itr)</span></code></pre></div></div>
+</details>
+</div>
+<p>We improved the speed by 5.05 times for a 14,000 cell dataset. I expect relative performance to be even greater for larger single cell datasets, since our sampling approach plots the same number of points regardless of dataset size.</p>
+<p>We accomplish while improving the ability to detect lowly expressed / sparse genes. See the results yourself:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset nav-pills">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" aria-controls="tabset-2-1" aria-selected="true" href="">Seurat::FeaturePlot</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" aria-controls="tabset-2-2" aria-selected="false" href="">Custom Plot</a></li></ul>
+<div class="tab-content nav-pills">
+<div id="tabset-2-1" class="tab-pane active" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1">Seurat<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">FeaturePlot</span>(seu, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">features =</span> features)</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="1000"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">naive_plot3</span>(seu, features)</span></code></pre></div></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="1000"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>The drawback of this increased sensitivity is there is more noise. Especially for the higher expressed genes, there’s a lot of lowly expressed cells that that appear highlighted, which might be distracting.</p>
+
+
+</section>
+
+<script data-goatcounter="https://victor2wy.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script> ]]></description>
+  <category>R</category>
+  <category>data visualization</category>
+  <category>bioinformatics</category>
+  <guid>https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/</guid>
+  <pubDate>Tue, 21 Oct 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>2025 Posit Plotnine and Great Tables Contest Submission</title>
   <dc:creator>Victor Yuan</dc:creator>
