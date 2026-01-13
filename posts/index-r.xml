@@ -9,7 +9,7 @@
 <link>https://victoryuan.com/posts/#category=R</link>
 <atom:link href="https://victoryuan.com/posts/index-r.xml" rel="self" type="application/rss+xml"/>
 <description>Victor&#39;s website</description>
-<generator>quarto-1.8.25</generator>
+<generator>quarto-1.8.26</generator>
 <lastBuildDate>Tue, 21 Oct 2025 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Speeding up UMAP plots for single cell gene expression analysis</title>
