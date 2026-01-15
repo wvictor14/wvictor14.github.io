@@ -7,5 +7,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.0.0
 Suggests: 
     usethis
+    devtools
 Imports: 
-    shinylive
+    quarto
+    dplyr
+    tidyr
