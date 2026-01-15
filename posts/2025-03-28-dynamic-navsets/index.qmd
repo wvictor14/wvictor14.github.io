@@ -13,6 +13,7 @@ filters:
 categories:
   - R
   - quarto
+embed-resources: false
 ---
 
 ![](shinylive.gif)
@@ -84,12 +85,13 @@ server <- function(session, input, output) {
 
   # 2. create the ui based on the `island` column
   output$dynamic_navset_card <- renderUI({
-    nav_items <- unique(penguins_filtered()$island) |> purrr::map(
-      ~ nav_panel(
-        title = .x,
-        plotOutput(glue("plot_{.x}"))
+    nav_items <- unique(penguins_filtered()$island) |>
+      purrr::map(
+        ~ nav_panel(
+          title = .x,
+          plotOutput(glue("plot_{.x}"))
+        )
       )
-    )
     navset_card_pill(!!!nav_items)
   })
 
@@ -120,7 +122,9 @@ on the relevant subset of data.
 
 Here is a demonstration with a shinylive app
 
-```{shinylive-r}
+<!-- add r-shinylive to code chunk to render, currently off because render bug --->
+```{r}
+#| eval: false
 #| standalone: true
 #| viewerHeight: 400
 library(bslib)
@@ -153,12 +157,13 @@ server <- function(session, input, output) {
 
   # 2. create the ui based on the `island` column
   output$dynamic_navset_card <- renderUI({
-    nav_items <- unique(penguins_filtered()$island) |> purrr::map(
-      ~ nav_panel(
-        title = .x,
-        plotOutput(glue("plot_{.x}"), width = "80%")
+    nav_items <- unique(penguins_filtered()$island) |>
+      purrr::map(
+        ~ nav_panel(
+          title = .x,
+          plotOutput(glue("plot_{.x}"), width = "80%")
+        )
       )
-    )
     navset_card_pill(!!!nav_items, height = 360)
   })
 
