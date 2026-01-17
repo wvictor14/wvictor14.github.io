@@ -7,6 +7,7 @@ categories:
   - R
   - data visualization
   - bioinformatics
+image: labourcan.gif
 ---
 
 On August 21 2025, Posit announced the [2025 Table and Plotnine contests](https://posit.co/blog/announcing-the-2025-table-and-plotnine-contests/). I was always impressed with the resulting submissions from previous years, so this year I decided to participate.

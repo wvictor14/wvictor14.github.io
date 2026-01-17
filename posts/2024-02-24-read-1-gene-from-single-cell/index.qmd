@@ -5,6 +5,7 @@ date: '2024-02-24'
 categories:
   - R
   - bioinformatics
+draft: true
 ---
 
 *"Can you check gene x for me?"* says every scientist I ever did RNAseq analysis for.

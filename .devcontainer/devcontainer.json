@@ -65,12 +65,8 @@
   // map 8787 (rstudio in container) to host 8889
   // modify the 8888 to whatever you want
   "appPort": [
-    "8890:8787"
-  ],
-  "forwardPorts": [
     "8890:8787",
-    9000, // httpgd
-    "4200:4210" // quarto preview
+    "4210:4210"
   ],
   "shutdownAction": "none",
   "remoteUser": "rstudio"

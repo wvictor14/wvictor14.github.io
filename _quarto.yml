@@ -1,5 +1,10 @@
 project:
   type: website
+  preview:
+    host: 0.0.0.0
+    port: 4210 # match devcontainer.json forwarded port
+    browser: false # Optional: automatically open a browser
+    navigate: false # Optional: automatically navigate the browser
 
 website:
   title: "Victor Yuan"
@@ -33,4 +38,4 @@ format:
     toc: true
 
 execute:
-  freeze: auto
+  freeze: true
