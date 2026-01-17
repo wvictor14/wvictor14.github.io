@@ -1,5 +1,5 @@
 ---
-title: rbiotechsalary
+title: An open data pipeline for transparent biotech compensation
 date: 2024-05-15
 last-modified: 2026-01-17
 format:

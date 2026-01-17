@@ -1,5 +1,5 @@
 ---
-title: Finding Child Care in BC, Canada Using Open Source Data
+title: Making child care vacancies accessible for british columbians 
 date: 2024-06-09
 image: bcchildcarebot_dashboard.png
 ---
