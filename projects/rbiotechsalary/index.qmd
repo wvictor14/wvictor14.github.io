@@ -1,21 +1,48 @@
 ---
 title: rbiotechsalary
 date: 2024-05-15
-last-modified: 2025-10-19
+last-modified: 2026-01-17
 format:
   html:
     page-layout: full
     toc: false
+image: rbiotechsalary.png
 ---
 
-![](image.png)
+![Screenshot of rbiotechsalary app](rbiotechsalary.png)
 
-In 2022 I pulled reddit's [r/biotech](https://www.reddit.com/r/biotech/comments/1i1rgxm/rbiotech_salary_and_company_survey_2025/) salary survey data to inform my job search. It involved extensive data cleaning, and ultimately was very useful information for a new graduate job seeker. Over time, I used this dataset to explore software, data visualization, and data science methods for my own personal interest. Some of these explorations I've shared here.
+This project leverages salary survey data collected from Reddit’s [r/biotech](https://www.reddit.com/r/biotech/comments/1i1rgxm/rbiotech_salary_and_company_survey_2025/) community to explore compensation trends in biotechnology. Initially, I used this data to inform my own job search as a new graduate, but over time it became a foundation for exploring data cleaning, visualization, and interactive data science techniques.
 
-The raw data is a live google excel file connected to a google form survey. The excel file is automatically pulled every week using github actions, and an ETL script ([source](https://github.com/wvictor14/rbiotechsalarydata)) publishes the dataset to github as a flat file ([csv](https://github.com/wvictor14/rbiotechsalarydata/blob/main/salary_results_cleaned.csv)). The ETL script (quarto markdown document) also publishes the *rendered* ETL script using quarto [here](https://victoryuan.com/rbiotechsalarydata/), which can be conveniently used to examine the different steps of the ETL pipeline in detail if needed.
+# Data Pipeline
 
-To explore the data, I built a [shiny app](https://app.victoryuan.com/rbiotechsalary/), which is a deployed docker container hosted on a digital ocean droplet. The app reads in the data from the flat file hosted on github. The app has interactive controls to filter the data and examine salary and other survey response information.
+The survey responses are collected via a Google Form, stored in a live Google Sheet, and automatically pulled weekly using GitHub Actions. An ETL pipeline (Quarto Markdown script) cleans, validates, and publishes the dataset as a flat CSV file on GitHub:
 
-I also have used this dataset to explore [using observable js to build dashboards](/rbiotechsalary/) 
+[ETL source code](https://github.com/wvictor14/rbiotechsalarydata)
 
+[Published dataset (CSV) *updates daily](https://github.com/wvictor14/rbiotechsalarydata/blob/main/salary_results_cleaned.csv)
 
+[Rendered ETL pipeline](https://victoryuan.com/rbiotechsalarydata/)
+
+# Interactive Applications
+
+To explore and visualize the data, I developed a Shiny app deployed as a Docker container on a Digital Ocean droplet. The app reads the cleaned dataset directly from GitHub and provides:
+
+- Interactive filters for examining salary distributions, experience, and other survey responses.
+- Visualizations that allow users to explore trends by role, company type, or other factors.
+
+This setup ensures that the dataset remains up-to-date, reproducible, and transparent while requiring minimal manual intervention.
+
+[Access the live Shiny app](https://app.victoryuan.com/rbiotechsalary/)
+
+Additionally, I have explored Observable JS dashboards as an alternative approach for interactive data exploration:
+
+- [Observable JS dashboard](/rbiotechsalary/) 
+
+# Technologies & Tools
+
+- GitHub Actions – automated data retrieval and ETL workflow scheduling.
+- Quarto – reproducible data pipeline documentation and rendering.
+- Shiny & Docker – interactive web app development and containerized deployment.
+- Digital Ocean – hosting for production Shiny application.
+- CSV & Google Sheets – data ingestion and storage.
+- Observable JS – alternative approach for interactive data dashboards.
