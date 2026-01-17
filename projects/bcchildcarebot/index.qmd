@@ -1,14 +1,34 @@
 ---
-title: BC Child Care Vacancies Dashboard + Mastodon Bot
+title: Finding Child Care in BC, Canada Using Open Source Data
 date: 2024-06-09
+image: bcchildcarebot_dashboard.png
 ---
 
-A data scientist finds childcare.
+![Screenshot of BC Childcare Dashboard](bcchildcarebot_dashboard.png)
 
-This 2 part project extracts and deliveries child care vacancies using open-source BC childcare dataset. It uses github actions to automatically pull the updated data every day to 
+This project leverages publicly available Government of BC's Child Care Vacancies to identify and disseminate up-to-date child care vacancy across the province.
 
-1. post to mastodon new vacancies, and 
-2. display vacancies in a webpage
+The system is implemented as an automated data pipeline that ingests a publicly available open data endpoint that refreshes daily, processes vacancy information, and distributes results through two public-facing channels:
+
+
+1. An interactive web dashboard that allows users to browse current vacancies in a centralized, accessible format.
+
+2. Automated social media reporting via a Mastodon bot that posts newly available child care vacancies.
+
+::: {.callout-note}
+Note the Mastodon bot has been decommisioned due to the [closure of the `bots.in.space` server in 2025](https://news.ycombinator.com/item?id=41989511). At this time, I have not yet looked for alternative hosting options.
+:::
+
+The goal of this project was to deliver these resources while minimizing overhead and maintenance, ensuring longevity without overburdening operations.
+
+The pipeline is orchestrated using GitHub Actions, enabling scheduled data retrieval, validation, transformation, and deployment without manual intervention. This ensures that published information remains current, reliable, and reproducible.
+
+# Dashboard
+
+Last updated: 2025-03-20 (the source, but the data is updated every day)
+
+- [Dashboard](https://victoryuan.com/bcchildcarebot)
+- [source](https://github.com/wvictor14/bcchildcarebot)
 
 # Mastodon bot
 
@@ -18,9 +38,16 @@ Last updated: 2024-06-09
 - [Mastodon bot](https://botsin.space/@bcchildcarebot) 
 - [source](https://github.com/wvictor14/bcchildcarebot)
 
-# Dashboard
+# Tools & Technology
 
-Last updated: 2025-03-20 (the source, but the data is updated every day)
+- GitHub Actions – orchestrates the automated pipeline, including daily data retrieval, validation, transformation, and deployment.
 
-- [Dashboard](https://victoryuan.com/bcchildcarebot)
-- [source](https://github.com/wvictor14/bcchildcarebot)
+- Open Data Integration – ingests daily-updated CSV datasets from the Government of British Columbia, ensuring reliable, up-to-date information.
+
+- Web Dashboard – built using Quarto and R to provide an interactive, accessible interface for end users.
+
+- Social Media Automation – Mastodon bot (decommissioned) demonstrated automated content delivery and engagement.
+
+- Version Control & Reproducibility – all source code and workflow managed with GitHub, supporting transparent and maintainable operations.
+
+- Automation & Scheduling – minimal manual intervention required; system designed for longevity and low-maintenance operation.
