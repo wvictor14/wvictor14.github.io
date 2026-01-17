@@ -9,7 +9,7 @@
 <link>https://victoryuan.com/posts/#category=R</link>
 <atom:link href="https://victoryuan.com/posts/index-r.xml" rel="self" type="application/rss+xml"/>
 <description>Victor&#39;s website</description>
-<generator>quarto-1.8.26</generator>
+<generator>quarto-1.8.27</generator>
 <lastBuildDate>Tue, 21 Oct 2025 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Speeding up UMAP plots for single cell gene expression analysis</title>
@@ -1525,6 +1525,7 @@ font-style: inherit;">naive_plot3</span>(seu, features)</span></code></pre></div
   <category>bioinformatics</category>
   <guid>https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/</guid>
   <pubDate>Tue, 21 Oct 2025 00:00:00 GMT</pubDate>
+  <media:content url="https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/umap-thumbnail.png" medium="image" type="image/png" height="115" width="144"/>
 </item>
 <item>
   <title>2025 Posit Plotnine and Great Tables Contest Submission</title>
@@ -1560,6 +1561,7 @@ font-style: inherit;">naive_plot3</span>(seu, features)</span></code></pre></div
   <category>bioinformatics</category>
   <guid>https://victoryuan.com/posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/</guid>
   <pubDate>Fri, 03 Oct 2025 00:00:00 GMT</pubDate>
+  <media:content url="https://victoryuan.com/posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/labourcan.gif" medium="image" type="image/gif"/>
 </item>
 <item>
   <title>Programmatically creating tabsets in R</title>
@@ -1711,80 +1713,81 @@ font-style: inherit;">penguins_filtered</span>()<span class="sc" style="color: #
 background-color: null;
 font-style: inherit;">$</span>island) <span class="sc" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">|&gt;</span> purrr<span class="sc" style="color: #5E5E5E;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-11">      purrr<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">map</span>(</span>
-<span id="cb3-11">      <span class="sc" style="color: #5E5E5E;
+<span id="cb3-12">        <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">~</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">nav_panel</span>(</span>
-<span id="cb3-12">        <span class="at" style="color: #657422;
+<span id="cb3-13">          <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">title =</span> .x,</span>
-<span id="cb3-13">        <span class="fu" style="color: #4758AB;
+<span id="cb3-14">          <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">plotOutput</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">glue</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"plot_{.x}"</span>))</span>
-<span id="cb3-14">      )</span>
-<span id="cb3-15">    )</span>
-<span id="cb3-16">    <span class="fu" style="color: #4758AB;
+<span id="cb3-15">        )</span>
+<span id="cb3-16">      )</span>
+<span id="cb3-17">    <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">navset_card_pill</span>(<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">!!!</span>nav_items)</span>
-<span id="cb3-17">  })</span>
-<span id="cb3-18"></span>
-<span id="cb3-19">  <span class="co" style="color: #5E5E5E;
+<span id="cb3-18">  })</span>
+<span id="cb3-19"></span>
+<span id="cb3-20">  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># 3. create the plots</span></span>
-<span id="cb3-20">  <span class="fu" style="color: #4758AB;
+<span id="cb3-21">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">observe</span>({</span>
-<span id="cb3-21">    <span class="fu" style="color: #4758AB;
+<span id="cb3-22">    <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">walk</span>(</span>
-<span id="cb3-22">      <span class="fu" style="color: #4758AB;
+<span id="cb3-23">      <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">unique</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">penguins_filtered</span>()<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">$</span>island),</span>
-<span id="cb3-23">      <span class="cf" style="color: #003B4F;
+<span id="cb3-24">      <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">function</span>(x) {</span>
-<span id="cb3-24">        id <span class="ot" style="color: #003B4F;
+<span id="cb3-25">        id <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">glue</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"plot_{x}"</span>)</span>
-<span id="cb3-25">        output[[id]] <span class="ot" style="color: #003B4F;
+<span id="cb3-26">        output[[id]] <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">renderPlot</span>({</span>
-<span id="cb3-26">          <span class="fu" style="color: #4758AB;
+<span id="cb3-27">          <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">penguins_filtered</span>() <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">|&gt;</span></span>
-<span id="cb3-27">            <span class="fu" style="color: #4758AB;
+<span id="cb3-28">            <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">filter</span>(island <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> x) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">|&gt;</span></span>
-<span id="cb3-28">            <span class="fu" style="color: #4758AB;
+<span id="cb3-29">            <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1793,7 +1796,7 @@ background-color: null;
 font-style: inherit;">x =</span> year)) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span></span>
-<span id="cb3-29">            <span class="fu" style="color: #4758AB;
+<span id="cb3-30">            <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">geom_histogram</span>(<span class="at" style="color: #657422;
 background-color: null;
@@ -1802,7 +1805,7 @@ background-color: null;
 font-style: inherit;">"count"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span></span>
-<span id="cb3-30">            <span class="fu" style="color: #4758AB;
+<span id="cb3-31">            <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
 background-color: null;
@@ -1811,11 +1814,11 @@ background-color: null;
 font-style: inherit;">glue</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Number of penguins by year for island {x}"</span>))</span>
-<span id="cb3-31">        })</span>
-<span id="cb3-32">      }</span>
-<span id="cb3-33">    )</span>
-<span id="cb3-34">  })</span>
-<span id="cb3-35">}</span></code></pre></div></div>
+<span id="cb3-32">        })</span>
+<span id="cb3-33">      }</span>
+<span id="cb3-34">    )</span>
+<span id="cb3-35">  })</span>
+<span id="cb3-36">}</span></code></pre></div></div>
 </div>
 <p>The tricky part is figuring out how to dynamically assign the output ids. Here, I programmatically create the <code>id</code>s and then assign them content (plots) based on the relevant subset of data.</p>
 </section>
@@ -1823,68 +1826,251 @@ font-style: inherit;">"Number of penguins by year for island {x}"</span>))</span
 <section id="shinylive-app" class="level1">
 <h1>Shinylive app</h1>
 <p>Here is a demonstration with a shinylive app</p>
-<pre class="shinylive-r" data-engine="r"><code>#| '!! shinylive warning !!': |
-#|   shinylive does not work in self-contained HTML documents.
-#|   Please set `embed-resources: false` in your metadata.
-#| standalone: true
-#| viewerHeight: 400
-library(bslib)
-library(dplyr)
-library(purrr)
-library(shiny)
-library(glue)
-library(ggplot2)
-library(palmerpenguins)
-data(penguins)
-ggplot2::theme_set(theme_bw(15))
-
-ui &lt;- bslib::page_sidebar(
-  sidebar = sidebar(
-    radioButtons(
-      "select_species",
-      "Filter by species",
-      choices = unique(penguins$species)
-    )
-  ),
-  shiny::uiOutput("dynamic_navset_card")
-)
-
-server &lt;- function(session, input, output) {
-  # 1. filter by species
-  penguins_filtered &lt;- reactive({
-    req(input$select_species)
-    penguins |&gt; filter(species == input$select_species)
-  })
-
-  # 2. create the ui based on the `island` column
-  output$dynamic_navset_card &lt;- renderUI({
-    nav_items &lt;- unique(penguins_filtered()$island) |&gt; purrr::map(
-      ~ nav_panel(
-        title = .x,
-        plotOutput(glue("plot_{.x}"), width = "80%")
-      )
-    )
-    navset_card_pill(!!!nav_items, height = 360)
-  })
-
-  # 3. create the plots
-  observe({
-    walk(
-      unique(penguins_filtered()$island),
-      function(x) {
-        id &lt;- glue("plot_{x}")
-        output[[id]] &lt;- renderPlot({
-          penguins_filtered() |&gt;
-            filter(island == x) |&gt;
-            ggplot(aes(x = year)) +
-            geom_histogram(stat = "count") +
-            labs(title = glue("Number of penguins by year for island {x}"))
-        })
-      }
-    )
-  })
-}
-shiny::shinyApp(ui, server)</code></pre>
+<!-- add r-shinylive to code chunk to render, currently off because render bug --->
+<div class="cell" data-standalone="true" data-viewerheight="400">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(bslib)</span>
+<span id="cb4-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(dplyr)</span>
+<span id="cb4-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(purrr)</span>
+<span id="cb4-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(shiny)</span>
+<span id="cb4-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(glue)</span>
+<span id="cb4-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(ggplot2)</span>
+<span id="cb4-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(palmerpenguins)</span>
+<span id="cb4-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data</span>(penguins)</span>
+<span id="cb4-9">ggplot2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_set</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_bw</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>))</span>
+<span id="cb4-10"></span>
+<span id="cb4-11">ui <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> bslib<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">page_sidebar</span>(</span>
+<span id="cb4-12">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sidebar =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sidebar</span>(</span>
+<span id="cb4-13">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">radioButtons</span>(</span>
+<span id="cb4-14">      <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"select_species"</span>,</span>
+<span id="cb4-15">      <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Filter by species"</span>,</span>
+<span id="cb4-16">      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">choices =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unique</span>(penguins<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>species)</span>
+<span id="cb4-17">    )</span>
+<span id="cb4-18">  ),</span>
+<span id="cb4-19">  shiny<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">uiOutput</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"dynamic_navset_card"</span>)</span>
+<span id="cb4-20">)</span>
+<span id="cb4-21"></span>
+<span id="cb4-22">server <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(session, input, output) {</span>
+<span id="cb4-23">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1. filter by species</span></span>
+<span id="cb4-24">  penguins_filtered <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">reactive</span>({</span>
+<span id="cb4-25">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">req</span>(input<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>select_species)</span>
+<span id="cb4-26">    penguins <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(species <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> input<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>select_species)</span>
+<span id="cb4-27">  })</span>
+<span id="cb4-28"></span>
+<span id="cb4-29">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 2. create the ui based on the `island` column</span></span>
+<span id="cb4-30">  output<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>dynamic_navset_card <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renderUI</span>({</span>
+<span id="cb4-31">    nav_items <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unique</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">penguins_filtered</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>island) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb4-32">      purrr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">map</span>(</span>
+<span id="cb4-33">        <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nav_panel</span>(</span>
+<span id="cb4-34">          <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> .x,</span>
+<span id="cb4-35">          <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plotOutput</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">glue</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"plot_{.x}"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">width =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"80%"</span>)</span>
+<span id="cb4-36">        )</span>
+<span id="cb4-37">      )</span>
+<span id="cb4-38">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">navset_card_pill</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!!!</span>nav_items, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">height =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">360</span>)</span>
+<span id="cb4-39">  })</span>
+<span id="cb4-40"></span>
+<span id="cb4-41">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 3. create the plots</span></span>
+<span id="cb4-42">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">observe</span>({</span>
+<span id="cb4-43">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">walk</span>(</span>
+<span id="cb4-44">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unique</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">penguins_filtered</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>island),</span>
+<span id="cb4-45">      <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(x) {</span>
+<span id="cb4-46">        id <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">glue</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"plot_{x}"</span>)</span>
+<span id="cb4-47">        output[[id]] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renderPlot</span>({</span>
+<span id="cb4-48">          <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">penguins_filtered</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb4-49">            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(island <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> x) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb4-50">            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> year)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-51">            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_histogram</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">stat =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"count"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-52">            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">glue</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Number of penguins by year for island {x}"</span>))</span>
+<span id="cb4-53">        })</span>
+<span id="cb4-54">      }</span>
+<span id="cb4-55">    )</span>
+<span id="cb4-56">  })</span>
+<span id="cb4-57">}</span>
+<span id="cb4-58">shiny<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">shinyApp</span>(ui, server)</span></code></pre></div></div>
+</div>
 
 
 </section>
@@ -1894,6 +2080,7 @@ shiny::shinyApp(ui, server)</code></pre>
   <category>quarto</category>
   <guid>https://victoryuan.com/posts/2025-03-28-dynamic-navsets/</guid>
   <pubDate>Fri, 28 Mar 2025 00:00:00 GMT</pubDate>
+  <media:content url="https://victoryuan.com/posts/2025-03-28-dynamic-navsets/shinylive.gif" medium="image" type="image/gif"/>
 </item>
 <item>
   <title>Making a Twitter Bot in the Year 2024</title>
@@ -1948,28 +2135,6 @@ shiny::shinyApp(ui, server)</code></pre>
   <category>shiny</category>
   <guid>https://victoryuan.com/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/</guid>
   <pubDate>Wed, 12 Jun 2024 00:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Quickly reading 1 gene at a time from single cell data</title>
-  <dc:creator>Victor Yuan</dc:creator>
-  <link>https://victoryuan.com/posts/2024-02-24-read-1-gene-from-single-cell/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p><em>“Can you check gene x for me?”</em> says every scientist I ever did RNAseq analysis for.</p>
-<p>This is a port from my old website so formatting is not great.</p>
-<iframe src="../../posts/2024-02-24-read-1-gene-from-single-cell/index.en.html" style="width:100%; height:600px; overflow:auto;">
-</iframe>
-
-
-
-<script data-goatcounter="https://victor2wy.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script> ]]></description>
-  <category>R</category>
-  <category>bioinformatics</category>
-  <guid>https://victoryuan.com/posts/2024-02-24-read-1-gene-from-single-cell/</guid>
-  <pubDate>Sat, 24 Feb 2024 00:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.8.27">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="dcterms.date" content="2024-06-09">
 
-<title>BC Child Care Vacancies Dashboard + Mastodon Bot – Victor Yuan</title>
+<title>Making child care vacancies accessible for british columbians – Victor Yuan</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -39,9 +39,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-2f22d56a1bc78158eb6a7ad741e927db.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -141,8 +141,9 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#mastodon-bot" id="toc-mastodon-bot" class="nav-link active" data-scroll-target="#mastodon-bot">Mastodon bot</a></li>
-  <li><a href="#dashboard" id="toc-dashboard" class="nav-link" data-scroll-target="#dashboard">Dashboard</a></li>
+  <li><a href="#dashboard" id="toc-dashboard" class="nav-link active" data-scroll-target="#dashboard">Dashboard</a></li>
+  <li><a href="#mastodon-bot" id="toc-mastodon-bot" class="nav-link" data-scroll-target="#mastodon-bot">Mastodon bot</a></li>
+  <li><a href="#tools-technology" id="toc-tools-technology" class="nav-link" data-scroll-target="#tools-technology">Tools &amp; Technology</a></li>
   </ul>
 </nav>
     </div>
@@ -151,7 +152,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">BC Child Care Vacancies Dashboard + Mastodon Bot</h1>
+<h1 class="title">Making child care vacancies accessible for british columbians</h1>
 </div>
 
 
@@ -174,12 +175,41 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </header>
 
 
-<p>A data scientist finds childcare.</p>
-<p>This 2 part project extracts and deliveries child care vacancies using open-source BC childcare dataset. It uses github actions to automatically pull the updated data every day to</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bcchildcarebot_dashboard.png" class="img-fluid figure-img"></p>
+<figcaption>Screenshot of BC Childcare Dashboard</figcaption>
+</figure>
+</div>
+<p>This project leverages publicly available Government of BC’s Child Care Vacancies to identify and disseminate up-to-date child care vacancy across the province.</p>
+<p>The system is implemented as an automated data pipeline that ingests a publicly available open data endpoint that refreshes daily, processes vacancy information, and distributes results through two public-facing channels:</p>
 <ol type="1">
-<li>post to mastodon new vacancies, and</li>
-<li>display vacancies in a webpage</li>
+<li><p>An interactive web dashboard that allows users to browse current vacancies in a centralized, accessible format.</p></li>
+<li><p>Automated social media reporting via a Mastodon bot that posts newly available child care vacancies.</p></li>
 </ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note the Mastodon bot has been decommisioned due to the <a href="https://news.ycombinator.com/item?id=41989511">closure of the <code>bots.in.space</code> server in 2025</a>. At this time, I have not yet looked for alternative hosting options.</p>
+</div>
+</div>
+<p>The goal of this project was to deliver these resources while minimizing overhead and maintenance, ensuring longevity without overburdening operations.</p>
+<p>The pipeline is orchestrated using GitHub Actions, enabling scheduled data retrieval, validation, transformation, and deployment without manual intervention. This ensures that published information remains current, reliable, and reproducible.</p>
+<section id="dashboard" class="level1">
+<h1>Dashboard</h1>
+<p>Last updated: 2025-03-20 (the source, but the data is updated every day)</p>
+<ul>
+<li><a href="https://victoryuan.com/bcchildcarebot">Dashboard</a></li>
+<li><a href="https://github.com/wvictor14/bcchildcarebot">source</a></li>
+</ul>
+</section>
 <section id="mastodon-bot" class="level1">
 <h1>Mastodon bot</h1>
 <p>Last updated: 2024-06-09</p>
@@ -189,12 +219,15 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <li><a href="https://github.com/wvictor14/bcchildcarebot">source</a></li>
 </ul>
 </section>
-<section id="dashboard" class="level1">
-<h1>Dashboard</h1>
-<p>Last updated: 2025-03-20 (the source, but the data is updated every day)</p>
+<section id="tools-technology" class="level1">
+<h1>Tools &amp; Technology</h1>
 <ul>
-<li><a href="https://victoryuan.com/bcchildcarebot">Dashboard</a></li>
-<li><a href="https://github.com/wvictor14/bcchildcarebot">source</a></li>
+<li><p>GitHub Actions – orchestrates the automated pipeline, including daily data retrieval, validation, transformation, and deployment.</p></li>
+<li><p>Open Data Integration – ingests daily-updated CSV datasets from the Government of British Columbia, ensuring reliable, up-to-date information.</p></li>
+<li><p>Web Dashboard – built using Quarto and R to provide an interactive, accessible interface for end users.</p></li>
+<li><p>Social Media Automation – Mastodon bot (decommissioned) demonstrated automated content delivery and engagement.</p></li>
+<li><p>Version Control &amp; Reproducibility – all source code and workflow managed with GitHub, supporting transparent and maintainable operations.</p></li>
+<li><p>Automation &amp; Scheduling – minimal manual intervention required; system designed for longevity and low-maintenance operation.</p></li>
 </ul>
 
 

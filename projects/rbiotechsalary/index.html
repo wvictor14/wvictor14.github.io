@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.8.27">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="dcterms.date" content="2024-05-15">
 
-<title>rbiotechsalary – Victor Yuan</title>
+<title>An open data pipeline for transparent biotech compensation – Victor Yuan</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -39,9 +39,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap-2f22d56a1bc78158eb6a7ad741e927db.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -142,7 +142,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">rbiotechsalary</h1>
+<h1 class="title">An open data pipeline for transparent biotech compensation</h1>
 </div>
 
 
@@ -165,13 +165,47 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </header>
 
 
-<p><img src="image.png" class="img-fluid"></p>
-<p>In 2022 I pulled reddit’s <a href="https://www.reddit.com/r/biotech/comments/1i1rgxm/rbiotech_salary_and_company_survey_2025/">r/biotech</a> salary survey data to inform my job search. It involved extensive data cleaning, and ultimately was very useful information for a new graduate job seeker. Over time, I used this dataset to explore software, data visualization, and data science methods for my own personal interest. Some of these explorations I’ve shared here.</p>
-<p>The raw data is a live google excel file connected to a google form survey. The excel file is automatically pulled every week using github actions, and an ETL script (<a href="https://github.com/wvictor14/rbiotechsalarydata">source</a>) publishes the dataset to github as a flat file (<a href="https://github.com/wvictor14/rbiotechsalarydata/blob/main/salary_results_cleaned.csv">csv</a>). The ETL script (quarto markdown document) also publishes the <em>rendered</em> ETL script using quarto <a href="https://victoryuan.com/rbiotechsalarydata/">here</a>, which can be conveniently used to examine the different steps of the ETL pipeline in detail if needed.</p>
-<p>To explore the data, I built a <a href="https://app.victoryuan.com/rbiotechsalary/">shiny app</a>, which is a deployed docker container hosted on a digital ocean droplet. The app reads in the data from the flat file hosted on github. The app has interactive controls to filter the data and examine salary and other survey response information.</p>
-<p>I also have used this dataset to explore <a href="../../rbiotechsalary/">using observable js to build dashboards</a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="rbiotechsalary.png" class="img-fluid figure-img"></p>
+<figcaption>Screenshot of rbiotechsalary app</figcaption>
+</figure>
+</div>
+<p>This project leverages salary survey data collected from Reddit’s <a href="https://www.reddit.com/r/biotech/comments/1i1rgxm/rbiotech_salary_and_company_survey_2025/">r/biotech</a> community to explore compensation trends in biotechnology. Initially, I used this data to inform my own job search as a new graduate, but over time it became a foundation for exploring data cleaning, visualization, and interactive data science techniques.</p>
+<section id="data-pipeline" class="level1">
+<h1>Data Pipeline</h1>
+<p>The survey responses are collected via a Google Form, stored in a live Google Sheet, and automatically pulled weekly using GitHub Actions. An ETL pipeline (Quarto Markdown script) cleans, validates, and publishes the dataset as a flat CSV file on GitHub:</p>
+<p><a href="https://github.com/wvictor14/rbiotechsalarydata">ETL source code</a></p>
+<p><a href="https://github.com/wvictor14/rbiotechsalarydata/blob/main/salary_results_cleaned.csv">Published dataset (CSV) *updates daily</a></p>
+<p><a href="https://victoryuan.com/rbiotechsalarydata/">Rendered ETL pipeline</a></p>
+</section>
+<section id="interactive-applications" class="level1">
+<h1>Interactive Applications</h1>
+<p>To explore and visualize the data, I developed a Shiny app deployed as a Docker container on a Digital Ocean droplet. The app reads the cleaned dataset directly from GitHub and provides:</p>
+<ul>
+<li>Interactive filters for examining salary distributions, experience, and other survey responses.</li>
+<li>Visualizations that allow users to explore trends by role, company type, or other factors.</li>
+</ul>
+<p>This setup ensures that the dataset remains up-to-date, reproducible, and transparent while requiring minimal manual intervention.</p>
+<p><a href="https://app.victoryuan.com/rbiotechsalary/">Access the live Shiny app</a></p>
+<p>Additionally, I have explored Observable JS dashboards as an alternative approach for interactive data exploration:</p>
+<ul>
+<li><a href="../../rbiotechsalary/">Observable JS dashboard</a></li>
+</ul>
+</section>
+<section id="technologies-tools" class="level1">
+<h1>Technologies &amp; Tools</h1>
+<ul>
+<li>GitHub Actions – automated data retrieval and ETL workflow scheduling.</li>
+<li>Quarto – reproducible data pipeline documentation and rendering.</li>
+<li>Shiny &amp; Docker – interactive web app development and containerized deployment.</li>
+<li>Digital Ocean – hosting for production Shiny application.</li>
+<li>CSV &amp; Google Sheets – data ingestion and storage.</li>
+<li>Observable JS – alternative approach for interactive data dashboards.</li>
+</ul>
 
 
+</section>
 
 <script data-goatcounter="https://victor2wy.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
