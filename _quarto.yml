@@ -1,5 +1,6 @@
 project:
   type: website
+  brand: _brand.yml
   preview:
     host: 0.0.0.0
     port: 4210 # match devcontainer.json forwarded port
@@ -15,9 +16,11 @@ website:
     search: true
     right:
       - href: projects
+        icon: puzzle-fill
         text: Projects
       - href: posts
-        text: Posts
+        icon: book-fill
+        text: Blog
       - icon: rss
         href: posts/index.xml
     tools:
@@ -30,6 +33,13 @@ website:
   body-footer: |
     <script data-goatcounter="https://victor2wy.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+  page-footer:
+    border: true
+    left: "&#169; 2026 Victor Yuan"
+    center:
+      - text: License
+        href: license.qmd
+    right: "made with [Quarto](https://quarto.org)"
 
 format:
   html:
