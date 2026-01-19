@@ -8,4 +8,4 @@ listing:
 title: Projects
 ---
 
-Some of my public projects.
+A selected list of open-source projects I have created or have contributed to.

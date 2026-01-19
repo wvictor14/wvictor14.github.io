@@ -12,3 +12,4 @@ Imports:
     quarto
     dplyr
     tidyr
+    pak

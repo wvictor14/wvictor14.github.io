@@ -26,3 +26,8 @@ typography:
     color: gray
   link:
     color: blue
+
+defaults:
+  bootstrap:
+    defaults:
+      navbar-bg: white
