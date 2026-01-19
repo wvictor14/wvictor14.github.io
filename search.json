@@ -1,87 +1,17 @@
 [
   {
-    "objectID": "posts/2025-03-28-dynamic-navsets/index.html#render-the-tab-names-and-content-server-side",
-    "href": "posts/2025-03-28-dynamic-navsets/index.html#render-the-tab-names-and-content-server-side",
-    "title": "Programmatically creating tabsets in R",
-    "section": "Render the tab names and content server-side",
-    "text": "Render the tab names and content server-side\nNext is the server code. The server code does 3 things:\n\nfilter the penguins dataset penguin_filtered, based on the radio buttons\ndynamically render the ui component based on the island column in the filter penguin dataset i.e. penguin_filtered$island\nCreate content for each tab, here I chose a histogram over year.\n\n\nserver &lt;- function(session, input, output) {\n  # 1. filter by species\n  penguins_filtered &lt;- reactive({\n    req(input$select_species)\n    penguins |&gt; filter(species == input$select_species)\n  })\n\n  # 2. create the ui based on the `island` column\n  output$dynamic_navset_card &lt;- renderUI({\n    nav_items &lt;- unique(penguins_filtered()$island) |&gt;\n      purrr::map(\n        ~ nav_panel(\n          title = .x,\n          plotOutput(glue(\"plot_{.x}\"))\n        )\n      )\n    navset_card_pill(!!!nav_items)\n  })\n\n  # 3. create the plots\n  observe({\n    walk(\n      unique(penguins_filtered()$island),\n      function(x) {\n        id &lt;- glue(\"plot_{x}\")\n        output[[id]] &lt;- renderPlot({\n          penguins_filtered() |&gt;\n            filter(island == x) |&gt;\n            ggplot(aes(x = year)) +\n            geom_histogram(stat = \"count\") +\n            labs(title = glue(\"Number of penguins by year for island {x}\"))\n        })\n      }\n    )\n  })\n}\n\nThe tricky part is figuring out how to dynamically assign the output ids. Here, I programmatically create the ids and then assign them content (plots) based on the relevant subset of data."
-  },
-  {
-    "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html",
-    "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html",
-    "title": "Speeding up UMAP plots for single cell gene expression analysis",
+    "objectID": "license.html",
+    "href": "license.html",
+    "title": "CC BY-NC-SA 4.0 license",
     "section": "",
-    "text": "Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as Seurat::DimPlot are limited by long plotting times, impeding efficient exploratory analysis.\nFor example, this is how long it takes to visualize 10 genes on a 14,000 single cell RNAseq (scRNAseq) dataset.\nCode\nbnch |&gt; select(expression, min, median, n_itr)\n\n\n# A tibble: 1 × 3\n  expression               min   median\n  &lt;bch:expr&gt;          &lt;bch:tm&gt; &lt;bch:tm&gt;\n1 Seurat, not sampled    5.31s    6.32s\nIt takes 6.3216542 seconds to plot 10 features with a 14,000 single cell dataset (number of cells = 14,000). This dataset is on the smaller side - considering that single cell datasets often reach the hundreds of thousands, the speed of plotting is a significant hamper on single cell analysis."
+    "text": "© 2026 Victor Yuan\nOpinions expressed are solely my own and do not express the views of my employer or any organizations I am associated with.\nMy content is released under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA) license.\n{{&lt; fa brands creative-commons size=2x &gt;}} {{&lt; fa brands creative-commons-by size=2x &gt;}} {{&lt; fa brands creative-commons-nc size=2x &gt;}} {{&lt; fa brands creative-commons-sa size=2x &gt;}}\nIn short, you may share and adapt this content with appropriate credit and notation of any changes. You may not use this material for any commercial purposes."
   },
   {
-    "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#libraries",
-    "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#libraries",
-    "title": "Speeding up UMAP plots for single cell gene expression analysis",
-    "section": "Libraries",
-    "text": "Libraries\n\n\nCode\nlibrary(Seurat)\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(patchwork)\nlibrary(bench)\nlibrary(here)\nlibrary(purrr)\nlibrary(glue)\nlibrary(gt)\nlibrary(tidyr)\ntheme_custom &lt;- function() {\n  ggplot2::theme_void() +\n    theme(\n      axis.title.y = element_text(angle = 90),\n      axis.title.x = element_text(),\n      panel.border = element_rect(color = \"black\", fill = NA, linewidth = 0.5, linetype = \"solid\"),\n      strip.text.x = element_text(size = rel(1.5)),\n      plot.margin = margin_auto(6, unit = \"pt\")\n    )\n}\nggplot2::theme_set(\n  theme_custom()\n)"
-  },
-  {
-    "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#parameters",
-    "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#parameters",
-    "title": "Speeding up UMAP plots for single cell gene expression analysis",
-    "section": "Parameters",
-    "text": "Parameters"
-  },
-  {
-    "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#datasets",
-    "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#datasets",
-    "title": "Speeding up UMAP plots for single cell gene expression analysis",
-    "section": "Datasets",
-    "text": "Datasets\n\nLoad seurat\n\n\nCode\nseu &lt;- readRDS(here(\"posts\", \"2025-10-13-fast-umap-plots-in-r\", \"ifnb.rds\"))\nrownames(seu)\n\n\n [1] \"S100A9\"   \"FCER1A\"   \"FCGR3A\"   \"SELL\"     \"CACYBP\"   \"GNLY\"    \n [7] \"CD8A\"     \"CD8B\"     \"IGJ\"      \"PPBP\"     \"CD14\"     \"HLA-DQA1\"\n[13] \"TSPAN13\"  \"GNG11\"    \"GIMAP5\"   \"IL3RA\"    \"FOXP3\"    \"CREM\"    \n[19] \"HBB\"      \"MS4A1\"    \"CD3E\"     \"CD3D\"     \"CD4\"      \"LYZ\"     \n[25] \"HSPH1\"    \"GPR183\"   \"HBA2\"     \"VMO1\"     \"CCL2\"     \"CCL5\"    \n[31] \"NME1\"     \"PRSS57\"   \"CD79A\"    \"NKG7\"     \"MIR155HG\"\n\n\nCode\nxy &lt;- FetchData(seu, vars = c(\"umap_1\", \"umap_2\", \"seurat_annotations\", rownames(seu)))"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Victor Yuan",
+    "objectID": "posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html",
+    "href": "posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html",
+    "title": "2025 Posit Plotnine and Great Tables Contest Submission",
     "section": "",
-    "text": "Hello! It’s nice to meet you. I am a bioinformatics data scientist at Sonoma Biotherapeutics where I use data science to help develop cell therapies to cure autoimmune diseases. I love making beautiful charts, developing reproducible scientific content, climbing boulders, and drinking specialty coffees.\nI studied epigenetics and placental biology, completing my PhD at University of British Columbia, Canada in 2022. Before that I did my BSc in molecular biology at Concordia University, Montreal."
-  },
-  {
-    "objectID": "projects/planet/index.html",
-    "href": "projects/planet/index.html",
-    "title": "planet",
-    "section": "",
-    "text": "An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease (preeclampsia), all from using placental DNA methylation data as input.\n\nplanet R package\nsource"
-  },
-  {
-    "objectID": "projects/bcchildcarebot/index.html",
-    "href": "projects/bcchildcarebot/index.html",
-    "title": "Making child care vacancies accessible for british columbians",
-    "section": "",
-    "text": "Screenshot of BC Childcare Dashboard\n\n\nThis project leverages publicly available Government of BC’s Child Care Vacancies to identify and disseminate up-to-date child care vacancy across the province.\nThe system is implemented as an automated data pipeline that ingests a publicly available open data endpoint that refreshes daily, processes vacancy information, and distributes results through two public-facing channels:\n\nAn interactive web dashboard that allows users to browse current vacancies in a centralized, accessible format.\nAutomated social media reporting via a Mastodon bot that posts newly available child care vacancies.\n\n\n\n\n\n\n\nNote\n\n\n\nNote the Mastodon bot has been decommisioned due to the closure of the bots.in.space server in 2025. At this time, I have not yet looked for alternative hosting options.\n\n\nThe goal of this project was to deliver these resources while minimizing overhead and maintenance, ensuring longevity without overburdening operations.\nThe pipeline is orchestrated using GitHub Actions, enabling scheduled data retrieval, validation, transformation, and deployment without manual intervention. This ensures that published information remains current, reliable, and reproducible.\n\nDashboard\nLast updated: 2025-03-20 (the source, but the data is updated every day)\n\nDashboard\nsource\n\n\n\nMastodon bot\nLast updated: 2024-06-09\n\nBlog post for the bot\nMastodon bot\nsource\n\n\n\nTools & Technology\n\nGitHub Actions – orchestrates the automated pipeline, including daily data retrieval, validation, transformation, and deployment.\nOpen Data Integration – ingests daily-updated CSV datasets from the Government of British Columbia, ensuring reliable, up-to-date information.\nWeb Dashboard – built using Quarto and R to provide an interactive, accessible interface for end users.\nSocial Media Automation – Mastodon bot (decommissioned) demonstrated automated content delivery and engagement.\nVersion Control & Reproducibility – all source code and workflow managed with GitHub, supporting transparent and maintainable operations.\nAutomation & Scheduling – minimal manual intervention required; system designed for longevity and low-maintenance operation."
-  },
-  {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Projects",
-    "section": "",
-    "text": "Some of my public projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMaking child care vacancies accessible for british columbians\n\n\n\n\n\n\n\n\nJun 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nAn open data pipeline for transparent biotech compensation\n\n\n\n\n\n\n\n\nMay 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nplanet\n\n\n\n\n\n\n\n\nJan 1, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nPlacental Methylome Browser\n\n\n\n\n\n\n\n\nJan 1, 2019\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "projects/rbiotechsalary/index.html",
-    "href": "projects/rbiotechsalary/index.html",
-    "title": "An open data pipeline for transparent biotech compensation",
-    "section": "",
-    "text": "Screenshot of rbiotechsalary app\n\n\nThis project leverages salary survey data collected from Reddit’s r/biotech community to explore compensation trends in biotechnology. Initially, I used this data to inform my own job search as a new graduate, but over time it became a foundation for exploring data cleaning, visualization, and interactive data science techniques.\n\nData Pipeline\nThe survey responses are collected via a Google Form, stored in a live Google Sheet, and automatically pulled weekly using GitHub Actions. An ETL pipeline (Quarto Markdown script) cleans, validates, and publishes the dataset as a flat CSV file on GitHub:\nETL source code\nPublished dataset (CSV) *updates daily\nRendered ETL pipeline\n\n\nInteractive Applications\nTo explore and visualize the data, I developed a Shiny app deployed as a Docker container on a Digital Ocean droplet. The app reads the cleaned dataset directly from GitHub and provides:\n\nInteractive filters for examining salary distributions, experience, and other survey responses.\nVisualizations that allow users to explore trends by role, company type, or other factors.\n\nThis setup ensures that the dataset remains up-to-date, reproducible, and transparent while requiring minimal manual intervention.\nAccess the live Shiny app\nAdditionally, I have explored Observable JS dashboards as an alternative approach for interactive data exploration:\n\nObservable JS dashboard\n\n\n\nTechnologies & Tools\n\nGitHub Actions – automated data retrieval and ETL workflow scheduling.\nQuarto – reproducible data pipeline documentation and rendering.\nShiny & Docker – interactive web app development and containerized deployment.\nDigital Ocean – hosting for production Shiny application.\nCSV & Google Sheets – data ingestion and storage.\nObservable JS – alternative approach for interactive data dashboards."
-  },
-  {
-    "objectID": "projects/placentalmethylomebrowser/index.html",
-    "href": "projects/placentalmethylomebrowser/index.html",
-    "title": "Placental Methylome Browser",
-    "section": "",
-    "text": "A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.\nI no longer maintain this app, but it usually lives here:\nrobinsonlab.shinyapps.io/Placental_Methylome_Browser/\nsource"
-  },
-  {
-    "objectID": "posts/index.html",
-    "href": "posts/index.html",
-    "title": "Posts",
-    "section": "",
-    "text": "Some attempts have been made at blogging\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSpeeding up UMAP plots for single cell gene expression analysis\n\n\n\nR\n\ndata visualization\n\nbioinformatics\n\n\n\n\n\n\n\n\n\nOct 21, 2025\n\n7 min\n\n\n\n\n\n\n\n\n\n\n\n2025 Posit Plotnine and Great Tables Contest Submission\n\n\n\nR\n\ndata visualization\n\nbioinformatics\n\n\n\nMy submissions to the 2025 plotnine and table contests: exploring the uncertain canadian job market with plotnine, and visualizing multiple sequence alignment with gt\n\n\n\n\n\nOct 3, 2025\n\n2 min\n\n\n\n\n\n\n\n\n\n\n\nProgrammatically creating tabsets in R\n\n\n\nR\n\nquarto\n\n\n\n\n\n\n\n\n\nMar 28, 2025\n\n5 min\n\n\n\n\n\n\n\n\n\n\n\nMaking a Twitter Bot in the Year 2024\n\n\n\nR\n\nshiny\n\n\n\n\n\n\n\n\n\nJun 12, 2024\n\n3 min\n\n\n\n\nNo matching items"
+    "text": "On August 21 2025, Posit announced the 2025 Table and Plotnine contests. I was always impressed with the resulting submissions from previous years, so this year I decided to participate.\nInitially, I decided that the plotnine contest sounded like a great opportunity to see how to use the python port of ggplot2. I had no experience with plotnine, but lots with ggplot2.\nHowever, after finishing my submission for plotnine, I turned my attention to the table contest. I wasn’t certain if I had the time to make another high quality submission. But I felt that I had a great idea that I haven’t seen done before. So I reconsidered and decided to make a smaller single post entry for the table contest.\n\nExploring Canada Job Market Data with plotnine\nFor the 2025 plotnine contest, I wanted to explore official Canadian labour statistics using Plotnine.\nUsing quarto, I created a website, which hosts the final submitted visualization, and a tutorial on how I developed the visualization.\nThe visualization uses the plotnine, which is a visualization library from python, heavily inspired by the grammar of graphics. I used polars to crunch the data.\n\n\n\nCoronavirus Spike Proteins with r-gt\nFor the 2025 Posit Table contest I wanted to explore how MSAs can be effectively visualized using the r package gt. This has been something I have wanted to do for a long time, and felt like this would be great way to share some of the exploration with the community.\nsubmission"
   },
   {
     "objectID": "posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html",
@@ -119,10 +49,87 @@
     "text": "How\n\nGithub Actions\nI followed this post closely to learn how to make my own workflow. Essentially it uses github actions to run an R script in the github repository on a daily basis (a cron job).\nThis is the section that configures the cron job. I also set it up so that on a certain branch named “test”, the script will run. I use this for testing that the workflow works, without having to change the cron schedule everytime.\non:\n  push:\n    branches: ['test'] # push to this branch to test toots\n  schedule:\n    - cron: '41 15 * * *'  # trigger at 3pm UTC  every day\nThe other necessary component is to add mastdon API token to github repository as a “github secret”. Then in the workflow, the token is used with the following syntax:\n${{ secrets.RTOOT_DEFAULT_TOKEN}}\n\n\nYay for open source\nThe last component is making the R script to: pull data, identify NEW vacancies, create a tweet / toot to send.\nI pulled data from BC gov’s open data portal, and figured out a way to ID new vacancies. Then, a message is crafted accounting for the character limits (500) for mastodon toots.\nActually the character limit is quite restrictive. Every day there can be 50-150 new vacancies over BC, depending on child care age group. But we only have 1 child (thank) so currently the bot only reports facilities with vacancy for children aged &lt;36 months.\nEvery day this dataset is updated at this URL. The whole script depends on whether this URL stays the same. If it changes, the bot will stop working. Fingers crossed!"
   },
   {
-    "objectID": "posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html",
-    "href": "posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html",
-    "title": "2025 Posit Plotnine and Great Tables Contest Submission",
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Blog",
     "section": "",
-    "text": "On August 21 2025, Posit announced the 2025 Table and Plotnine contests. I was always impressed with the resulting submissions from previous years, so this year I decided to participate.\nInitially, I decided that the plotnine contest sounded like a great opportunity to see how to use the python port of ggplot2. I had no experience with plotnine, but lots with ggplot2.\nHowever, after finishing my submission for plotnine, I turned my attention to the table contest. I wasn’t certain if I had the time to make another high quality submission. But I felt that I had a great idea that I haven’t seen done before. So I reconsidered and decided to make a smaller single post entry for the table contest.\n\nExploring Canada Job Market Data with plotnine\nFor the 2025 plotnine contest, I wanted to explore official Canadian labour statistics using Plotnine.\nUsing quarto, I created a website, which hosts the final submitted visualization, and a tutorial on how I developed the visualization.\nThe visualization uses the plotnine, which is a visualization library from python, heavily inspired by the grammar of graphics. I used polars to crunch the data.\n\n\n\nCoronavirus Spike Proteins with r-gt\nFor the 2025 Posit Table contest I wanted to explore how MSAs can be effectively visualized using the r package gt. This has been something I have wanted to do for a long time, and felt like this would be great way to share some of the exploration with the community.\nsubmission"
+    "text": "Some attempts have been made at blogging.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSpeeding up UMAP plots for single cell gene expression analysis\n\n\n\nR\n\ndata visualization\n\nbioinformatics\n\n\n\n\n\n\n\n\n\nOct 21, 2025\n\n7 min\n\n\n\n\n\n\n\n\n\n\n\n2025 Posit Plotnine and Great Tables Contest Submission\n\n\n\nR\n\ndata visualization\n\nbioinformatics\n\n\n\nMy submissions to the 2025 plotnine and table contests: exploring the uncertain canadian job market with plotnine, and visualizing multiple sequence alignment with gt\n\n\n\n\n\nOct 3, 2025\n\n2 min\n\n\n\n\n\n\n\n\n\n\n\nProgrammatically creating tabsets in R\n\n\n\nR\n\nquarto\n\n\n\n\n\n\n\n\n\nMar 28, 2025\n\n5 min\n\n\n\n\n\n\n\n\n\n\n\nMaking a Twitter Bot in the Year 2024\n\n\n\nR\n\nshiny\n\n\n\n\n\n\n\n\n\nJun 12, 2024\n\n3 min\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects/placentalmethylomebrowser/index.html",
+    "href": "projects/placentalmethylomebrowser/index.html",
+    "title": "Placental Methylome Browser",
+    "section": "",
+    "text": "A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.\nI no longer maintain this app, but it usually lives here:\nrobinsonlab.shinyapps.io/Placental_Methylome_Browser/\nsource"
+  },
+  {
+    "objectID": "projects/rbiotechsalary/index.html",
+    "href": "projects/rbiotechsalary/index.html",
+    "title": "An open data pipeline for transparent biotech compensation",
+    "section": "",
+    "text": "Screenshot of rbiotechsalary app\n\n\nThis project leverages salary survey data collected from Reddit’s r/biotech community to explore compensation trends in biotechnology. Initially, I used this data to inform my own job search as a new graduate, but over time it became a foundation for exploring data cleaning, visualization, and interactive data science techniques.\n\nData Pipeline\nThe survey responses are collected via a Google Form, stored in a live Google Sheet, and automatically pulled weekly using GitHub Actions. An ETL pipeline (Quarto Markdown script) cleans, validates, and publishes the dataset as a flat CSV file on GitHub:\nETL source code\nPublished dataset (CSV) *updates daily\nRendered ETL pipeline\n\n\nInteractive Applications\nTo explore and visualize the data, I developed a Shiny app deployed as a Docker container on a Digital Ocean droplet. The app reads the cleaned dataset directly from GitHub and provides:\n\nInteractive filters for examining salary distributions, experience, and other survey responses.\nVisualizations that allow users to explore trends by role, company type, or other factors.\n\nThis setup ensures that the dataset remains up-to-date, reproducible, and transparent while requiring minimal manual intervention.\nAccess the live Shiny app\nAdditionally, I have explored Observable JS dashboards as an alternative approach for interactive data exploration:\n\nObservable JS dashboard\n\n\n\nTechnologies & Tools\n\nGitHub Actions – automated data retrieval and ETL workflow scheduling.\nQuarto – reproducible data pipeline documentation and rendering.\nShiny & Docker – interactive web app development and containerized deployment.\nDigital Ocean – hosting for production Shiny application.\nCSV & Google Sheets – data ingestion and storage.\nObservable JS – alternative approach for interactive data dashboards."
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projects",
+    "section": "",
+    "text": "A selected list of open-source projects I have created or have contributed to.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMaking child care vacancies accessible for british columbians\n\n\n\n\n\n\n\n\nJun 9, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nAn open data pipeline for transparent biotech compensation\n\n\n\n\n\n\n\n\nMay 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nplanet\n\n\n\n\n\n\n\n\nJan 1, 2020\n\n\n\n\n\n\n\n\n\n\n\n\nPlacental Methylome Browser\n\n\n\n\n\n\n\n\nJan 1, 2019\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects/bcchildcarebot/index.html",
+    "href": "projects/bcchildcarebot/index.html",
+    "title": "Making child care vacancies accessible for british columbians",
+    "section": "",
+    "text": "Screenshot of BC Childcare Dashboard\n\n\nThis project leverages publicly available Government of BC’s Child Care Vacancies to identify and disseminate up-to-date child care vacancy across the province.\nThe system is implemented as an automated data pipeline that ingests a publicly available open data endpoint that refreshes daily, processes vacancy information, and distributes results through two public-facing channels:\n\nAn interactive web dashboard that allows users to browse current vacancies in a centralized, accessible format.\nAutomated social media reporting via a Mastodon bot that posts newly available child care vacancies.\n\n\n\n\n\n\n\nNote\n\n\n\nNote the Mastodon bot has been decommisioned due to the closure of the bots.in.space server in 2025. At this time, I have not yet looked for alternative hosting options.\n\n\nThe goal of this project was to deliver these resources while minimizing overhead and maintenance, ensuring longevity without overburdening operations.\nThe pipeline is orchestrated using GitHub Actions, enabling scheduled data retrieval, validation, transformation, and deployment without manual intervention. This ensures that published information remains current, reliable, and reproducible.\n\nDashboard\nLast updated: 2025-03-20 (the source, but the data is updated every day)\n\nDashboard\nsource\n\n\n\nMastodon bot\nLast updated: 2024-06-09\n\nBlog post for the bot\nMastodon bot\nsource\n\n\n\nTools & Technology\n\nGitHub Actions – orchestrates the automated pipeline, including daily data retrieval, validation, transformation, and deployment.\nOpen Data Integration – ingests daily-updated CSV datasets from the Government of British Columbia, ensuring reliable, up-to-date information.\nWeb Dashboard – built using Quarto and R to provide an interactive, accessible interface for end users.\nSocial Media Automation – Mastodon bot (decommissioned) demonstrated automated content delivery and engagement.\nVersion Control & Reproducibility – all source code and workflow managed with GitHub, supporting transparent and maintainable operations.\nAutomation & Scheduling – minimal manual intervention required; system designed for longevity and low-maintenance operation."
+  },
+  {
+    "objectID": "projects/planet/index.html",
+    "href": "projects/planet/index.html",
+    "title": "planet",
+    "section": "",
+    "text": "An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease (preeclampsia), all from using placental DNA methylation data as input.\n\nplanet R package\nsource"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Victor Yuan",
+    "section": "",
+    "text": "Hello, I’m Victor, and welcome to my website!\nI am a data scientist at Sonoma Biotherapeutics. I spend my time translating complex biological data into data-driven stories that help us understand how to better develop cell therapies to treat autoimmune diseases.\n\nWhat I do:\n\nData Visualization: Crafting beautiful charts and effective visual narratives.\nPipeline Engineering: Building automated, reproducible systems for scientific computing.\nTool Development: Writing software that makes scientific data analysis more accessible.\n\n\nI earned my PhD from the University of British Columbia (2022), Vancouver BC, focusing on epigenetics and placental biology, following a BSc in Molecular Biology from Concordia University, Montreal QC.\n\nWhen I’m off the clock, you’ll likely find me at a rock climbing gym, hunting for the perfect pour-over, or criticizing car-centric urban development and transit systems in North America.\nI’m always keen to connect with others in the biotech and data science space. If you’re working on an interesting problem and need a fresh perspective, feel free to reach out!  ✉️ Email  |  🔗 LinkedIn"
+  },
+  {
+    "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html",
+    "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html",
+    "title": "Speeding up UMAP plots for single cell gene expression analysis",
+    "section": "",
+    "text": "Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as Seurat::DimPlot are limited by long plotting times, impeding efficient exploratory analysis.\nFor example, this is how long it takes to visualize 10 genes on a 14,000 single cell RNAseq (scRNAseq) dataset.\nCode\nbnch |&gt; select(expression, min, median, n_itr)\n\n\n# A tibble: 1 × 3\n  expression               min   median\n  &lt;bch:expr&gt;          &lt;bch:tm&gt; &lt;bch:tm&gt;\n1 Seurat, not sampled    5.31s    6.32s\nIt takes 6.3216542 seconds to plot 10 features with a 14,000 single cell dataset (number of cells = 14,000). This dataset is on the smaller side - considering that single cell datasets often reach the hundreds of thousands, the speed of plotting is a significant hamper on single cell analysis."
+  },
+  {
+    "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#libraries",
+    "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#libraries",
+    "title": "Speeding up UMAP plots for single cell gene expression analysis",
+    "section": "Libraries",
+    "text": "Libraries\n\n\nCode\nlibrary(Seurat)\nlibrary(ggplot2)\nlibrary(dplyr)\nlibrary(patchwork)\nlibrary(bench)\nlibrary(here)\nlibrary(purrr)\nlibrary(glue)\nlibrary(gt)\nlibrary(tidyr)\ntheme_custom &lt;- function() {\n  ggplot2::theme_void() +\n    theme(\n      axis.title.y = element_text(angle = 90),\n      axis.title.x = element_text(),\n      panel.border = element_rect(color = \"black\", fill = NA, linewidth = 0.5, linetype = \"solid\"),\n      strip.text.x = element_text(size = rel(1.5)),\n      plot.margin = margin_auto(6, unit = \"pt\")\n    )\n}\nggplot2::theme_set(\n  theme_custom()\n)"
+  },
+  {
+    "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#parameters",
+    "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#parameters",
+    "title": "Speeding up UMAP plots for single cell gene expression analysis",
+    "section": "Parameters",
+    "text": "Parameters"
+  },
+  {
+    "objectID": "posts/2025-10-13-fast-umap-plots-in-r/index.html#datasets",
+    "href": "posts/2025-10-13-fast-umap-plots-in-r/index.html#datasets",
+    "title": "Speeding up UMAP plots for single cell gene expression analysis",
+    "section": "Datasets",
+    "text": "Datasets\n\nLoad seurat\n\n\nCode\nseu &lt;- readRDS(here(\"posts\", \"2025-10-13-fast-umap-plots-in-r\", \"ifnb.rds\"))\nrownames(seu)\n\n\n [1] \"S100A9\"   \"FCER1A\"   \"FCGR3A\"   \"SELL\"     \"CACYBP\"   \"GNLY\"    \n [7] \"CD8A\"     \"CD8B\"     \"IGJ\"      \"PPBP\"     \"CD14\"     \"HLA-DQA1\"\n[13] \"TSPAN13\"  \"GNG11\"    \"GIMAP5\"   \"IL3RA\"    \"FOXP3\"    \"CREM\"    \n[19] \"HBB\"      \"MS4A1\"    \"CD3E\"     \"CD3D\"     \"CD4\"      \"LYZ\"     \n[25] \"HSPH1\"    \"GPR183\"   \"HBA2\"     \"VMO1\"     \"CCL2\"     \"CCL5\"    \n[31] \"NME1\"     \"PRSS57\"   \"CD79A\"    \"NKG7\"     \"MIR155HG\"\n\n\nCode\nxy &lt;- FetchData(seu, vars = c(\"umap_1\", \"umap_2\", \"seurat_annotations\", rownames(seu)))"
+  },
+  {
+    "objectID": "posts/2025-03-28-dynamic-navsets/index.html#render-the-tab-names-and-content-server-side",
+    "href": "posts/2025-03-28-dynamic-navsets/index.html#render-the-tab-names-and-content-server-side",
+    "title": "Programmatically creating tabsets in R",
+    "section": "Render the tab names and content server-side",
+    "text": "Render the tab names and content server-side\nNext is the server code. The server code does 3 things:\n\nfilter the penguins dataset penguin_filtered, based on the radio buttons\ndynamically render the ui component based on the island column in the filter penguin dataset i.e. penguin_filtered$island\nCreate content for each tab, here I chose a histogram over year.\n\n\nserver &lt;- function(session, input, output) {\n  # 1. filter by species\n  penguins_filtered &lt;- reactive({\n    req(input$select_species)\n    penguins |&gt; filter(species == input$select_species)\n  })\n\n  # 2. create the ui based on the `island` column\n  output$dynamic_navset_card &lt;- renderUI({\n    nav_items &lt;- unique(penguins_filtered()$island) |&gt;\n      purrr::map(\n        ~ nav_panel(\n          title = .x,\n          plotOutput(glue(\"plot_{.x}\"))\n        )\n      )\n    navset_card_pill(!!!nav_items)\n  })\n\n  # 3. create the plots\n  observe({\n    walk(\n      unique(penguins_filtered()$island),\n      function(x) {\n        id &lt;- glue(\"plot_{x}\")\n        output[[id]] &lt;- renderPlot({\n          penguins_filtered() |&gt;\n            filter(island == x) |&gt;\n            ggplot(aes(x = year)) +\n            geom_histogram(stat = \"count\") +\n            labs(title = glue(\"Number of penguins by year for island {x}\"))\n        })\n      }\n    )\n  })\n}\n\nThe tricky part is figuring out how to dynamically assign the output ids. Here, I programmatically create the ids and then assign them content (plots) based on the relevant subset of data."
   }
 ]
