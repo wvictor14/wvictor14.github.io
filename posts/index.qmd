@@ -1,5 +1,5 @@
 ---
-title: Posts
+title: Blog
 listing:
   type: default
   contents:
@@ -14,4 +14,4 @@ listing:
 comments: false
 ---
 
-Some attempts have been made at blogging
+Some attempts have been made at blogging.
