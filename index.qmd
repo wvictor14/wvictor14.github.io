@@ -6,18 +6,40 @@ format:
     toc: false
     from: "markdown+emoji"
 about:
-  template: jolla
+  template: solana
   image: "images/Yuan, Victor - Nov 2018 Headshots (2).jpg"
   image-shape: round
   links:
     - icon: github
       href: https://www.github.com/wvictor14/
     - icon: linkedin
-      href: https://www.linkedin.com/in/victor2wy/
+      href: https://www.linkedin.com/in/victorwyuan/
     - icon: envelope
-      href: mailto:victor.2wy@gmail.com
+      href: mailto:victorwyuan@gmail.com
 ---
 
-Hello! It's nice to meet you. I am a  **bioinformatics data scientist** at [Sonoma Biotherapeutics](https://sonomabio.com/) where I use data science to help develop cell therapies to cure autoimmune diseases. I love making beautiful charts, developing reproducible scientific content, climbing boulders, and drinking specialty coffees.
+Hello, I'm Victor, and welcome to my website!
 
-I studied epigenetics and placental biology, completing my PhD at University of British Columbia, Canada in 2022. Before that I did my BSc in molecular biology at Concordia University, Montreal.
+I am a  **data scientist** at [Sonoma Biotherapeutics](https://sonomabio.com/). I spend my time translating complex biological data into data-driven stories that help us understand how to better develop cell therapies to treat autoimmune diseases.
+
+<!--- Professional stack --->
+
+What I do:
+
+- Data Visualization: Crafting beautiful charts and effective visual narratives.
+- Pipeline Engineering: Building automated, reproducible systems for scientific computing.
+- Tool Development: Writing software that makes scientific data analysis more accessible.
+
+<!--- Background --->
+I earned my PhD from the **University of British Columbia (2022), Vancouver BC**, focusing on epigenetics and placental biology, following a **BSc in Molecular Biology from Concordia University, Montreal QC**.
+
+<!--- Beyond the Data --->
+When I’m off the clock, you’ll likely find me at a rock climbing gym, hunting for the perfect pour-over, or criticizing car-centric urban development and transit systems in North America.
+
+*I’m always keen to connect with others in the biotech and data science space. If you’re working on an interesting problem and need a fresh perspective, feel free to reach out!* <a href="mailto:victorwyuan@gmail.com" style="text-decoration: none; margin-left: 10px;">
+    <span role="img" aria-label="envelope">✉️</span> Email
+  </a> 
+  | 
+  <a href="https://www.linkedin.com/in/victorwyuan/" target="_blank" style="text-decoration: none; margin-left: 5px;">
+    <span role="img" aria-label="linkedin">🔗</span> LinkedIn
+  </a>
