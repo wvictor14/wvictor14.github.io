@@ -8,6 +8,6 @@ explore epigenetic data from placental samples we collected.
 
 I no longer maintain this app, but it usually lives here:
 
-[robinsonlab.shinyapps.io/Placental_Methylome_Browser/](https://robinsonlab.shinyapps.io/Placental_Methylome_Browser/)
+[https://wvictor.shinyapps.io/dmr-project/](https://wvictor.shinyapps.io/dmr-project/)
 
 [source](https://github.com/Yifan-Yin/DMR-Project/tree/master)

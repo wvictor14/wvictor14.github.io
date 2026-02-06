@@ -51,3 +51,16 @@ Last updated: 2024-06-09
 - Version Control & Reproducibility – all source code and workflow managed with GitHub, supporting transparent and maintainable operations.
 
 - Automation & Scheduling – minimal manual intervention required; system designed for longevity and low-maintenance operation.
+# Tools & Technology
+
+- GitHub Actions – orchestrates the automated pipeline, including daily data retrieval, validation, transformation, and deployment.
+
+- Open Data Integration – ingests daily-updated CSV datasets from the Government of British Columbia, ensuring reliable, up-to-date information.
+
+- Web Dashboard – built using Quarto and R to provide an interactive, accessible interface for end users.
+
+- Social Media Automation – Mastodon bot (decommissioned) demonstrated automated content delivery and engagement.
+
+- Version Control & Reproducibility – all source code and workflow managed with GitHub, supporting transparent and maintainable operations.
+
+- Automation & Scheduling – minimal manual intervention required; system designed for longevity and low-maintenance operation.
