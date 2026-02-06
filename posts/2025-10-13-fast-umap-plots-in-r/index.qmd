@@ -43,7 +43,12 @@ theme_custom <- function() {
     theme(
       axis.title.y = element_text(angle = 90),
       axis.title.x = element_text(),
-      panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5, linetype = "solid"),
+      panel.border = element_rect(
+        color = "black",
+        fill = NA,
+        linewidth = 0.5,
+        linetype = "solid"
+      ),
       strip.text.x = element_text(size = rel(1.5)),
       plot.margin = margin_auto(6, unit = "pt")
     )
@@ -65,7 +70,10 @@ ggplot2::theme_set(
 seu <- readRDS(here("posts", "2025-10-13-fast-umap-plots-in-r", "ifnb.rds"))
 rownames(seu)
 
-xy <- FetchData(seu, vars = c("umap_1", "umap_2", "seurat_annotations", rownames(seu)))
+xy <- FetchData(
+  seu,
+  vars = c("umap_1", "umap_2", "seurat_annotations", rownames(seu))
+)
 ```
 
 :::
@@ -85,7 +93,9 @@ features <- c(
 )
 
 bnch <- bench::mark(
-  `Seurat, not sampled` = seu |> Seurat::FeaturePlot(features = features) |> plot(),
+  `Seurat, not sampled` = seu |>
+    Seurat::FeaturePlot(features = features) |>
+    plot(),
   iterations = 3,
   memory = FALSE
 )
@@ -110,8 +120,12 @@ Plotting tens to hundreds of thousands of cells is likely not completely necessa
 #| fig-width: 10
 seu_sampled <- seu[, sample(1:ncol(seu), size = 0.1 * ncol(seu))]
 plots <- list(
-  seu |> Seurat::FeaturePlot(features = c("CD8A", "FOXP3"), order = TRUE) & coord_equal(),
-  seu_sampled |> Seurat::FeaturePlot(features = c("CD8A", "FOXP3"), order = TRUE) & coord_equal()
+  seu |>
+    Seurat::FeaturePlot(features = c("CD8A", "FOXP3"), order = TRUE) &
+    coord_equal(),
+  seu_sampled |>
+    Seurat::FeaturePlot(features = c("CD8A", "FOXP3"), order = TRUE) &
+    coord_equal()
 )
 (plots[[1]] & labs(subtitle = "Not sampled")) /
   (plots[[2]] & labs(subtitle = "Sampled 10%"))
@@ -121,7 +135,8 @@ plots <- list(
 #| include: false
 bnch_sampled <- bench::mark(
   `Seurat, sampled 10% (n=1,400)` = seu_sampled |>
-    Seurat::FeaturePlot(features = features) |> plot(),
+    Seurat::FeaturePlot(features = features) |>
+    plot(),
   iterations = 3,
   memory = FALSE
 )
@@ -137,11 +152,12 @@ The improvement in speed is also slightly better, but still very slow. `Seurat::
 #| include: false
 extract_and_pivot <- function(.seu, features) {
   seu_expr <- FetchData(.seu, vars = c("umap_1", "umap_2", features))
-  seu_expr_long <- seu_expr |> pivot_longer(
-    all_of(features),
-    names_to = "feature",
-    values_to = ".abundance"
-  )
+  seu_expr_long <- seu_expr |>
+    pivot_longer(
+      all_of(features),
+      names_to = "feature",
+      values_to = ".abundance"
+    )
   seu_expr_long
 }
 
@@ -258,7 +274,8 @@ prepare_plot_data <- function(seu, features, .n = 1400) {
 
   return(
     list(
-      background = background_data, abundance = seu_expr_long
+      background = background_data,
+      abundance = seu_expr_long
     )
   )
 }
@@ -297,7 +314,8 @@ list(
   purrr::map(~ count(.x, feature)) |>
   bind_rows(.id = "type") |>
   pivot_wider(
-    names_from = type, values_from = n
+    names_from = type,
+    values_from = n
   ) |>
   gt() |>
   grand_summary_rows(-feature, fns = list(sum ~ sum(.)))
@@ -310,12 +328,14 @@ Finally, let's compare our solution with `Seurat::FeaturePlot` over 10 genes for
 ```{r}
 #| eval: false
 bnch_final <- bench::mark(
-  `Seurat, not sampled` = Seurat::FeaturePlot(seu, features = features) |> plot(),
+  `Seurat, not sampled` = Seurat::FeaturePlot(seu, features = features) |>
+    plot(),
   `Custom solution` = naive_plot3(seu, features) |> plot(),
   memory = FALSE,
   check = FALSE,
   iterations = 4
-) |> select(expression, min, median, n_itr)
+) |>
+  select(expression, min, median, n_itr)
 ```
 
 
