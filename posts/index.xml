@@ -1536,6 +1536,31 @@ font-style: inherit;">naive_plot3</span>(seu, features)</span></code></pre></div
 
 
 
+<div class="callout callout-style-default callout-tip callout-titled" title="Wow! :crown:">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Wow! <span class="emoji" data-emoji="crown">👑</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><em>edited 2025-11-10</em></p>
+<p>Hooray! I won a prize. <a href="https://posit.co/blog/2025-table-contest-winners/">“The Best gt Table”</a> was awarded to my visualization of coronavirus spike proteins.</p>
+<blockquote class="blockquote">
+<p>This table submission is remarkable for its audacity: multiple sequence alignment has its own established tooling, yet here’s someone doing it with gt and it actually works! It’s obvious to me that the author saw a table package not as a constraint but as a canvas for domain-specific visualization. Maybe the future of bioinformatics might involve more Quarto documents with/ tables and fewer standalone desktop applications?</p>
+</blockquote>
+<p><em>edited 2025-12-15</em></p>
+<p>I also won the <a href="https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/">Grand Prize for the 2025 Plotnine contest</a>.</p>
+<blockquote class="blockquote">
+<p>We are happy to announce Victor’s Canada Labour Statistics visualisation as the winner of the 2025 Plotnine plotting contest.</p>
+<p>The backdrop of this visualisation is an aggregate of all the categories of industries. It encodes three dimensions. While the Grammar of Graphics makes it easy to encode dimensions into visual elements, i.e., aesthetic mapping, this visual shines because of what it has chosen to represent, and how it represents it: time along the horizontal, ranking of the percentage change in employment numbers on the vertical, and the percentage change itself as a colour.</p>
+<p>Yet there is more information in the backdrop than the explicit dimensions; for each year, the vertical range of the tiles encodes the performance of the job market across all industries. At first, it is hidden, then it is obvious. This is a range plot! The entire job market moves down between 2020 and 2023 and then moves up in 2024. The deliberate choice of the colours at lower and higher ends of the colour scale attracts the eye to the changes that need scrutiny. For an ordinal variable, why would a blue follow a sequence of greens in the colour scale? Well, to catch your attention. An enallage is a figure of speech where wrong grammar is used deliberately for an emphatic stylistic effect; Victor’s choice achieves a similar effect.</p>
+<p>Well, we was gifted</p>
+</blockquote>
+</div>
+</div>
 <p>On August 21 2025, Posit announced the <a href="https://posit.co/blog/announcing-the-2025-table-and-plotnine-contests/">2025 Table and Plotnine contests</a>. I was always impressed with the resulting submissions from previous years, so this year I decided to participate.</p>
 <p>Initially, I decided that the <code>plotnine</code> contest sounded like a great opportunity to see how to use the python port of <code>ggplot2</code>. I had no experience with plotnine, but lots with ggplot2.</p>
 <p>However, after finishing my submission for <code>plotnine</code>, I turned my attention to the table contest. I wasn’t certain if I had the time to make another high quality submission. But I felt that I had a great idea that I haven’t seen done before. So I reconsidered and decided to make a smaller single post entry for the table contest.</p>
