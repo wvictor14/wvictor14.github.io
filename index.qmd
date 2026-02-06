@@ -51,14 +51,14 @@ When I’m off the clock, you’ll likely find me at a rock climbing gym, huntin
 
 I'm very excited that some of my recent work won recognition in two 2025 Posit contests: 
 
-The [grand prize for the Plotnine contest](https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/) ([Canadian labour statistics](https://victoryuan.com/labourcan/02_develop_visualization.html))
+I took a step out of biotech and peered into the world of labour statistics with my visualization of [Canadian labour statistics](https://victoryuan.com/labourcan/02_develop_visualization.html) that won [the grand prize for the 2025 Plotnine contest](https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/).
 
-> We are happy to announce Victor’s Canada Labour Statistics visualisation as the winner of the 2025 Plotnine plotting contest.
+> We are happy to announce Victor’s Canada Labour Statistics visualisation as the winner of Posit's 2025 Plotnine plotting contest.
 >
-> The backdrop of this visualisation is an aggregate of all the categories of industries. It encodes three dimensions. While the Grammar of Graphics makes it easy to encode dimensions into visual elements, i.e., aesthetic mapping, this visual shines because of what it has chosen to represent, and how it represents it: time along the horizontal, ranking of the percentage change in employment numbers on the vertical, and the percentage change itself as a colour.
+> The backdrop of this visualisation is an aggregate of all the categories of industries. It encodes three dimensions. While the Grammar of Graphics makes it easy to encode dimensions into visual elements, i.e., aesthetic mapping, this visual shines because of what it has chosen to represent, and how it represents it: time along the horizontal, ranking of the percentage change in employment numbers on the vertical, and the percentage change itself as a colour...
 
 
-and "[Best gt Table](https://posit.co/blog/2025-table-contest-winners/)" ([Coronavirus Spike Proteins](https://victoryuan.com/2025-posit-table-contest-gt-msa/)). 
+And my visualization of [Coronavirus Spike Proteins](https://victoryuan.com/2025-posit-table-contest-gt-msa/) won the award for "[Best gt Table](https://posit.co/blog/2025-table-contest-winners/)" for Posit's 2025 Table Contest. 
 
 > This table submission is remarkable for its audacity: multiple sequence alignment has its own established tooling, yet here’s someone doing it with gt and it actually works! It’s obvious to me that the author saw a table package not as a constraint but as a canvas for domain-specific visualization. Maybe the future of bioinformatics might involve more Quarto documents with/ tables and fewer standalone desktop applications?
 
