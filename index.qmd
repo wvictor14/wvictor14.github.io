@@ -20,21 +20,23 @@ about:
 
 Hello, I'm Victor, and welcome to my website!
 
-I am a  **data scientist** at [Sonoma Biotherapeutics](https://sonomabio.com/). I spend my time translating complex biological data into data-driven stories that help us understand how to better develop cell therapies to treat autoimmune diseases.
+I am a  **data scientist** working in **Biotech**. I spend my time transforming complex biological data into data-driven stories that help us understand how to better develop therapies to treat diseases.
 
 <!--- Professional stack --->
 
 What I do:
 
-- Data Visualization: Crafting beautiful charts and effective visual narratives.
-- Pipeline Engineering: Building automated, reproducible systems for scientific computing.
-- Tool Development: Writing software that makes scientific data analysis more accessible.
+- **Analytics and Visualization**: Crafting beautiful charts and effective visual narratives.
+- **Data Engineering**: Building automated, reproducible systems for scientific computing.
+- **Tool Development**: Writing software that makes scientific data analysis more accessible.
+
+**My favorite tool is R**, but I do keep a close eye on python.
 
 <!--- Background --->
 I earned my PhD from the **University of British Columbia (2022), Vancouver BC**, focusing on epigenetics and placental biology, following a **BSc in Molecular Biology from Concordia University, Montreal QC**.
 
 <!--- Beyond the Data --->
-When I’m off the clock, you’ll likely find me at a rock climbing gym, hunting for the perfect pour-over, or criticizing car-centric urban development and transit systems in North America.
+When I’m off the clock, you’ll likely find me at a rock climbing gym, hunting for the perfect pour-over, or criticizing car-centric urban development and transit systems.
 
 *I’m always keen to connect with others in the biotech and data science space. If you’re working on an interesting problem and need a fresh perspective, feel free to reach out!* <a href="mailto:victorwyuan@gmail.com" style="text-decoration: none; margin-left: 10px;">
     <span role="img" aria-label="envelope">✉️</span> Email
@@ -43,3 +45,21 @@ When I’m off the clock, you’ll likely find me at a rock climbing gym, huntin
   <a href="https://www.linkedin.com/in/victorwyuan/" target="_blank" style="text-decoration: none; margin-left: 5px;">
     <span role="img" aria-label="linkedin">🔗</span> LinkedIn
   </a>
+
+
+### Recent news
+
+I'm very excited that some of my recent work won recognition in two 2025 Posit contests: 
+
+The [grand prize for the Plotnine contest](https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/) ([Canadian labour statistics](https://victoryuan.com/labourcan/02_develop_visualization.html))
+
+> We are happy to announce Victor’s Canada Labour Statistics visualisation as the winner of the 2025 Plotnine plotting contest.
+>
+> The backdrop of this visualisation is an aggregate of all the categories of industries. It encodes three dimensions. While the Grammar of Graphics makes it easy to encode dimensions into visual elements, i.e., aesthetic mapping, this visual shines because of what it has chosen to represent, and how it represents it: time along the horizontal, ranking of the percentage change in employment numbers on the vertical, and the percentage change itself as a colour.
+
+
+and "[Best gt Table](https://posit.co/blog/2025-table-contest-winners/)" ([Coronavirus Spike Proteins](https://victoryuan.com/2025-posit-table-contest-gt-msa/)). 
+
+> This table submission is remarkable for its audacity: multiple sequence alignment has its own established tooling, yet here’s someone doing it with gt and it actually works! It’s obvious to me that the author saw a table package not as a constraint but as a canvas for domain-specific visualization. Maybe the future of bioinformatics might involve more Quarto documents with/ tables and fewer standalone desktop applications?
+
+Check out my [blog post](posts\2025-10-03-2025-posit-plotnine-and-great-tables-contest\index.qmd) for details.

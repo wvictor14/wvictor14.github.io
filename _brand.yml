@@ -9,19 +9,17 @@ logo:
 color:
   palette:
     black: "#1A1A1A"
-    white: "#F9F9F9"
     orange: "#FF6F20"
     pink: "#FF3D7F"
   foreground: black
-  background: white
   primary: orange
   danger: pink
 
 typography:
   fonts:
-    - family: Work Sans
+    - family: Figtree  # Epilogue, Figtree is good too  
       source: google
-  base: Work Sans
+  base: Figtree   
   headings:
     color: gray
   link:
