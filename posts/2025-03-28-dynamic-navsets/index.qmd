@@ -14,6 +14,7 @@ categories:
   - R
   - quarto
 embed-resources: false
+image: shinylive.gif
 ---
 
 ![](shinylive.gif)

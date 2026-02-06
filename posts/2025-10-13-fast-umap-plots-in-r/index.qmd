@@ -13,6 +13,7 @@ categories:
   - R
   - data visualization
   - bioinformatics
+image: umap-thumbnail.png
 ---
 
 Analyzing single cell data often requires visualizing thousands to millions of data point on a graph. Current R packages such as `Seurat::DimPlot` are limited by long plotting times, impeding efficient exploratory analysis. 
