@@ -1,0 +1,78 @@
+---
+title: Dev vs Prod in R data pipeline
+description: Exploring data engineering best practices in R targets pipelines with pins.
+author: Victor Yuan
+date: 2026-02-21
+draft: true
+categories:
+  - R
+  - python
+  - targets
+  - data engineering
+---
+
+# Skipping uploads when in `development`
+
+When in development we need to be able to test changes without affecting production systems (e.g. a database and connected services). One option is to simply not write to the production database[^1] in development. This can be easily accomplished adding a flag to the `skip` argument `target`s that upload assets, where the flag checks if an environmental variable is set to `production`:
+
+[^1]: Where production database can be replaced with a `pins` board, or some other "container" of data assets
+
+```bash
+# This target pushes an object to production
+tar_target(
+	 UPLOAD_TO_PRODUCTION,
+	 ...,
+	 skip = Sys.getenv('PROJECT_ENVIRONMENT') == 'production'
+)
+```
+
+If the environmental variable returns something other than `production` in this example, the `target` will be skipped and the data object won't be uploaded to our production systems.
+
+This allows us to locally develop freely without affecting production systems until changes are finalized. 
+
+# Publishing, but not to `prod`
+
+However, skipping uploads in development trades one problem in exchange for another. If no data from development are written to production, how can we know if other downstream dependent services will be impacted? Sure we can explore pipeline assets and run asset checks locally, but impacts on downstream services can be hard to predict, particularly in more complex and mature production systems. 
+
+To address this, we can take a page out of a practice that [dbt]() does by default[^2]. During development, we can write to a development-specific *address*[^3]. Then, connected services can connect and run service-specific tests against development assets.
+
+[^2]: I won't pretend to know that much about dbt. But just a few fleeting explorations with the framework were enough for me to realize that dbt has some really excellent enforced and/or highly encouraged practices that can be applied to any data pipeline system, like `r-targets`.
+
+[^3]: Here I am being purposefully vague - an address can refer to something conceptually like a root/parent folder in a local system, a bucket in s3, a board using pins, a schema in a database. If data storage were geography, it would be the `city` part of your address.
+
+But what *is* this development address?
+
+If we consider the case where there are multiple developers working on the same pipeline, where each developer may want to test their own unique developmental branches against downstream services, then the development address should be specific to each developer or to each branch.
+
+So when developer John is working, he’s writing to the an address unique to him, so we can specify `john` as the specific schema / folder / address / catalog. 
+
+John can then test for downstream services by directly referencing john’s specific developmental address, thus ensuring that not only does the pipeline pass all checks, but the resulting assets are fully compatible with existing dependent services.
+
+This can be particularly convenient and easy to implement because many popular storage systems have some form of "parent" or "root" folder concept -- data warehouses/lakes like databricks have [catalogs]() and [schemas](), s3 has [buckets](), databases have schemas. To have downstream services to reference these development-specific addresses, one can often simply swap out the "parent" folder part of the address, and the remaining asset-specific part of the address can remain untouched.
+
+
+## dev vs prod environment
+
+To summarize, option 1 would look like this:
+
+|                | development | production             |
+|----------------|-------------|------------------------|
+| write          | OFF         | ON                     |
+| where to write | ---         | `PROD/{ASSET_ADDRESS}` |
+
+This would suffice if testing downstream dependencies on the published data assets is not a priority.
+
+The second option looks more like this:
+
+
+|                | development                       | production             |
+|----------------|-----------------------------------|------------------------|
+| write          | OFF                               | ON                     |
+| where to write | `DEV/{DEVELOPER}/{ASSET_ADDRESS}` | `PROD/{ASSET_ADDRESS}` |
+
+Obviously, the storage size of this second option is effectively multiplied by the number of developers + 1 for prod, but provides more control over development, and is a more testable system especially with downstream connected services. 
+
+# A light example
+
+
+
