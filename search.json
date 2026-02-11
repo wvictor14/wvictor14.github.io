@@ -60,7 +60,7 @@
     "href": "projects/placentalmethylomebrowser/index.html",
     "title": "Placental Methylome Browser",
     "section": "",
-    "text": "A mini project where me and one of my students Yifan Yin created a shiny app to explore epigenetic data from placental samples we collected.\nI no longer maintain this app, but it usually lives here:\nhttps://wvictor.shinyapps.io/dmr-project/\nsource"
+    "text": "A project where me and one of our lab’s rotation students, Yifan Yin, created a shiny app to explore epigenetic (DNA methylation) data from placental samples we collected.\nI no longer actively maintain this app, but it lives here:\nhttps://wvictor.shinyapps.io/dmr-project/\nsource"
   },
   {
     "objectID": "projects/rbiotechsalary/index.html",
