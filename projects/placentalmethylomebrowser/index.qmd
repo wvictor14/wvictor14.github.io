@@ -3,10 +3,10 @@ title: Placental Methylome Browser
 date: 2019-01-01
 ---
 
-A mini project where me and one of my students Yifan Yin created a shiny app to
-explore epigenetic data from placental samples we collected.
+A project where me and one of our lab's rotation students, Yifan Yin, created a shiny app to
+explore epigenetic (DNA methylation) data from placental samples we collected.
 
-I no longer maintain this app, but it usually lives here:
+I no longer actively maintain this app, but it lives here:
 
 [https://wvictor.shinyapps.io/dmr-project/](https://wvictor.shinyapps.io/dmr-project/)
 
