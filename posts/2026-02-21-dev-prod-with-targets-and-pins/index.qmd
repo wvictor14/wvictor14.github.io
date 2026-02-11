@@ -11,11 +11,13 @@ categories:
   - data engineering
 ---
 
+# Introduction
+
 # Skipping uploads when in `development`
 
-When in development we need to be able to test changes without affecting production systems (e.g. a database and connected services). One option is to simply not write to the production database[^1] in development. This can be easily accomplished adding a flag to the `skip` argument `target`s that upload assets, where the flag checks if an environmental variable is set to `production`:
+When developing data pipelines one often needs to test changes without disturbing data assets that live in production systems (e.g. tables in databases, pins in boards) and connected downstream services (e.g. a web app, apis, dashboards). One option is to simply not write to production in development. 
 
-[^1]: Where production database can be replaced with a `pins` board, or some other "container" of data assets
+In a `r-targets` data pipeline, this can be easily accomplished by adding a flag to the `skip` argument `target`s that upload assets, where the flag checks if an environmental variable is set to `production`:
 
 ```bash
 # This target pushes an object to production
