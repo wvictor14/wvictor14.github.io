@@ -1,0 +1,145 @@
+---
+title: Notes on non-standard evaluation in R
+description: 
+author: Victor Yuan
+date: 2026-02-30
+draft: true
+categories:
+  - R
+---
+
+Notes on Hadley's Advanced R book.
+
+# Chapter 17 
+
+https://adv-r.hadley.nz/meta-big-picture.html
+
+## `expr` vs `enexpr`
+
+`expr` captures code as it is written
+
+`enexpr` captures code that a user has passed to a function
+
+
+```{r}
+library(rlang)
+capture_it <- function(x) {
+  expr(x)
+}
+capture_it(1 + 2 + 3)
+```
+
+
+
+```{r}
+capture_it <- function(x) {
+  enexpr(x)
+}
+capture_it(1 + 2 + 3)
+```
+
+Terminology: `enexpr` allows "quoting" user supplied expressions to functions. The quoted user expression can itself be then modified.
+
+## Constructing expressions programmatically
+
+Expressions can be constructed with `rlang::call2`
+
+
+```{r}
+call2('+', 1, 2)
+```
+
+
+`!!` operator takes the abstract syntax tree (AST) and injects it into a function
+
+
+```{r}
+square_it <- function(x) {
+  captured <- enexpr(x)
+  expr(!!captured * !!captured)
+}
+square_it(1 + 2 + 3)
+```
+
+
+```{r}
+xx <- expr(x + x)
+yy <- expr(y + y)
+
+expr(!!xx / !!yy)
+#> (x + x)/(y + y)
+```
+
+## Evaluating code
+
+In above examples, we "captured" or "quoted" code. To evaluate code, means to reaplce the variables and functions using a namespace/environment, and then execute the resulting AST.
+
+
+```{r}
+eval(expr(x + y), env(x = 1, y = 2))
+```
+
+What if no env is provided?
+
+```{r}
+
+eval(expr(x + y))
+```
+
+This is how tidyverse functions work, they capture user supplied code and then evaluate in an environment where objects/variables are the columns of a data frame.
+
+
+```{r}
+string_math <- function(x) {
+  e <- env(
+    caller_env(),
+    `+` = function(x, y) paste0(x, y),
+    `*` = function(x, y) strrep(x, y)
+  )
+
+  eval(enexpr(x), e)
+}
+
+name <- "Hadley"
+string_math("Hello " + name)
+#> [1] "Hello Hadley"
+string_math(("x" * 2 + "-y") * 3)
+#> [1] "xx-yxx-yxx-y"
+```
+
+## enquo vs enexpr
+
+`enexpr` captures code user supplies to function
+
+`enquo` captures code user supplies to function + the environment 
+
+`enquo` is used with `eval_tidy` in the context of a data mask ie in a dataframe operation
+
+
+# 18
+
+## 18.2
+
+### 18.2.1
+
+#> █─f 
+#> └─█─g 
+#>   └─█─h
+
+f(g(h()))
+
+#> █─`+` 
+#> ├─█─`+` 
+#> │ ├─1 
+#> │ └─2 
+#> └─3
+(1+2)+3
+
+#> █─`*` 
+#> ├─█─`(` 
+#> │ └─█─`+` 
+#> │   ├─x 
+#> │   └─y 
+#> └─z
+
+z*(x+y)

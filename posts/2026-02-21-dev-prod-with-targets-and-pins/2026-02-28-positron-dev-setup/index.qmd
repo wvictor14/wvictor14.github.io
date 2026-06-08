@@ -1,0 +1,63 @@
+---
+title: Settings for Positron
+description: Optimizing my personal developer experience with Positron.
+author: Victor Yuan
+date: 2026-02-30
+draft: true
+categories:
+  - R
+  - python
+  - vscode
+  - positron
+---
+
+Over the years, I have developed preferences and certain expectations for my development experience. I have gone from Rstudio, to vscode, to rstudio server from a docker container + vscode, and now to rstudio[^1] + vscode + positron.
+
+[^1] I am eagerly awaiting until I can drop rstudio completely for positron, but at this moment my list of must-haves and pain-points with positron make me prefer  rstudio still for most of my daily data analysis activities.
+
+I have so many developer settings scattered across these various environments. I also have separate work / personal laptops. So I'm constantly frustrated by the lack of consistency and behaviours of my developer experience when switching contexts throughout the day.
+
+So I'm starting a list of things to remember to configure. Hopefully one day all my environments will coalesce to one glorious optimized developer experience. The second goal of this list is to keep track of settings, extensions, and shortcuts that I have experimented with.
+
+# Shortcuts
+
+I've become heavily reliant on rstudio's shortcuts. I now must configure vscode and positron to have a consistent experience to my most well used rstudio shortcuts. Some of these are already the default for positron/vscode.
+
+## Focusing
+
+Switching focus to different panes within positron is critical to speeding up actions per minute (APM). 
+
+- `ctrl` + `1` focuses the editor / source
+- `ctrl` + `2` focuses the console
+- `ctrl` + ``` focuses the terminal (default)
+- `ctrl` + `e` focuses the file explorer
+- `ctrl` + `k`, `e` focuses the open editors group
+- `ctrl` + `tab` switches from  next tab in editor, add `shift` for previous
+
+# Reasons why I still prefer Rstudio to Positron
+
+I hope one day I can delete this section, but for now these are the biggest hurdles to using positron full time:
+
+## Positron is slow
+
+This is by far my biggest hurdle today when suggesting positron to anyone. 
+
+I don't know why, but it seems that every positron session starts quick and snappy, but quickly becomes a sluggish mess. After a measly 1000 lines of code, twenty <1mb objects in my workspace, and it feels like I'm wading through 2 feet of mud. `ctrl` + `enter` now wait 1-5s for code to show up in the terminal and execut. And then wait another 5 seconds for the code to finish running. Try to restart the R session and it hangs. Guess I'll just force kill the session and reload the window. Oh and why is there a bajillion `.vdoc.*` files in my workspace that I have to clean up?
+
+## No WSL support
+
+Until this is supported I just frankly cannot use positron. Nothing will ever make want to use windows to run bioinformatic tools or PowerShell to pretend I can sys admin. And I will never enter Apple's ecosystem.
+
+## Limited .devcontainer support
+
+devcontainers are amazing for portable developer workspaces and I have become reliant on them for ensuring the seemless juggling of multiple distinct projects with their own specific environments.
+
+## The default plots pane makes me slower to generate quick high quality graphics
+
+My ability to generate high quality graphics quickly is severely hampered by positron's plots pane. Though it is a much better experience compared to vscode, I am still missing a few crucial behaviours from Rstudio.
+
+Using Positron's plotting capabilities is definitely a step up from vscode's, but still a step behind Rstudio's when it comes to quickly generating graphics.
+
+Rstudio allows me to pop open the plots pane into an external viewer, then I can zoom and resize the window to get the exact dimensions and font size I want. Copy + paste into powerpoint / email / teams chat and then done. When you resize plots in Positron by resizing the window, it appears there are some limits on aspect ratios. For example, I can't resize a graph to be really really wide and short, or very tall and narrow. Zooming in and out of the plotting pane also has a limited effect on adjusting relative size of the fonts compared to the other components of the graphic, which maybe sounds like a good thing on paper, but in practice I miss this "quirk" from rstudio dearly. The last thing is that it appears the quality of these plots are much lower when copy and pasting.
+
+On the plus side, I really like that there is a save button with a preview mode. This makes it easy to save a high quality svg and adjust dimensions easily. But even the preview seems to have some limitations when going below certain sizes.
