@@ -1,0 +1,106 @@
+---
+title: Reflecting on Two Weeks of AI Usage
+date: "2026-06-16"
+author: "Victor Yuan"
+categories: [AI, Productivity]
+---
+
+This post contains some reflections on my first two weeks[^1] of using AI at work. 
+
+At first, I was astounded at the amount of output Claude could generate. Not necessarily at the quality of the output but the amount of seemingly working and reasonable code it produced. My first thoughts were about how great it was that I no longer needed to keep my "cheatsheets" of regex matches, bash one-liners, and endless amounts of syntax that my brain doesn't seem to approve to commit to my long-term memory. Instead, I just can ask Claude.
+
+When work announced that we would be getting unlimited [^2], I was excited. I started to think about the possibilities. I opened a terminal and decided that I would try to use Claude for... everything. I tasked Claude to assist me in writing some "helper" functions to assist in downloading new datasets, I asked C to analyze my patterns and create new analysis notebooks, I asked C if it thought my existing patterns could be improved. Claude identified "issues" one-by-one and explained how easily it could fix them. 
+
+> The Solution? It's simpler than you think...
+
+Quickly I set C off to work. I sat back and reveled at what the state of coding and data analysis was quickly becoming. When C was done I enthusiastically explored the outputs a "State-of-the-art" intelligence had made. The code looked nice, the logic was sound, there were even "integrated" tests and documentation that so often I deprioritize for speed. I felt successful, even though I hadn't written a line a code, I directed Claude what to do, I wrote the prompt, so I should feel right to feel proud. That's what I told myself, but I had a nagging feeling.
+
+But behind the shiny curtain what seemed to be a seemless well-architected solution, actually missed the  mark on the end goals. I saw errors that I wouldn't expect a co-op student to make. The code looked nice, but empty plots, unreadable tables, and non-sensical narratives were an regular occurence. If I could summarize my impression of AI-assisted data science by time in a nice plot (that C helped me generate):
+
+```{r}
+## Build a graph using R code that represents my "Impression of AI-assisted coding" and "time since using AI" that represents my narrative above.
+
+## DeepSeek V4 Flash:
+library(ggplot2)
+
+impression <- data.frame(
+  week = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+  rating = c(5, 8, 9, 9.5, 9.8, 9.5, 7, 4, 3, 2.5, 2)
+)
+
+ggplot(impression, aes(x = week, y = rating)) +
+  geom_line(color = "#FF6B35", linewidth = 1.5) +
+  geom_point(color = "#FF6B35", size = 2.5) +
+  annotate(
+    "text",
+    x = 1.5,
+    y = 9.2,
+    label = '"The Solution? It\'s simpler than you think..."',
+    size = 3.2,
+    hjust = 0,
+    color = "#FF6B35",
+    fontface = "italic"
+  ) +
+  annotate(
+    "text",
+    x = 7,
+    y = 3.5,
+    label = '"Empty plots, unreadable tables,\nnon-sensical narratives"',
+    size = 3.2,
+    hjust = 0,
+    color = "#888",
+    fontface = "italic"
+  ) +
+  annotate(
+    "segment",
+    x = 4,
+    xend = 6,
+    y = 9.5,
+    yend = 7.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    color = "#88888870",
+    linewidth = 0.5
+  ) +
+  annotate(
+    "text",
+    x = 2,
+    y = 9.8,
+    label = "honeymoon phase",
+    size = 3,
+    color = "#88888870",
+    fontface = "italic"
+  ) +
+  scale_x_continuous(breaks = seq(0, 10, 2)) +
+  coord_cartesian(ylim = c(1, 10)) +
+  labs(
+    title = "Impression of AI-Assisted Data Science",
+    subtitle = "Enthusiasm over time",
+    x = "Weeks since adopting AI coding assistants",
+    y = "Rating (1–10)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = "grey40", size = 10),
+    panel.grid.minor = element_blank()
+  )
+```
+
+When new models are released, a profile of its abilities will also be released, which must always demonstrate that it is a marked improvement from previous standards. As our brilliant local mayor said in a total-non-embarassing interview "AI", AI is improving every day. I haven't dug into these metrics myself, but I were to generate my own rubric on AI for tasks that I have tried using it for it would look like the following.
+
+Things I think AI is good for:
+
+Thing I think AI is not good for:
+
+- Data Interpretation
+- Evaluating 
+
+
+Motivated by forums and user reviews of their success with AI-assisted coding, I investigated how to use C's abilities better. "Skill-issue" is what I thought. I just need to write my prompts better, be more specific, give more context, give the agent more skills, more control, more agency. 
+
+
+
+[^1] Well, I started using github copilot $10 pro plan for about a month prior, but the limits made me barely use it all. Only for small tasks that didn't really have me appreciate the full extent of how AI could help me. 
+
+[^2] It was May that I got access to CC, seemingly in the middle of when Anthropic implemented time-based limits. 
+
