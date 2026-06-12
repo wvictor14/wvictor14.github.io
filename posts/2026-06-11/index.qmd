@@ -1,0 +1,35 @@
+
+
+Some lessons I've learned from managing a large scientific analytics website with quarto.
+
+My context: 
+
+- large quarto website with 100+ pages of scientific content written in R / python
+- updates are initiated in two streams: 1. regular (weekly, monthly) data updates necessitates page-specific refreshes. 2. New analyses warrant new pages
+
+`_freeze`[cite quarto-freeze] does a lot of heavy-lifting by precisely updating specific pages by saving computations in pages not needing updates.
+
+However, each page requiring ~1 minute to render means that [quarto's serial render](https://github.com/orgs/quarto-dev/discussions/2749) makes quick interactive development a pain. 
+
+Helper functions that help pair page-specific data dependencies (for example  data update A requires render of page 1, 2, and 3) minimize unnecessary rendering.
+
+Parallelizing renders is an obvious solution which works well out of the box and can be easily customized with a "make" like tool like [r-targets](https://books.ropensci.org/targets/). But...
+
+If utilizing templating (basically trying to follow DRY principles) means that parallel renders need to carefully handle dependencies into temporary environments so that renders don't clash and error out. 
+
+relevant GH issues: [#5861](https://github.com/quarto-dev/quarto-cli/issues/5861), [#4730](https://github.com/quarto-dev/quarto-cli/issues/4730)
+
+Unfortunately these solutions aren't generalizable to websites. My solution can be found here, which disclaimer I asked Claude to help generate: []()
+
+If these strategies are employed updates the development speed of new pages and page updates can be increased by an order of magnitude. Compounded with the need of quick interactive tests, this makes dev time way way faster. The tip from this blog, which also has some great points on the SPEED of quarto[^1], using caddy to serve _site instead of relying on quarto preview (which tries to be too fancy at the cost of speed) is also extremely good for interactive dev. 
+
+Lastly, even if page-wise renders are optimized, site-wide renders are still slow (1-3s per page even with _freeze strategy = +100s for 100 pages). This friction can be minimized with CI/CD system of choice (e.g. GHA, private runners).
+
+
+Refs (add to references.bib)
+
+1. https://quarto.org/docs/projects/code-execution.html#freeze
+
+Footenotes
+
+[^1]: 
