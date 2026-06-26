@@ -1,51 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://victoryuan.com/license.html</loc>
-    <lastmod>2026-02-11T05:26:29.062Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.066Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.063Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.073Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/projects/placentalmethylomebrowser/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.077Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/projects/rbiotechsalary/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.077Z</lastmod>
+    <loc>https://victoryuan.com/index.html</loc>
+    <lastmod>2026-06-26T16:59:06.077Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.077Z</lastmod>
+    <lastmod>2026-06-26T16:59:06.090Z</lastmod>
   </url>
   <url>
-    <loc>https://victoryuan.com/projects/bcchildcarebot/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.077Z</lastmod>
+    <loc>https://victoryuan.com/projects/rbiotechsalary/index.html</loc>
+    <lastmod>2026-06-26T16:59:06.091Z</lastmod>
   </url>
   <url>
-    <loc>https://victoryuan.com/projects/planet/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.077Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.062Z</lastmod>
+    <loc>https://victoryuan.com/posts/index.html</loc>
+    <lastmod>2026-06-26T16:59:06.087Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.072Z</lastmod>
+    <lastmod>2026-06-26T16:59:06.086Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/license.html</loc>
+    <lastmod>2026-06-26T16:59:06.077Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/llm-skill-usage.html</loc>
+    <lastmod>2026-06-26T16:59:06.077Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html</loc>
+    <lastmod>2026-06-26T16:59:06.080Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html</loc>
+    <lastmod>2026-06-26T16:59:06.079Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/posts/2025-03-28-dynamic-navsets/index.html</loc>
-    <lastmod>2026-02-11T05:26:29.063Z</lastmod>
+    <lastmod>2026-06-26T16:59:06.079Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/projects/placentalmethylomebrowser/index.html</loc>
+    <lastmod>2026-06-26T16:59:06.090Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/projects/planet/index.html</loc>
+    <lastmod>2026-06-26T16:59:06.091Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/projects/bcchildcarebot/index.html</loc>
+    <lastmod>2026-06-26T16:59:06.090Z</lastmod>
   </url>
 </urlset>

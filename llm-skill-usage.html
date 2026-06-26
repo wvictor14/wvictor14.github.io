@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Victor Yuan">
-<meta name="dcterms.date" content="2024-06-12">
+<meta name="dcterms.date" content="2026-06-26">
 
-<title>Making a Twitter Bot in the Year 2024 – Victor Yuan</title>
+<title>LLM skill usage – Victor Yuan</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -28,28 +27,28 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<link href="../../favicon.svg" rel="icon" type="image/svg+xml">
-<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-2e587f63340ecc23f14ae6091e8eab9e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-2e587f63340ecc23f14ae6091e8eab9e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-2e587f63340ecc23f14ae6091e8eab9e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-2e587f63340ecc23f14ae6091e8eab9e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-2e587f63340ecc23f14ae6091e8eab9e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-2e587f63340ecc23f14ae6091e8eab9e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -88,7 +87,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </script>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -98,11 +97,11 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../../favicon.svg" alt="" class="navbar-logo light-content">
-    <img src="../../favicon.svg" alt="" class="navbar-logo dark-content">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./favicon.svg" alt="" class="navbar-logo light-content">
+    <img src="./favicon.svg" alt="" class="navbar-logo dark-content">
     </a>
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Victor Yuan</span>
     </a>
   </div>
@@ -113,17 +112,17 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../projects"> <i class="bi bi-puzzle-fill" role="img">
+    <a class="nav-link" href="./projects"> <i class="bi bi-puzzle-fill" role="img">
 </i> 
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../posts"> <i class="bi bi-book-fill" role="img">
+    <a class="nav-link" href="./posts"> <i class="bi bi-book-fill" role="img">
 </i> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../posts/index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="./posts/index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -141,49 +140,26 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#i-made-a-twitter-bot-the-bc-child-care-bot" id="toc-i-made-a-twitter-bot-the-bc-child-care-bot" class="nav-link active" data-scroll-target="#i-made-a-twitter-bot-the-bc-child-care-bot">I made a Twitter bot, the BC Child Care Bot</a></li>
-  <li><a href="#what-is-mastodon" id="toc-what-is-mastodon" class="nav-link" data-scroll-target="#what-is-mastodon">What is Mastodon</a></li>
-  <li><a href="#why" id="toc-why" class="nav-link" data-scroll-target="#why">Why</a></li>
-  <li><a href="#how" id="toc-how" class="nav-link" data-scroll-target="#how">How</a>
-  <ul class="collapse">
-  <li><a href="#github-actions" id="toc-github-actions" class="nav-link" data-scroll-target="#github-actions">Github Actions</a></li>
-  <li><a href="#yay-for-open-source" id="toc-yay-for-open-source" class="nav-link" data-scroll-target="#yay-for-open-source">Yay for open source</a></li>
-  </ul></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Making a Twitter Bot in the Year 2024</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">R</div>
-    <div class="quarto-category">shiny</div>
-  </div>
-  </div>
+<h1 class="title">LLM skill usage</h1>
+</div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Victor Yuan </p>
-          </div>
-  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 12, 2024</p>
+      <p class="date">June 26, 2026</p>
     </div>
   </div>
   
@@ -195,44 +171,27 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </header>
 
 
-<section id="i-made-a-twitter-bot-the-bc-child-care-bot" class="level2">
-<h2 class="anchored" data-anchor-id="i-made-a-twitter-bot-the-bc-child-care-bot">I made a Twitter bot, the <a href="https://botsin.space/@bcchildcarebot">BC Child Care Bot</a></h2>
-<p>Except, because it is 2024, using Twitter is uncool, so what I actually did instead was, <a href="https://github.com/wvictor14/bcchildcarebot">I made a Mastodon Bot</a>. It’s powered by github actions, meaning everyday it automatically pulls data from BC open map data, detects new vacancies using R, and sends a “toot” (that’s the mastodon word for “tweet”) to <a href="https://botsin.space/@bcchildcarebot">this account</a>.</p>
-</section>
-<section id="what-is-mastodon" class="level2">
-<h2 class="anchored" data-anchor-id="what-is-mastodon">What is Mastodon</h2>
-<p>If you’re like me and were not an avid Twitter user in the first place, you probably have never heard of Mastodon.</p>
-<p>Well, Mastodon is basically Twitter - you create an account, follow people, and see posts from things you follow.</p>
-<p>But unlike Twitter, the servers are decentralized, meaning nothing like what Elon did to Twitter can happen, because no single person “owns” all of the servers. Or something like that.</p>
-</section>
-<section id="why" class="level2">
-<h2 class="anchored" data-anchor-id="why">Why</h2>
-<p>Anyways, I don’t really care much about Mastodon / Twitter / X or whatever. The main reason I made a the BC Child Care Bot was so that I could help my wife find day care vacancies for my son. And after struggling with deployment challenges in <a href="">my previous project</a>, I was interested in CICD and other cool things you can do with github actions.</p>
-</section>
-<section id="how" class="level2">
-<h2 class="anchored" data-anchor-id="how">How</h2>
-<section id="github-actions" class="level3">
-<h3 class="anchored" data-anchor-id="github-actions">Github Actions</h3>
-<p>I followed <a href="https://github.com/matt-dray/londonmapbot">this post</a> closely to learn how to make my own workflow. Essentially it uses github actions to run an R script in the github repository on a daily basis (a cron job).</p>
-<p>This is the section that configures the cron job. I also set it up so that on a certain branch named “test”, the script will run. I use this for testing that the workflow works, without having to change the cron schedule everytime.</p>
-<pre><code>on:
-  push:
-    branches: ['test'] # push to this branch to test toots
-  schedule:
-    - cron: '41 15 * * *'  # trigger at 3pm UTC  every day</code></pre>
-<p>The other necessary component is to add mastdon API token to github repository as a “github secret”. Then in the workflow, the token is used with the following syntax:</p>
-<pre><code>${{ secrets.RTOOT_DEFAULT_TOKEN}}</code></pre>
-</section>
-<section id="yay-for-open-source" class="level3">
-<h3 class="anchored" data-anchor-id="yay-for-open-source">Yay for open source</h3>
-<p>The last component is making the R script to: pull data, identify NEW vacancies, create a tweet / toot to send.</p>
-<p>I pulled data from <a href="https://catalogue.data.gov.bc.ca/dataset/child-care-map-data/resource/9a9f14e1-03ea-4a11-936a-6e77b15eeb39">BC gov’s open data portal</a>, and figured out a way to ID new vacancies. Then, a message is crafted accounting for the character limits (500) for mastodon toots.</p>
-<p>Actually the character limit is quite restrictive. Every day there can be 50-150 new vacancies over BC, depending on child care age group. But we only have 1 child (thank) so currently the bot only reports facilities with vacancy for children aged &lt;36 months.</p>
-<p>Every day this dataset is updated at this URL. The whole script depends on whether this URL stays the same. If it changes, the bot will stop working. Fingers crossed!</p>
+<p>Tracking my claude skill usage:</p>
+<p>Top skills overall:</p>
+<p>┌──────┬─────────────────────────────────────────────────────────┬────────┐ │ Rank │ Skill │ Count │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 1 │ grill-with-docs │ 44 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 2 │ quarto-modify │ 23 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 3 │ superpowers:writing-plans │ 20 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 4 │ superpowers:subagent-driven-development │ 18 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 5 │ superpowers:brainstorming │ 18 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 6 │ grill-me │ 14 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 7 │ quarto-render │ 10 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 8 │ superpowers:finishing-a-development-branch │ 10 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 9 │ write-a-skill │ 7 │ ├──────┼─────────────────────────────────────────────────────────┼────────┤ │ 10 │ verify / obsidian-markdown / firecrawl:firecrawl-search │ 7 each │ └──────┴─────────────────────────────────────────────────────────┴────────┘</p>
+<p>By project:</p>
+<p><em>Private repo names are redacted and replaced with a brief descriptive name</em></p>
+<ul>
+<li><code>PRIVATE-QUARTO-WEBSITE</code> (129) — heaviest user; dominated by quarto-modify, grill-with-docs, superpowers:subagent-driven-development</li>
+<li><code>PRIVATE-CLINICAL-TRIALS-RESEARCH</code> (43) — brainstorming, grill-with-docs, writing-plans</li>
+<li><code>PRIVATE-ETL</code> (36) — grill-with-docs, writing-plans, grill-me</li>
+<li>obsidian-notes / vaults (22) — obsidian-markdown, write-a-skill, obsidian-bases</li>
+<li>Other projects: scattered, low usage</li>
+</ul>
+<p>Observations:</p>
+<ul>
+<li>You lean heavily on the grilling skills (grill-with-docs + grill-me =&nbsp;58) — design interrogation is a strong habit</li>
+<li>The superpowers planning/execution cluster accounts for ~70 invocations combined, suggesting consistent structured development workflows</li>
+<li>quarto-modify and quarto-render are project-specific to casebooks (all 23+10 from there)</li>
+<li>22 skills only appear once, suggesting some were experimental or one-off</li>
+</ul>
 
 
-</section>
-</section>
 
 <script data-goatcounter="https://victor2wy.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -635,35 +594,6 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
     }
   });
   </script>
-<input type="hidden" id="giscus-base-theme" value="light">
-<input type="hidden" id="giscus-alt-theme" value="dark">
-<script>
-  function loadGiscus() {
-    // Function to get the theme based on body class
-    const getTheme = () => {
-      let baseTheme = document.getElementById('giscus-base-theme').value;
-      let altTheme = document.getElementById('giscus-alt-theme').value;
-      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
-    };
-    const script = document.createElement("script");
-    script.src = "https://giscus.app/client.js";
-    script.async = true;
-    script.dataset.repo = "wvictor14/wvictor14.github.io";
-    script.dataset.repoId = "MDEwOlJlcG9zaXRvcnkzMjI3NTA0Mjc=";
-    script.dataset.category = "General";
-    script.dataset.categoryId = "DIC_kwDOEzzH284Cw0CO";
-    script.dataset.mapping = "title";
-    script.dataset.reactionsEnabled = "1";
-    script.dataset.emitMetadata = "0";
-    script.dataset.inputPosition = "top";
-    script.dataset.theme = getTheme();
-    script.dataset.lang = "en";
-    script.crossOrigin = "anonymous";
-    // Append the script to the desired div instead of at the end of the body
-    document.getElementById("quarto-content").appendChild(script);
-  }
-  loadGiscus();
-</script>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
@@ -673,7 +603,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
     <div class="nav-footer-center">
       <ul class="footer-items list-unstyled">
     <li class="nav-item">
-    <a class="nav-link" href="../../license.html">
+    <a class="nav-link" href="./license.html">
 <p>License</p>
 </a>
   </li>  
