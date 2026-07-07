@@ -12,23 +12,23 @@ editor_options:
   chunk_output_type: console
 ---
 
-Quarto has slowly become one of my daily tools as a data scientist. Pretty much any analytical task involving data analysis - I turn to quarto instead of jupyter notebook or rmarkdown. More than that, quarto is not just for "notebook" analysis, but I have been using it to publish data-centric wiki-like websites. Quarto is well suited (on paper) for this type of product - reproducibility, integration with python, R, and web technologies etc.
+Quarto has slowly become one of my daily tools as a data scientist. Pretty much any analytical task involving data analysis - I turn to quarto instead of jupyter notebook or rmarkdown. More than that, quarto is not just for "notebook" analysis, but can be used to create wiki-like websites with analytical content. Quarto is desigend exactly for this type of product, enabling reproducibility, integration with python, R, and web technologies etc.
 
-But this post is about navigating some of the pains that comes along with quarto (and there are definitely some worth mentioning). Specifically, this is about speed and scalability, two features that I find rate-limiting in using quarto for large websites.
+Quarto has made my life much easier in a lot of ways, but because I use it so much, I spend a lot of my time fighting with quarto, specifically on limitations around scalability and preformance. This is what this blog post is about and some of the strategies I've been employing to tackle those. 
 
 This is not undocumented, others have discussed the scalability issues (cite blog post, gh discussion), and the quarto team is aware, and seems to planning some significant performance-related upgrades in the near term (crossing fingers that these issues become irrelevant super quick). 
 
-## An example use-case involving a large >100page scientific website
+## Quarto for a large >100 page scientific website
 
 My context:
 
-I manage a project that involves creating and updating webpages on a quarto website where there are close to 100 pages of analytical documents. "Documents" here refers to a `.qmd`[^1] that programmatically analyses data and generates outputs like graphs and figures that conveniently live alongside narrative - a perfect use-case for quarto. Two types of events prompt site updates. **First**, regular data refreshes (weekly, monthly) mean specific pages need re-rendering. Second, new scientific questions requires new dedicated webpages for associated analyses to live. Each page takes about 20 seconds to 1 minute to render.
+I manage a project that involves creating and updating webpages on a quarto website where there are close to 100 pages of analytical documents. "Documents" here refers to a `.qmd`[^1] that programmatically analyses data and generates outputs like graphs and figures that conveniently live alongside narrative - a perfect use-case for quarto. Two types of events prompt site updates. **First**, regular data refreshes (weekly, monthly) mean specific pages need re-rendering. Second, new scientific questions requires new dedicated webpages for associated analyses to live. Each page takes about 20 seconds to 1 minute to render. The total time it takes to render the whole site is **10-20 minutes**, and expected to increase at least 2-fold in the next year.
 
 [^1]: `.qmd` files are like jupyter notebooks, code and it's output lives together alongside author-written narratives. the "`md`" part conveys that the filetype is "markdown" at heart, a simple lightweight human-readable document. The "`q`" standards for "Quarto", which today conveys a wide set of capabilities from languages supported (R, python, julia, observable js) and output file types. 
 
 ## Slowness with quarto render
 
-Speed stems from the fact that quarto renders documents serially and cannot be parallelized due to concurrency problems [Quarto Discussions #2749](https://github.com/orgs/quarto-dev/discussions/2749). A few github issues describe some bespoke solutions[^2], but none are that generalizable. Specifically, they don't work for me, because I use `includes` to keep my website DRY. 
+Speed stems from the fact that quarto renders documents serially and cannot be parallelized due to concurrency problems [Quarto Discussions #2749](https://github.com/orgs/quarto-dev/discussions/2749). A few github issues describe some bespoke solutions[^2], but none are that generalizable. Specifically, they don't work for me, because 1. the solutions are for standalone html documents not a full on website, and 2. I use [`includes`](https://quarto.org/docs/authoring/includes.html) to keep my website DRY, which brings some complications to parallelization. 
 
 [^2]: [Quarto CLI #5861](https://github.com/quarto-dev/quarto-cli/issues/5861) and [#4730](https://github.com/quarto-dev/quarto-cli/issues/4730) describe concurrency issues, with some members suggesting workarounds, but with no official fix from quarto yet.
 
@@ -40,9 +40,7 @@ quarto render page_A.qmd -P counter:1 --output page_A.html
 unlink page_A.qmd
 ```
 
-Though this works for standalone parameterized reports, it breaks in a Quarto website projects because website outputs lands in a shared `_site/` directory. It also doesn't handle the project-level dependencies those renders need: `_quarto.yml`, `.Rprofile`, `renv/`, `R/` helper functions, and shared data.
-
-Following is a solution that is more generalizable
+Though this works for standalone parameterized reports, it breaks in a Quarto website projects because website outputs lands in a shared `_site/` directory. It also doesn't handle the project-level dependencies those renders need: `_quarto.yml`, `.Rprofile`, `renv/`, `R/` helper functions, and shared data. So, following is an extension of this solution that generalizes to quarto websites.
 
 ## `render_in_isolation()`
 
@@ -201,8 +199,6 @@ DEFAULT_SYMLINKS <- c(
 *I might be missing some resources - add as needed*
 
 It also auto-detects root-level `_*.qmd` and `_*.Rmd` template files, plus any sibling templates in the target's directory. Missing paths are silently skipped.
-
-**Why symlinks instead of copies?** Two reasons: speed (symlink creation is instantaneous regardless of file size — copying a `data/` directory with gigabytes of CSVs would dominate render time) and no duplication (N parallel renders all point to the same physical files). Symlinks are also read-only from the sandbox's perspective — the render never modifies the originals.
 
 ### Freeze and output management
 
