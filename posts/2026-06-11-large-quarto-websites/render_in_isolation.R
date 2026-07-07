@@ -118,7 +118,7 @@ copy_output_back <- function(
 #'   Defaults to `"."`.
 #' @param symlinks Character vector of paths relative to `project_dir` to
 #'   symlink into the tempdir. Defaults to `DEFAULT_SYMLINKS` plus all
-#'   root-level `_*.qmd` / `_*.Rmd` templates.
+#'   underscore-prefixed files at the project root.
 #' @param keep_failed Logical. If `TRUE`, the tempdir is preserved on render
 #'   failure to aid debugging. The returned list's `$tempdir` field gives the
 #'   path. Default `FALSE`.

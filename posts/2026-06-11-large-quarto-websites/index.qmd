@@ -14,7 +14,7 @@ editor_options:
 
 Quarto has slowly become one of my daily tools as a data scientist. Pretty much any analytical task involving data analysis, I turn to Quarto instead of Jupyter notebooks or R Markdown. More than that, Quarto isn't just for "notebook" analysis; it can also be used to create wiki-like websites with analytical content. Quarto is designed exactly for this kind of product, enabling reproducibility and integration with Python, R, and web technologies.
 
-Quarto has made my life much easier in a lot of ways, but because I use it so much, I also spend a lot of time fighting it, specifically around limitations in scalability and performance. This post is about those limitations and some of the strategies I've been using to work around them.
+Quarto has made my life much easier in a lot of ways, but because I use it so much, I also spend a lot of time fighting it, specifically around limitations in scalability and performance. This post is an *in-the-weeds* experience about those limitations and some of the strategies I've been using to work around them.
 
 This isn't a novel problem. Others have discussed the same performance issues (see [1](https://github.com/orgs/quarto-dev/discussions/4684), [2](https://danmackinlay.name/notebook/quarto#this-is-slow), and the other linked discussions and issues below), and the Quarto team is aware and seems to be planning some significant performance-related upgrades [in the near term](https://opensource.posit.co/blog/2026-04-06_whats-next-quarto-2/). Fingers crossed these issues become moot soon.
 
@@ -136,21 +136,30 @@ render_in_isolation <- function(
 
   links <- if (is.null(symlinks)) DEFAULT_SYMLINKS else symlinks
   links <- c(links, list_root_templates(project_dir))
-  for (link in links) {
-    symlink_if_exists(link, project_dir, tempdir_path)
-  }
 
   # Sibling "_*" files next to the target qmd (e.g. a shared template used
-  # via includes) also need to be symlinked in.
+  # via includes) also need to be symlinked in. A missing qmd_dir is reported
+  # as a normal render failure below rather than crashing here.
   qmd_dir <- fs::path_dir(qmd_path)
   if (qmd_dir != ".") {
-    qmd_dir_files <- fs::dir_ls(fs::path(project_dir, qmd_dir), type = "file")
+    qmd_dir_files <- tryCatch(
+      fs::dir_ls(fs::path(project_dir, qmd_dir), type = "file", all = FALSE),
+      error = function(e) character(0)
+    )
     for (file_path in qmd_dir_files) {
       file_name <- fs::path_file(file_path)
       if (startsWith(file_name, "_")) {
-        symlink_if_exists(fs::path(qmd_dir, file_name), project_dir, tempdir_path)
+        links <- c(links, fs::path(qmd_dir, file_name))
       }
     }
+  }
+
+  # The render target itself may already be one of the underscore-prefixed
+  # templates symlinked above; dedupe so it's only linked once.
+  links <- unique(links)
+  links <- links[links != qmd_path]
+  for (link in links) {
+    symlink_if_exists(link, project_dir, tempdir_path)
   }
 
   setwd(tempdir_path)
@@ -163,6 +172,9 @@ render_in_isolation <- function(
       }
       target_dest <- fs::path(tempdir_path, qmd_path)
       fs::dir_create(fs::path_dir(target_dest), recurse = TRUE)
+      if (fs::link_exists(target_dest)) {
+        fs::file_delete(target_dest)
+      }
       fs::link_create(fs::path_abs(target_src), target_dest)
 
       quarto::quarto_render(qmd_path, ...)
@@ -217,7 +229,7 @@ DEFAULT_SYMLINKS <- c(
 This is a non-exhaustive list of resources that I needed for my own website - add more as needed
 :::
 
-It also auto-detects root-level `_*.qmd` and `_*.Rmd` template files, plus any sibling templates in the target's directory. Missing paths are silently skipped.
+It also auto-detects any underscore-prefixed file at the project root (`_metadata.yml`, `_page_template.qmd`, etc.) and any sibling underscore-prefixed files sitting next to the target `.qmd`. This is the piece that actually solves the `includes` problem from earlier: when `species-A.qmd` and `species-B.qmd` both include the shared `penguins.qmd`, each gets its own symlinked copy of `penguins.qmd` in its own sandboxed tempdir, so their intermediate render state can never collide. Missing paths are silently skipped, and if the render target itself happens to be one of the auto-detected templates, it's only linked once.
 
 ### Freeze and output management
 
