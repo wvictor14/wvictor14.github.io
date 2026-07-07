@@ -20,9 +20,12 @@ This is not undocumented, others have discussed the scalability issues (cite blo
 
 ## Quarto for a large >100 page scientific website
 
-My context:
+I manage a project that involves creating and updating webpages on a quarto website where there are close to 100 pages of analytical documents. "Document" here refers to a `.qmd`[^1] that programmatically (through R, python, and/or javascript) analyses data and generates outputs like graphs and figures that conveniently live alongside narrative - a perfect use-case for quarto. Two types of events prompt site updates:
 
-I manage a project that involves creating and updating webpages on a quarto website where there are close to 100 pages of analytical documents. "Documents" here refers to a `.qmd`[^1] that programmatically analyses data and generates outputs like graphs and figures that conveniently live alongside narrative - a perfect use-case for quarto. Two types of events prompt site updates. **First**, regular data refreshes (weekly, monthly) mean specific pages need re-rendering. Second, new scientific questions requires new dedicated webpages for associated analyses to live. Each page takes about 20 seconds to 1 minute to render. The total time it takes to render the whole site is **10-20 minutes**, and expected to increase at least 2-fold in the next year.
+- Regular data refreshes (weekly, monthly) trigger specific  re-rendering of downstream pages. 
+- New scientific questions requires new dedicated webpages for associated analyses to live. 
+
+Each page takes about 20 seconds to 1 minute to render. The total time it takes to render the whole site is **10-20 minutes**, and expected to increase at least 2-fold in the next year. This presents a significant bottleneck in this analytical workflow, where render time requires significant consideration.
 
 [^1]: `.qmd` files are like jupyter notebooks, code and it's output lives together alongside author-written narratives. the "`md`" part conveys that the filetype is "markdown" at heart, a simple lightweight human-readable document. The "`q`" standards for "Quarto", which today conveys a wide set of capabilities from languages supported (R, python, julia, observable js) and output file types. 
 
@@ -40,13 +43,13 @@ quarto render page_A.qmd -P counter:1 --output page_A.html
 unlink page_A.qmd
 ```
 
-Though this works for standalone parameterized reports, it breaks in a Quarto website projects because website outputs lands in a shared `_site/` directory. It also doesn't handle the project-level dependencies those renders need: `_quarto.yml`, `.Rprofile`, `renv/`, `R/` helper functions, and shared data. So, following is an extension of this solution that generalizes to quarto websites.
+Though this works for standalone parameterized reports, it breaks in a Quarto website projects because website outputs lands in a shared `_site/` directory. It also doesn't handle the project-level dependencies those renders need: `_quarto.yml`, `.Rprofile`, `renv/`, `R/` helper functions, and shared data. The following `render_in_isolation` function tries to address these issues to allow parallel rendering for quarto websites.
 
 ## `render_in_isolation()`
 
 The idea is: for each `.qmd` you want to render, create a fresh tempdir, symlink in the project resources it needs, render inside that sandbox, and copy the results back.
 
-```mermaid
+```{mermaid}
 flowchart TD
     A["Project directory<br/>(_quarto.yml, R/, data/, …)"]
     B["render_in_isolation('page.qmd')"]
@@ -69,13 +72,6 @@ flowchart TD
     G --> H
     H --> I
     I --> J
-```
-
-Here's how to use it:
-
-```r
-source("posts/2026-06-11/render_in_isolation.R")
-render_in_isolation("reports/q4-summary.qmd")
 ```
 
 Here I show pairing with `{targets}` to run in parallel:
@@ -194,9 +190,12 @@ DEFAULT_SYMLINKS <- c(
   "scripts",
   "references.bib"
 )
+
 ```
 
-*I might be missing some resources - add as needed*
+::: {.callout-note}
+This is a non-exhaustive list of resources that I needed for my own website - add more as needed
+:::
 
 It also auto-detects root-level `_*.qmd` and `_*.Rmd` template files, plus any sibling templates in the target's directory. Missing paths are silently skipped.
 
@@ -213,7 +212,7 @@ The function returns a list with `$success`, `$error`, and `$duration_sec`. With
 - `freeze` helps a lot, but it only covers the computation part, quarto still spends a lot of time rendering (1-2s per page adds up when you have 100+pages). 
   - BUT, sharing freeze artifacts with git (quarto's suggestion) quickly becomes unwieldy, I recommend sharing via some other mechanism.
 - CI/CD with github actions to handle full site renders
-- serving the _site directly and running `quarto render [PAGE]` from cli is much much faster than `quarto preview` as this excellent blog post explains
+- serving the _site directly and running `quarto render [PAGE]` from cli is much much faster than `quarto preview` as this excellent blog post explains. This tip is for increasing speed in the development environment; not relevant for production rendering.  
 
 ```bash
 # In your project directory
