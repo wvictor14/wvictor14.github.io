@@ -22,6 +22,9 @@ website:
       - href: posts
         icon: book-fill
         text: Blog
+      - href: collections
+        icon: gem
+        text: Collections
       - icon: rss
         href: posts/index.xml
     tools:
@@ -47,6 +50,7 @@ format:
     theme: cosmo
     css: styles.css
     toc: true
+    highlight-style: highlight-styles/lavi.theme
 
 execute:
   freeze: true

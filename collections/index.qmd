@@ -1,0 +1,18 @@
+---
+title: Resources
+execute:
+  echo: false
+  warning: false
+  error: false
+---
+
+
+# blogroll
+
+```{r blogroll}
+library(readr)
+library(here)
+library(gt)
+readr::read_csv(here('collections', 'blogroll.csv')) |>
+  gt()
+```
