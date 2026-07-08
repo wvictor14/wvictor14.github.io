@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2024-06-09">
 
-<title>Surfacing child care with vacancies in Vancouver – Victor Yuan</title>
+<title>Surfacing daycare vacancies in Vancouver – Victor Yuan</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -161,7 +161,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Surfacing child care with vacancies in Vancouver</h1>
+<h1 class="title">Surfacing daycare vacancies in Vancouver</h1>
 </div>
 
 
@@ -190,8 +190,8 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 <figcaption>Screenshot of BC Childcare Dashboard</figcaption>
 </figure>
 </div>
-<p>This project leverages publicly available Government of BC’s Child Care Vacancies to identify and disseminate up-to-date child care vacancy across the province.</p>
-<p>The system is implemented as an automated data pipeline that ingests a publicly available open data endpoint that refreshes daily, processes vacancy information, and distributes results through two public-facing channels:</p>
+<p>This project pulls publicly available Government of BC’s Child Care Vacancies to identify up-to-date child care vacancy across the province.</p>
+<p>The implementation is an automated data pipeline that ingests a publicly available open data endpoint that refreshes daily, processes vacancy information, and distributes results through two public-facing channels:</p>
 <ol type="1">
 <li><p>An interactive web dashboard that allows users to browse current vacancies in a centralized, accessible format.</p></li>
 <li><p>Automated social media reporting via a Mastodon bot that posts newly available child care vacancies.</p></li>
@@ -206,14 +206,13 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Note the Mastodon bot has been decommisioned due to the <a href="https://news.ycombinator.com/item?id=41989511">closure of the <code>bots.in.space</code> server in 2025</a>. At this time, I have not yet looked for alternative hosting options.</p>
+<p>Note the Mastodon bot has been decommisioned due to the <a href="https://news.ycombinator.com/item?id=41989511">closure of the <code>bots.in.space</code> server in 2025</a>.</p>
 </div>
 </div>
-<p>The goal of this project was to deliver these resources while minimizing overhead and maintenance, ensuring longevity without overburdening operations.</p>
-<p>The pipeline is orchestrated using GitHub Actions, enabling scheduled data retrieval, validation, transformation, and deployment without manual intervention. This ensures that published information remains current, reliable, and reproducible.</p>
+<p>The goal of this project was to deliver these resources while minimizing overhead and maintenance. Which leads to tech choice:</p>
+<p>The pipeline is orchestrated using GitHub Actions (free), enabling scheduled data retrieval, validation, transformation, and deployment without manual intervention. This ensures that published information remains current, reliable, and reproducible.</p>
 <section id="dashboard" class="level1">
 <h1>Dashboard</h1>
-<p>Last updated: 2025-03-20 (the source, but the data is updated every day)</p>
 <ul>
 <li><a href="https://victoryuan.com/bcchildcarebot">Dashboard</a></li>
 <li><a href="https://github.com/wvictor14/bcchildcarebot">source</a></li>
@@ -231,12 +230,6 @@ Note
 <section id="tools-technology" class="level1">
 <h1>Tools &amp; Technology</h1>
 <ul>
-<li><p>GitHub Actions – orchestrates the automated pipeline, including daily data retrieval, validation, transformation, and deployment.</p></li>
-<li><p>Open Data Integration – ingests daily-updated CSV datasets from the Government of British Columbia, ensuring reliable, up-to-date information.</p></li>
-<li><p>Web Dashboard – built using Quarto and R to provide an interactive, accessible interface for end users.</p></li>
-<li><p>Social Media Automation – Mastodon bot (decommissioned) demonstrated automated content delivery and engagement.</p></li>
-<li><p>Version Control &amp; Reproducibility – all source code and workflow managed with GitHub, supporting transparent and maintainable operations.</p></li>
-<li><p>Automation &amp; Scheduling – minimal manual intervention required; system designed for longevity and low-maintenance operation. # Tools &amp; Technology</p></li>
 <li><p>GitHub Actions – orchestrates the automated pipeline, including daily data retrieval, validation, transformation, and deployment.</p></li>
 <li><p>Open Data Integration – ingests daily-updated CSV datasets from the Government of British Columbia, ensuring reliable, up-to-date information.</p></li>
 <li><p>Web Dashboard – built using Quarto and R to provide an interactive, accessible interface for end users.</p></li>
