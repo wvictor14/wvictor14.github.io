@@ -1,15 +1,28 @@
 /* css styles */
 
 /* Reading comfort for post/page body copy. Font family now comes
-   from _brand.yml (typography.base), applied site-wide. */
+   from _brand.yml (typography.base), applied site-wide. Page uses
+   page-layout: full, so the whole content column (not just <p>) is
+   capped and centered here, rather than any single element. */
+#quarto-document-content {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
 #quarto-document-content p,
 #quarto-document-content li,
 #quarto-document-content blockquote {
   line-height: 1.75;
 }
 
-#quarto-document-content p {
-  max-width: 700px;
+@media (max-width: 500px) {
+  #quarto-document-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 
 /* Section breaks read as hairline rules, like gridlines on a chart,
@@ -109,6 +122,15 @@
   .hero-image {
     width: 120px;
   }
+}
+
+/* Section break without a heading: same hairline vocabulary as
+   h1/h2 rules, for pages (like the homepage) that flow between
+   blocks without introducing new subheadings. */
+.divider {
+  border: none;
+  border-top: 1px solid var(--brand-hairline, #8A9089);
+  margin: 2.5rem 0;
 }
 
 /* Listing pages (blog, projects): category chips read the same way
