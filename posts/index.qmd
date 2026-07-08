@@ -10,7 +10,7 @@ listing:
   feed: 
     categories: [R]
   categories: true
-  fields: [image, date, title, description, categories, reading-time]
+  fields: [date, title, description, categories, reading-time]
 comments: false
 ---
 
