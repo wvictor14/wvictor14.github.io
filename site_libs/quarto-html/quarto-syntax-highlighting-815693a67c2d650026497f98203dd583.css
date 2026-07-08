@@ -1,0 +1,211 @@
+/* quarto syntax highlight colors */
+:root {
+  --quarto-hl-kw-color: #C27700;
+  --quarto-hl-cf-color: #C27700;
+  --quarto-hl-fu-color: #9E8400;
+  --quarto-hl-bu-color: #9E8400;
+  --quarto-hl-ex-color: #9E8400;
+  --quarto-hl-va-color: #1A85FF;
+  --quarto-hl-at-color: #1585FF;
+  --quarto-hl-dt-color: #009947;
+  --quarto-hl-dv-color: #998500;
+  --quarto-hl-bn-color: #998500;
+  --quarto-hl-fl-color: #998500;
+  --quarto-hl-cn-color: #FF346A;
+  --quarto-hl-op-color: #8777E2;
+  --quarto-hl-sc-color: #8777E2;
+  --quarto-hl-ch-color: #1D9A00;
+  --quarto-hl-st-color: #1D9A00;
+  --quarto-hl-vs-color: #1D9A00;
+  --quarto-hl-ss-color: #1D9A00;
+  --quarto-hl-im-color: #1486FF;
+  --quarto-hl-pp-color: #EC00F5;
+  --quarto-hl-an-color: #9772E4;
+  --quarto-hl-cv-color: #9772E4;
+  --quarto-hl-co-color: #7E7490;
+  --quarto-hl-do-color: #14997A;
+  --quarto-hl-re-color: #9772E4;
+  --quarto-hl-in-color: #BD7700;
+  --quarto-hl-wa-color: #BD7700;
+  --quarto-hl-al-color: #F04B6B;
+  --quarto-hl-er-color: #F04B6B;
+}
+
+/* other quarto variables */
+:root {
+  --quarto-font-monospace: IBM Plex Mono;
+}
+
+/* syntax highlight based on Pandoc's rules */
+pre > code.sourceCode > span {
+  color: #14181C;
+}
+
+code.sourceCode > span {
+  color: #14181C;
+}
+
+div.sourceCode,
+div.sourceCode pre.sourceCode {
+  color: #14181C;
+}
+
+/* Normal */
+code span {
+  color: #14181C;
+}
+
+/* Alert */
+code span.al {
+  color: #F04B6B;
+  background-color: #FBE4E7;
+}
+
+/* Annotation */
+code span.an {
+  color: #9772E4;
+}
+
+/* Attribute */
+code span.at {
+  color: #1585FF;
+}
+
+/* BaseN */
+code span.bn {
+  color: #998500;
+}
+
+/* BuiltIn */
+code span.bu {
+  color: #9E8400;
+}
+
+/* ControlFlow */
+code span.cf {
+  color: #C27700;
+}
+
+/* Char */
+code span.ch {
+  color: #1D9A00;
+}
+
+/* Constant */
+code span.cn {
+  color: #FF346A;
+}
+
+/* Comment */
+code span.co {
+  color: #7E7490;
+  font-style: italic;
+}
+
+/* CommentVar */
+code span.cv {
+  color: #9772E4;
+}
+
+/* Documentation */
+code span.do {
+  color: #14997A;
+}
+
+/* DataType */
+code span.dt {
+  color: #009947;
+}
+
+/* DecVal */
+code span.dv {
+  color: #998500;
+}
+
+/* Error */
+code span.er {
+  color: #F04B6B;
+  text-decoration: underline;
+}
+
+/* Extension */
+code span.ex {
+  color: #9E8400;
+}
+
+/* Float */
+code span.fl {
+  color: #998500;
+}
+
+/* Function */
+code span.fu {
+  color: #9E8400;
+}
+
+/* Import */
+code span.im {
+  color: #1486FF;
+}
+
+/* Information */
+code span.in {
+  color: #BD7700;
+}
+
+/* Keyword */
+code span.kw {
+  color: #C27700;
+}
+
+/* Operator */
+code span.op {
+  color: #8777E2;
+}
+
+/* Preprocessor */
+code span.pp {
+  color: #EC00F5;
+}
+
+/* RegionMarker */
+code span.re {
+  color: #9772E4;
+  background-color: #E4DDF5;
+}
+
+/* SpecialChar */
+code span.sc {
+  color: #8777E2;
+}
+
+/* SpecialString */
+code span.ss {
+  color: #1D9A00;
+}
+
+/* String */
+code span.st {
+  color: #1D9A00;
+}
+
+/* Variable */
+code span.va {
+  color: #1A85FF;
+}
+
+/* VerbatimString */
+code span.vs {
+  color: #1D9A00;
+}
+
+/* Warning */
+code span.wa {
+  color: #BD7700;
+}
+
+.prevent-inlining {
+  content: "</";
+}
+
+/*# sourceMappingURL=2be18ca420d425af3418bea2c9329da7.css.map */

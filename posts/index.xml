@@ -39,7 +39,7 @@ Figure&nbsp;1: An optimistic render time by size of quarto project where the ave
 </div>
 <section id="quarto-for-a-large-100-page-scientific-website" class="level2">
 <h2 class="anchored" data-anchor-id="quarto-for-a-large-100-page-scientific-website">Quarto for a large &gt;100 page scientific website</h2>
-<p>I manage a project that involves creating and updating webpages on a Quarto website with close to 100 pages of analytical documents. “Document” here refers to a <code>.qmd</code><sup>1</sup> that programmatically (through R, Python, and/or JavaScript) analyzes data and generates outputs like graphs and figures that live alongside narrative text, a perfect use case for Quarto. Two types of events prompt site updates:</p>
+<p>I manage a project that involves creating and updating webpages on a Quarto website with close to 100 pages of analytical documents. “Document” here refers to a <code>.qmd</code><sup>1</sup> that programmatically (through R, Python, and/or JavaScript) analyzes data and generates outputs like graphs and figures that live alongside narrative text – a perfect use case for Quarto. Two types of events prompt site updates:</p>
 <ul>
 <li>Regular data refreshes (weekly, monthly) trigger targeted re-rendering of downstream pages.</li>
 <li>New scientific questions require new dedicated webpages for their associated analyses to live in.</li>
