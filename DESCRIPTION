@@ -5,11 +5,17 @@ Description: Personal website
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.0.0
-Suggests: 
-    usethis
-    devtools
-Imports: 
-    quarto
-    dplyr
-    tidyr
-    pak
+Suggests:
+    usethis,
+    devtools,
+    ggplot2,
+    gt
+Imports:
+    quarto,
+    dplyr,
+    tidyr,
+    pak,
+    yaml,
+    here,
+    showtext,
+    sysfonts

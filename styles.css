@@ -1,1 +1,168 @@
 /* css styles */
+
+/* Reading comfort for post/page body copy. Font family now comes
+   from _brand.yml (typography.base), applied site-wide. */
+#quarto-document-content p,
+#quarto-document-content li,
+#quarto-document-content blockquote {
+  line-height: 1.75;
+}
+
+#quarto-document-content p {
+  max-width: 700px;
+}
+
+/* Section breaks read as hairline rules, like gridlines on a chart,
+   rather than a boxed "accent bar" card treatment. */
+#quarto-document-content h1:not(.title),
+#quarto-document-content h2 {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--brand-hairline, #8A9089);
+}
+
+/* Metadata (dates, categories, published labels) reads as data,
+   set in monospace, distinct from the serif prose voice. */
+.quarto-title-meta-heading,
+.quarto-title-meta-contents,
+#title-block-header .description,
+.listing-date {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
+
+.quarto-title-meta-heading {
+  text-transform: uppercase;
+  color: var(--brand-hairline, #8A9089);
+}
+
+.quarto-category,
+.quarto-title .quarto-categories .quarto-category {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--brand-hairline, #8A9089);
+  border-radius: 0;
+  background: transparent;
+  color: var(--brand-black, #14181C);
+}
+
+/* Homepage hero: custom two-column bio, replacing the stock
+   about-page template. */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 3rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--brand-hairline, #8A9089);
+  margin-bottom: 2rem;
+}
+
+.hero-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#quarto-document-content .hero-text h1 {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
+.hero-image {
+  flex: 0 0 auto;
+  width: 180px;
+}
+
+.hero-image img {
+  width: 100%;
+  border-radius: 50%;
+  display: block;
+}
+
+.colophon {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--brand-hairline, #8A9089);
+  margin-bottom: 1.5rem;
+}
+
+.contact-row {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  margin-top: 1rem;
+}
+
+.contact-row a {
+  text-decoration: none;
+}
+
+@media (max-width: 700px) {
+  .hero {
+    flex-direction: column-reverse;
+  }
+  .hero-image {
+    width: 120px;
+  }
+}
+
+/* Listing pages (blog, projects): category chips read the same way
+   as post-page category tags, and rows separate with a hairline
+   instead of default list spacing. */
+.listing-category,
+.quarto-listing-category .category {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--brand-hairline, #8A9089);
+  border-radius: 0;
+  background: transparent;
+  color: var(--brand-black, #14181C);
+}
+
+.quarto-listing-category-title {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--brand-hairline, #8A9089);
+}
+
+.quarto-category-count {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+}
+
+.quarto-post {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-top: 1px solid var(--brand-hairline, #8A9089);
+}
+
+.quarto-post:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* Navbar: hairline instead of a default drop shadow. */
+.navbar {
+  border-bottom: 1px solid var(--brand-hairline, #8A9089);
+  box-shadow: none;
+}
+
+/* Page footer: copyright / colophon reads as metadata, matching
+   the monospace treatment used for dates and tags elsewhere. */
+.nav-footer {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--brand-hairline, #8A9089);
+}
+
+.nav-footer a {
+  color: var(--brand-hairline, #8A9089);
+}
