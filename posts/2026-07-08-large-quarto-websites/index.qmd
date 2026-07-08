@@ -1,10 +1,13 @@
 ---
-title: "Managing llarge Quarto projects"
-date: 06/15/2026
+title: "Large quarto projects and speed"
+date: 7/8/2026
 categories:
+  - Python
   - R
   - Quarto
-image: quarto-lessons-thumbnail.png
+image: quarto-render-time.png
+bibliography: references.bib
+csl: https://www.zotero.org/styles/ieee
 format:
   html:
     code-fold: show
@@ -12,28 +15,46 @@ editor_options:
   chunk_output_type: console
 ---
 
-Quarto has slowly become one of my daily tools as a data scientist. Pretty much any analytical task involving data analysis, I turn to Quarto instead of Jupyter notebooks or R Markdown. More than that, Quarto isn't just for "notebook" analysis; it can also be used to create wiki-like websites with analytical content. Quarto is designed exactly for this kind of product, enabling reproducibility and integration with Python, R, and web technologies.
+Quarto has slowly become one of my daily tools as a data scientist. Pretty much any analytical task involving data analysis, I turn to Quarto instead of Jupyter notebooks or R Markdown. More than that, Quarto isn't just for "notebook" analysis; it can also be used to create wiki-like websites with analytical content. Quarto is designed exactly for this kind of product, enabling reproducibility and integration with Python, R, JavaScript, and HTML/CSS.
 
-Quarto has made my life much easier in a lot of ways, but because I use it so much, I also spend a lot of time fighting it, specifically around limitations in scalability and performance. This post is an *in-the-weeds* experience about those limitations and some of the strategies I've been using to work around them.
+::: {.columns .gap-4}
 
-This isn't a novel problem. Others have discussed the same performance issues (see [1](https://github.com/orgs/quarto-dev/discussions/4684), [2](https://danmackinlay.name/notebook/quarto#this-is-slow), and the other linked discussions and issues below), and the Quarto team is aware and seems to be planning some significant performance-related upgrades [in the near term](https://opensource.posit.co/blog/2026-04-06_whats-next-quarto-2/). Fingers crossed these issues become moot soon.
+::: {.column}
+
+Quarto has made my life much easier in a lot of ways, *but because I use it so much, I also spend a lot of time fighting it*, specifically around limitations in scalability and performance. This post is an *in-the-weeds* experience about those limitations and some of the strategies I've been using to work around them.
+
+This isn't an unknown problem. Others have discussed the same performance issues [@quarto-perf-2024; @mackinlay-quarto], and the Quarto team is aware and seems to be planning some significant performance-related upgrades [@quarto-roadmap-2026]. Crossing my fingers these issues become irrelevant soon.
+
+:::
+
+::: {.column}
+
+![An optimistic render time by size of quarto project where the average page-level render time is 1-3 seconds (faster than a typical project)](quarto-render-time.png){#fig-render-time}
+
+:::
+
+:::
 
 ## Quarto for a large >100 page scientific website
 
-I manage a project that involves creating and updating webpages on a Quarto website with close to 100 pages of analytical documents. "Document" here refers to a `.qmd`[^1] that programmatically (through R, Python, and/or JavaScript) analyzes data and generates outputs like graphs and figures that live alongside narrative text, a perfect use case for Quarto. Two types of events prompt site updates:
+I manage a project that involves creating and updating webpages on a Quarto website with close to 100 pages of analytical documents. "Document" here refers to a `.qmd`[^1] that programmatically (through R, Python, and/or JavaScript) analyzes data and generates outputs like graphs and figures that live alongside narrative text -- a perfect use case for Quarto. Two types of events prompt site updates:
 
 - Regular data refreshes (weekly, monthly) trigger targeted re-rendering of downstream pages.
 - New scientific questions require new dedicated webpages for their associated analyses to live in.
 
-Each page takes about 20 seconds to 1 minute to render. The total time to render the whole site is **10-20 minutes**, and is expected to at least double in the next year. This is a significant bottleneck in the workflow: render time now requires real consideration when planning updates.
+Each page takes about 20 seconds to 1 minute to render. We use [freeze](https://quarto.org/docs/projects/code-execution.html#freeze) combined with targets to so that updates to data dependencies trigger webpage re-renders with a dependency-driven manner **(A)**. This greatly speeds up page-specific updates, but whole website wide renders **(B)** still takes about 1-3s / page making total render time around **10-20 minutes**. This is a significant bottleneck in the workflow: render time now requires real consideration when planning updates.
+
+This post is about speeding up part (A) using targets + parallel rendering of specific web pages.
 
 [^1]: `.qmd` files are like Jupyter notebooks: code and its output live together alongside author-written narrative. The "`md`" part conveys that the filetype is markdown at heart, a simple, lightweight, human-readable document. The "`q`" stands for "Quarto," which today spans a wide set of capabilities across supported languages (R, Python, Julia, Observable JS) and output formats.
 
+
+
 ## Slowness with quarto render
 
-Slowness stems from the fact that Quarto renders documents serially and can't be parallelized, due to concurrency problems ([Quarto Discussions #2749](https://github.com/orgs/quarto-dev/discussions/2749)). A few GitHub issues describe some bespoke solutions[^2], but none are generalizable enough. Specifically, they don't work for me for two reasons: the solutions target standalone HTML documents rather than a full website, and I rely on [`includes`](https://quarto.org/docs/authoring/includes.html) to keep my website DRY[^3], which brings its own complications for parallelization.
+Slowness stems from the fact that Quarto renders documents serially and can't be parallelized, due to concurrency problems [@quarto-perf-2024]. A few GitHub issues describe some bespoke solutions[^2], but none are generalizable enough. Specifically, they don't work for me for two reasons: the solutions target standalone HTML documents rather than a full website, and I rely on [`includes`](https://quarto.org/docs/authoring/includes.html) [@quarto-includes-docs] to keep my website DRY[^3], which brings its own complications for parallelization.
 
-[^2]: [Quarto CLI #5861](https://github.com/quarto-dev/quarto-cli/issues/5861) and [#4730](https://github.com/quarto-dev/quarto-cli/issues/4730) describe concurrency issues, with some members suggesting workarounds, but with no official fix from Quarto yet.
+[^2]: @quarto-concurrency-hpc and @quarto-concurrency-param describe concurrency issues, with some members suggesting workarounds, but with no official fix from Quarto yet.
 
 [^3]: The DRY (Don't Repeat Yourself) principle is a core software development philosophy stating that "every piece of knowledge must have a single, unambiguous, authoritative representation within a system".
 
@@ -43,7 +64,7 @@ A `.qmd` document can be treated like a function: parameterized and reused as a 
 
 This is a great way to follow DRY principles in an "analysis notebook" workflow: write the analysis once, reuse it across many pages. But it comes at a cost for parallelization. Rendering a `.qmd` produces intermediate files during the render process. When two documents that both include the same shared `.qmd` render at the same time, their intermediate state collides: each process overwrites the other's files mid-render, and both renders error out.
 
-One community workaround (from [@mschubert](https://github.com/quarto-dev/quarto-cli/issues/4730#issuecomment-1469364296)) symlinks the `.qmd` under a unique name, renders that, then cleans up:
+One community [workaround](https://github.com/quarto-dev/quarto-cli/issues/4730#issuecomment-1469364296)) symlinks the `.qmd` under a unique name, renders that, then cleans up:
 
 ```bash
 ln -s template.qmd page_A.qmd
@@ -101,13 +122,12 @@ list(
 )
 ```
 
-## How it works under the hood
-
 The full source is in [`render_in_isolation.R`](render_in_isolation.R). Here are the key pieces.
 
-### The core function
+### The main logic
 
-```r
+```{r}
+#| code-fold: true
 render_in_isolation <- function(
   qmd_path,
   project_dir = ".",
@@ -237,12 +257,12 @@ After `quarto::quarto_render()` completes, the function copies `_freeze/<page>/`
 
 ### Error handling
 
-The function returns a list with `$success`, `$error`, `$tempdir`, and `$duration_sec`. With `keep_failed = TRUE`, the tempdir is preserved for debugging and its path is returned in `$tempdir`. Crucially, tempdirs are created in `/tmp` (not R's session temp), so they survive the R process exiting.
+The function returns a list with `$success`, `$error`, `$tempdir`, and `$duration_sec`. With `keep_failed = TRUE`, the tempdir is preserved for debugging and its path is returned in `$tempdir`. Temp directories are created in `/tmp` (not R's session temp), so they survive the R process exiting.
 
-## Other performance tips
+## Summary and other performance tips
 
 - `freeze` helps a lot, but it only covers computation. Quarto still spends a lot of time rendering (1-2s per page adds up when you have 100+ pages).
-  - That said, sharing freeze artifacts via git (Quarto's own suggestion) quickly becomes unwieldy; I recommend sharing them through some other mechanism.
+- That said, sharing freeze artifacts via git (Quarto's own suggestion) quickly becomes unwieldy -- Once my `.git/` folder grew to 2 gb, I decided to stop tracking `_freeze` files. I recommend sharing them through some other mechanism.
 - Use CI/CD (e.g. GitHub Actions) to handle full site renders.
 - Serving the `_site` directory directly and running `quarto render [PAGE]` from the CLI is much faster than `quarto preview`. This speeds up the development loop; it's not relevant for production rendering.
 
@@ -252,9 +272,3 @@ caddy file-server --listen :4210 --root _site
 ```
 
 ## References
-
-- [Quarto — Managing Execution (freeze)](https://quarto.org/docs/projects/code-execution.html#freeze)
-- [The targets R package](https://books.ropensci.org/targets/) (Landau, 2021. JOSS 6(57): 2959)
-- [Quarto Discussions #2749](https://github.com/orgs/quarto-dev/discussions/2749) — Parallel rendering feature request.
-- [Quarto CLI #5861](https://github.com/quarto-dev/quarto-cli/issues/5861) — HPC parallel render bug.
-- [Quarto CLI #4730](https://github.com/quarto-dev/quarto-cli/issues/4730) — Parameterized parallel report conflicts.

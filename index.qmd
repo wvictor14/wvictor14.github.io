@@ -36,7 +36,7 @@ My interests include but is not limited to:
 
 - **Analytics and Visualization**. Tool of choice R ([tidyverse](https://tidyverse.org/)), javascript, python (in that order). My preferred deliverable for data products are scientific articles and web apps.
 - **Data Engineering**. I strongly value reproducibility, visibility, and authenticity. Naturally I am drawn to data engineering principles and technology. Relevant stack: quarto for reproducible scientific documents, CI/CD (github actions) for automated testing and deployment, prefect/dagster/r-targets for orchestration and pipeline implementation.
-- **Bioinformatics, Statistics, and Machine Learning**.  
+- **Bioinformatics, Statistics, and Machine Learning**. RNA, DNAm, epigenetics, single cell, TCR-seq. Domains: autoimmune tissue/pbmc, placental / pregnancy / developmental bio. 
 
 <!--- Background --->
 I earned my PhD from the **University of British Columbia (2022), Vancouver BC**, focusing on epigenetics and placental biology, following a **BSc in Molecular Biology from Concordia University, Montreal QC**.
