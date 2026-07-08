@@ -1,5 +1,5 @@
 ---
-title: Making child care vacancies accessible for british columbians 
+title: Surfacing child care with vacancies in Vancouver 
 date: 2024-06-09
 image: bcchildcarebot_dashboard.png
 ---

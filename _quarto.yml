@@ -1,5 +1,8 @@
 project:
   type: website
+  render:
+    - "*"
+    - "!listing-templates/**"
   preview:
     host: 0.0.0.0
     port: 4210 # match devcontainer.json forwarded port
@@ -22,6 +25,9 @@ website:
       - href: posts
         icon: book-fill
         text: Blog
+      - href: collections
+        icon: gem
+        text: Collections
       - icon: rss
         href: posts/index.xml
     tools:
@@ -47,6 +53,7 @@ format:
     theme: cosmo
     css: styles.css
     toc: true
+    highlight-style: highlight-styles/lavi.theme
 
 execute:
   freeze: true
