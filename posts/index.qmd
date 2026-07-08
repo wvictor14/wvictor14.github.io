@@ -1,16 +1,16 @@
 ---
 title: Blog
 listing:
-  type: default
+  template: ../listing-templates/title-list.ejs.md
   contents:
    - '*.qmd'
   sort:
     - "date desc"
     - "title desc"
-  feed: 
+  feed:
     categories: [R]
   categories: true
-  fields: [date, title, description, categories, reading-time]
+  fields: [date, title, categories]
 comments: false
 ---
 

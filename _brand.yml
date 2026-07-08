@@ -9,7 +9,7 @@ logo:
 color:
   palette:
     black: "#14181C"
-    paper: "#F7F8F6"
+    paper: "#FFFFFF"
     orange: "#FF6F20"
     teal: "#1B7A72"
     hairline: "#8A9089"
@@ -40,4 +40,4 @@ typography:
 defaults:
   bootstrap:
     defaults:
-      navbar-bg: white
+      navbar-bg: "#FFFFFF"

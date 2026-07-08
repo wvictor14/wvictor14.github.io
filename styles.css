@@ -137,15 +137,71 @@
   font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
 }
 
-.quarto-post {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+/* Custom listing template (listing-templates/title-list.ejs.md):
+   a terse, title-forward list in the spirit of minimal Hugo blog
+   themes -- a monospace date column, serif titles doing the work,
+   no descriptions or thumbnails competing for attention. */
+.title-list {
+  max-width: 700px;
+}
+
+.title-list-item {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: 0.6rem 0;
   border-top: 1px solid var(--brand-hairline, #8A9089);
 }
 
-.quarto-post:first-of-type {
+.title-list-item:first-child {
   border-top: none;
-  padding-top: 0;
+}
+
+.title-list-date {
+  flex: 0 0 auto;
+  width: 6.5rem;
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.75rem;
+  color: var(--brand-hairline, #8A9089);
+}
+
+.title-list-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.title-list-title {
+  font-size: 1.05rem;
+  text-decoration: none;
+  color: var(--brand-black, #14181C);
+}
+
+.title-list-title:hover {
+  color: var(--brand-teal, #1B7A72);
+}
+
+.title-list-categories {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.title-list-categories .listing-category {
+  font-size: 0.65rem;
+  padding: 0.05rem 0.35rem;
+}
+
+@media (max-width: 550px) {
+  .title-list-item {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .title-list-date {
+    width: auto;
+  }
 }
 
 /* Navbar: hairline instead of a default drop shadow. */

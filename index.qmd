@@ -19,7 +19,7 @@ DATA SCIENTIST · BIOTECH · VANCOUVER, BC
 
 Hello, I'm Victor, and welcome to my website!
 
-I am currently a **data scientist** in the **Biotech** industry at a cell therapy company helping develop new drugs to treat auto-immune disease. My day-to-day involves trying to answer scientific questions using programming and statistics to make sense of biological data.
+I am currently a **data scientist** in the **Biotech** industry at a cell therapy company helping develop new drugs to treat autoimmune disease. My day-to-day involves trying to answer scientific questions using programming and statistics to make sense of biological data.
 
 :::
 
@@ -31,10 +31,10 @@ I am currently a **data scientist** in the **Biotech** industry at a cell therap
 
 <!--- Professional stack --->
 
-My tech stack involves:
+My technical stack involves:
 
-- **Analytics and Visualization**. Tool of choice R tidyverse, ggplot2, javascript. Scientific documents, data-driven web apps as deliverables.
-- **Data Engineering**. I value reproducibility and high visibility into data pipelines strongly. Tools I use for this: quarto for reproducible scientific documents, CI/CD (github actions) for automated testing and deployment, prefect/dagster/targets for orchestration and pipeline implementation.
+- **Analytics and Visualization**. Tool of choice R ([tidyverse](https://tidyverse.org/)), javascript, python (in that order). My preferred deliverable for data products are scientific articles and web apps.
+- **Data Engineering**. I strongly value reproducibility, visibility, and authenticity. Naturally I am drawn to data engineering principles and technology. Relevant stack: quarto for reproducible scientific documents, CI/CD (github actions) for automated testing and deployment, prefect/dagster/r-targets for orchestration and pipeline implementation.
 - **Tool development**. I enjoy writing R packages.
 
 <!--- Background --->
@@ -51,7 +51,7 @@ When I’m off the clock, you’ll likely find me at a rock climbing gym, huntin
 
 ### Recent news
 
-I'm very excited that some of my recent work won recognition in two 2025 Posit contests: 
+Some of my recent work won recognition in two 2025 Posit contests: 
 
 Visualization of [Canadian labour statistics](https://victoryuan.com/labourcan/02_develop_visualization.html) that won [the grand prize for the 2025 Plotnine contest](https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/).
 
