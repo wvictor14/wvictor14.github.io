@@ -13,6 +13,31 @@ execute:
 library(readr)
 library(here)
 library(gt)
+library(dplyr)
 readr::read_csv(here('collections', 'blogroll.csv')) |>
-  gt()
+  mutate(
+    link = paste0(
+      "[",
+      gsub("^https://www\\.|^https://|\\.html$", "", link),
+      "](",
+      link,
+      ")"
+    )
+  ) |>
+  gt() |>
+  fmt_markdown(columns = link) |>
+  cols_label(link = "Items", author = '', description = '') |>
+  tab_options(
+    column_labels.border.top.style = "hidden",
+    table.border.top.style = "none",
+    table.border.bottom.style = "hidden",
+  ) |>
+  tab_style(
+    style = cell_borders(
+      sides = "bottom",
+      color = "#e2e2e2",
+      weight = px(0.25)
+    ),
+    locations = cells_body()
+  )
 ```
