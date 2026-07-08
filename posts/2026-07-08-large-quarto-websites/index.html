@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-07-15">
+<meta name="dcterms.date" content="2026-07-08">
 
 <title>Large quarto projects and speed – Victor Yuan</title>
 <style>
@@ -220,7 +220,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
   <li><a href="#freeze-and-output-management" id="toc-freeze-and-output-management" class="nav-link" data-scroll-target="#freeze-and-output-management">Freeze and output management</a></li>
   <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">Error handling</a></li>
   </ul></li>
-  <li><a href="#other-performance-tips" id="toc-other-performance-tips" class="nav-link" data-scroll-target="#other-performance-tips">Other performance tips</a></li>
+  <li><a href="#summary-and-other-performance-tips" id="toc-summary-and-other-performance-tips" class="nav-link" data-scroll-target="#summary-and-other-performance-tips">Summary and other performance tips</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
@@ -246,7 +246,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 15, 2026</p>
+      <p class="date">July 8, 2026</p>
     </div>
   </div>
   
@@ -259,11 +259,11 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 
 
 <p>Quarto has slowly become one of my daily tools as a data scientist. Pretty much any analytical task involving data analysis, I turn to Quarto instead of Jupyter notebooks or R Markdown. More than that, Quarto isn’t just for “notebook” analysis; it can also be used to create wiki-like websites with analytical content. Quarto is designed exactly for this kind of product, enabling reproducibility and integration with Python, R, JavaScript, and HTML/CSS.</p>
-<div class="columns">
-<div class="column" style="width:50%;">
+<div class="columns gap-4">
+<div class="column">
 <p>Quarto has made my life much easier in a lot of ways, <em>but because I use it so much, I also spend a lot of time fighting it</em>, specifically around limitations in scalability and performance. This post is an <em>in-the-weeds</em> experience about those limitations and some of the strategies I’ve been using to work around them.</p>
 <p>This isn’t an unknown problem. Others have discussed the same performance issues <span class="citation" data-cites="quarto-perf-2024 mackinlay-quarto"><a href="#ref-quarto-perf-2024" role="doc-biblioref">[1]</a>, <a href="#ref-mackinlay-quarto" role="doc-biblioref">[2]</a></span>, and the Quarto team is aware and seems to be planning some significant performance-related upgrades <span class="citation" data-cites="quarto-roadmap-2026"><a href="#ref-quarto-roadmap-2026" role="doc-biblioref">[3]</a></span>. Crossing my fingers these issues become irrelevant soon.</p>
-</div><div class="column" style="width:50%;">
+</div><div class="column">
 <div id="fig-render-time" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-render-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -283,7 +283,8 @@ Figure&nbsp;1: An optimistic render time by size of quarto project where the ave
 <li>Regular data refreshes (weekly, monthly) trigger targeted re-rendering of downstream pages.</li>
 <li>New scientific questions require new dedicated webpages for their associated analyses to live in.</li>
 </ul>
-<p>Each page takes about 20 seconds to 1 minute to render. The total time to render the whole site is <strong>10-20 minutes</strong>, and is expected to at least double in the next year. This is a significant bottleneck in the workflow: render time now requires real consideration when planning updates.</p>
+<p>Each page takes about 20 seconds to 1 minute to render. We use <a href="https://quarto.org/docs/projects/code-execution.html#freeze">freeze</a> combined with targets to so that updates to data dependencies trigger webpage re-renders with a dependency-driven manner <strong>(A)</strong>. This greatly speeds up page-specific updates, but whole website wide renders <strong>(B)</strong> still takes about 1-3s / page making total render time around <strong>10-20 minutes</strong>. This is a significant bottleneck in the workflow: render time now requires real consideration when planning updates.</p>
+<p>This post is about speeding up part (A) using targets + parallel rendering of specific web pages.</p>
 </section>
 <section id="slowness-with-quarto-render" class="level2">
 <h2 class="anchored" data-anchor-id="slowness-with-quarto-render">Slowness with quarto render</h2>
@@ -492,8 +493,8 @@ Note
 <p>The function returns a list with <code>$success</code>, <code>$error</code>, <code>$tempdir</code>, and <code>$duration_sec</code>. With <code>keep_failed = TRUE</code>, the tempdir is preserved for debugging and its path is returned in <code>$tempdir</code>. Temp directories are created in <code>/tmp</code> (not R’s session temp), so they survive the R process exiting.</p>
 </section>
 </section>
-<section id="other-performance-tips" class="level2">
-<h2 class="anchored" data-anchor-id="other-performance-tips">Other performance tips</h2>
+<section id="summary-and-other-performance-tips" class="level2">
+<h2 class="anchored" data-anchor-id="summary-and-other-performance-tips">Summary and other performance tips</h2>
 <ul>
 <li><code>freeze</code> helps a lot, but it only covers computation. Quarto still spends a lot of time rendering (1-2s per page adds up when you have 100+ pages).</li>
 <li>That said, sharing freeze artifacts via git (Quarto’s own suggestion) quickly becomes unwieldy – Once my <code>.git/</code> folder grew to 2 gb, I decided to stop tracking <code>_freeze</code> files. I recommend sharing them through some other mechanism.</li>
