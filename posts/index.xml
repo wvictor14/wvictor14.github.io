@@ -10,50 +10,56 @@
 <atom:link href="https://victoryuan.com/posts/index.xml" rel="self" type="application/rss+xml"/>
 <description>Victor&#39;s website</description>
 <generator>quarto-1.9.38</generator>
-<lastBuildDate>Wed, 08 Jul 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 10 Jul 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Large quarto projects and speed</title>
-  <link>https://victoryuan.com/posts/2026-07-08-large-quarto-websites/</link>
+  <link>https://victoryuan.com/posts/2026-07-10-large-quarto-websites/</link>
   <description><![CDATA[ 
 
 
 
 
-<p>Quarto has slowly become one of my daily tools as a data scientist. Pretty much any analytical task involving data analysis, I turn to Quarto instead of Jupyter notebooks or R Markdown. More than that, Quarto isn’t just for “notebook” analysis; it can also be used to create wiki-like websites with analytical content. Quarto is designed exactly for this kind of product, enabling reproducibility and integration with Python, R, JavaScript, and HTML/CSS.</p>
+<p>At work I am often asked to share my analysis and keep updating it as more data comes in. In the beginning, I used powerpoints because it’s easy to copy paste plots from positron / vscode directly. But as the volume of data coming grew, it became clear that I needed a better system so that I spent less time updating analysis (necessary, but boring) and more time doing new analysis.</p>
+<p>I thought Quarto would be a good choice for this project, and I always wanted to use Quarto for something bigger. And for the most part, it did.</p>
+<p>With the release of <a href="https://positron.posit.co/release-notes/release-2025-07.html">release of Positron IDE</a> and it’s tight integration for Quarto, I felt like it queitly has become a daily tool. Plus I enjoy the added benefit of sounding like a hardcore programmer now that I can say I use vscode as my daily IDE of choice <sup>1</sup>.</p>
+<p>One reason I chose quarto for this project was because it can handle multiple R/python environments, and caching, which I anticipated to help as website, analysis needs, and data grows - and they always do. The nice thing about quarto and <code>.qmd</code> notebooks specifically is that it also enables code-driven development and multi-author collaboration possible. Though, after 5 years of PhD and 3 years of industry work, I think I can count on one hand the number of times I had to “collaboratively” edit the same analysis notebook. I ponder if the all the hours spent figuring out the <a href="https://jvns.ca/blog/2023/11/01/confusing-git-terminology/">confusing differences between git terms</a> like <code>branch</code>, forks, <code>detached HEAD</code>, <code>HEAD~1</code>/<code>HEAD^</code> / <code>HEAD~</code> (they are all the same), <code>origin/main</code> vs local <code>main</code> was worth it.</p>
 <div class="columns gap-4">
 <div class="column">
-<p>Quarto has made my life much easier in a lot of ways, <em>but because I use it so much, I also spend a lot of time fighting it</em>, specifically around limitations in scalability and performance. This post is an <em>in-the-weeds</em> experience about those limitations and some of the strategies I’ve been using to work around them.</p>
-<p>This isn’t an unknown problem. Others have discussed the same performance issues <span class="citation" data-cites="quarto-perf-2024 mackinlay-quarto">[1], [2]</span>, and the Quarto team is aware and seems to be planning some significant performance-related upgrades <span class="citation" data-cites="quarto-roadmap-2026">[3]</span>. Crossing my fingers these issues become irrelevant soon.</p>
+<p>I was not unaware of the problems around performance with quarto. I had already read the numerous discussion in the past about limitations of serial/parallel rendering <span class="citation" data-cites="quarto-concurrency-hpc quarto-disc-perf-2024">[5]</span>. Perhaps because there were community workarounds, and maybe also because the Quarto team was aware and stated plans to improve performance <span class="citation" data-cites="quarto-roadmap-2026">[6]</span>, I felt like Quarto was a good choice for my project.</p>
 </div><div class="column">
 <div id="fig-render-time" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-render-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="https://victoryuan.com/posts/2026-07-08-large-quarto-websites/quarto-render-time.png" class="img-fluid figure-img">
+<img src="https://victoryuan.com/posts/2026-07-10-large-quarto-websites/quarto-render-time.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-render-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: An optimistic render time by size of quarto project where the average page-level render time is 1-3 seconds (faster than a typical project)
+Figure&nbsp;1: An optimistic render time by size of quarto project where the average page-level render time is 1-3 seconds. See <a href="render_in_isolation.R">render_in_isolation.R</a> for code
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<section id="quarto-for-a-large-100-page-scientific-website" class="level2">
-<h2 class="anchored" data-anchor-id="quarto-for-a-large-100-page-scientific-website">Quarto for a large &gt;100 page scientific website</h2>
-<p>I manage a project that involves creating and updating webpages on a Quarto website with close to 100 pages of analytical documents. “Document” here refers to a <code>.qmd</code><sup>1</sup> that programmatically (through R, Python, and/or JavaScript) analyzes data and generates outputs like graphs and figures that live alongside narrative text – a perfect use case for Quarto. Two types of events prompt site updates:</p>
-<ul>
-<li>Regular data refreshes (weekly, monthly) trigger targeted re-rendering of downstream pages.</li>
-<li>New scientific questions require new dedicated webpages for their associated analyses to live in.</li>
-</ul>
-<p>Each page takes about 20 seconds to 1 minute to render. We use <a href="https://quarto.org/docs/projects/code-execution.html#freeze">freeze</a> combined with targets to so that updates to data dependencies trigger webpage re-renders with a dependency-driven manner <strong>(A)</strong>. This greatly speeds up page-specific updates, but whole website wide renders <strong>(B)</strong> still takes about 1-3s / page making total render time around <strong>10-20 minutes</strong>. This is a significant bottleneck in the workflow: render time now requires real consideration when planning updates.</p>
-<p>This post is about speeding up part (A) using targets + parallel rendering of specific web pages.</p>
+<section id="fighting-with-quarto" class="level2">
+<h2 class="anchored" data-anchor-id="fighting-with-quarto">Fighting with Quarto</h2>
+<p>I knew Quarto had performance problems before I had started. At least, I knew in this sort of vague way that every software has certain “problems”. I had read the github discussions and community workarounds but the exact details were muddy. Well, I now know very clearly that there are two issues with scaling Quarto to large websites.</p>
+<p><strong>The first issue</strong> is that quarto generates intermediate files during render, meaning that rendering a <code>.qmd</code> in parallel is not supported by default.</p>
+<p>This issue I was already aware of. It appeared to me that easy workarounds exist: copy qmd into a new environmnet and render there, copy outputs back. And this is indeed what proposed community solutions contained - though not completely generalizable to my specific project (website + usage of <a href="https://quarto.org/docs/authoring/includes.html"><code>includes</code></a> <span class="citation" data-cites="quarto-includes-docs">[7]</span>). It was relatively easy to ask Claude to generate me a more robust solution that worked well in my own personal project. I will share that solution here, in case it might benefit others, who also encounter troubles with the workarounds provided on the quarto github issues/discussions.</p>
+<p>So the first issue was <em>easy</em>, the solution enables parallel renders, combined with freeze means that computations only happen in a very event-driven and dependency-depenedent manner (hello good friend <a href="https://kazuyanagimoto.com/blog/2025/0426_research_workflow/"><code>r-targets</code></a>).</p>
+<p><strong>The second issue</strong> is that even with quarto’s <code>freeze</code>, which I would describe as caching <sup>2</sup>, Quarto still takes 1-2 seconds to render each page on full website renders. Meaning that it will take at minimum 2 minutes to render the full website of 120 pages. In practice, because I have a combination of pages, some that utilize freezing and others that do benefit from re-rendering every time, pre- and post- render scripts, the total time it takes is reaching 10-15 minutes. Combine that with local vs deployment previews, it can take a few hours to make <em>simple</em> changes to a deployed website. On the stakeholder-management side, it is hard to explain to a user that their “small change” will be live in a few hours.</p>
+<p>I empathize with them, why does it need to take so long to re-render the whole website, especially when the changes <em>involve no code or underlying data changes</em>?</p>
+<p>Unfortunately, I’m not aware of any solutions to this limitation. So today, I handle the full website renders by offloading that to a server with Prefect to run renders on schedule and on events like through GHA - this was not trivial, and is the end result of a long process of trying other approaches. If I look at the amount of time I spent writing analysis versus figuring out how to <em>automate the boring stuff</em>, I wonder if an job title more reflective of my work would be “dev ops” or “data” engineer. For that, I have to thank the quarto team for leading me to this hat-swapping opportunity.</p>
 </section>
-<section id="slowness-with-quarto-render" class="level2">
-<h2 class="anchored" data-anchor-id="slowness-with-quarto-render">Slowness with quarto render</h2>
-<p>Slowness stems from the fact that Quarto renders documents serially and can’t be parallelized, due to concurrency problems <span class="citation" data-cites="quarto-perf-2024">[1]</span>. A few GitHub issues describe some bespoke solutions<sup>2</sup>, but none are generalizable enough. Specifically, they don’t work for me for two reasons: the solutions target standalone HTML documents rather than a full website, and I rely on <a href="https://quarto.org/docs/authoring/includes.html"><code>includes</code></a> <span class="citation" data-cites="quarto-includes-docs">[6]</span> to keep my website DRY<sup>3</sup>, which brings its own complications for parallelization.</p>
+<section id="why-i-still-stand-by-my-choice" class="level1">
+<h1>Why I still stand by my choice</h1>
+<p>Quarto, despite your flaws, I still think you were the best choice for my situation. The problems I listed were not gating, the website runs, I can write my analyses from the comfort of R/python, and make some nice looking webpages that my collaborators appreciate. Quarto has a very active community and developer team which means there are gems and tips<sup>3</sup> hidden all over that are delightful to discover.</p>
+<p>I do wish that I spent less time waiting for my website to render, but at the same, I am grateful for learning a little bit more about DevOps, orchestration, and automation in general. I wonder for example, if Quarto didn’t have these performance limitations, when would I have learned skills?</p>
+</section>
+<section id="technical-appendix-parallel-quarto-render-solution" class="level1">
+<h1>Technical Appendix: parallel quarto render solution</h1>
 <section id="why-includes-complicates-parallel-rendering" class="level3">
 <h3 class="anchored" data-anchor-id="why-includes-complicates-parallel-rendering">Why <code>includes</code> complicates parallel rendering</h3>
 <p>A <code>.qmd</code> document can be treated like a function: parameterized and reused as a shared component that other <code>.qmd</code> documents call into. For example, I might have a <code>penguins.qmd</code> that analyzes penguin body measurements, and a series of per-species documents that each include <code>penguins.qmd</code>, passing in a different species as a parameter.</p>
-<p>This is a great way to follow DRY principles in an “analysis notebook” workflow: write the analysis once, reuse it across many pages. But it comes at a cost for parallelization. Rendering a <code>.qmd</code> produces intermediate files during the render process. When two documents that both include the same shared <code>.qmd</code> render at the same time, their intermediate state collides: each process overwrites the other’s files mid-render, and both renders error out.</p>
+<p>This is a great way to follow DRY principles in an “analysis notebook” workflow: write the analysis once, reuse it across many pages. But it comes that it complicates parallelizing the renders. Rendering a <code>.qmd</code> produces intermediate files during the render process. When two documents that both include the same shared <code>.qmd</code> render at the same time, their intermediate state collides: each process overwrites the other’s files mid-render, and both renders error out.</p>
 <p>One community <a href="https://github.com/quarto-dev/quarto-cli/issues/4730#issuecomment-1469364296">workaround</a>) symlinks the <code>.qmd</code> under a unique name, renders that, then cleans up:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -70,8 +76,7 @@ font-style: inherit;">--output</span> page_A.html</span>
 <span id="cb1-3"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">unlink</span> page_A.qmd</span></code></pre></div></div>
-<p>Though this works for standalone parameterized reports, it breaks in a Quarto website project because the output lands in a shared <code>_site/</code> directory. It also doesn’t handle the project-level dependencies those renders need: <code>_quarto.yml</code>, <code>.Rprofile</code>, <code>renv/</code>, <code>R/</code> helper functions, and shared data. The following <code>render_in_isolation</code> function tries to address these issues to allow parallel rendering for Quarto websites.</p>
-</section>
+<p>Though this works for standalone parameterized reports, but in a Quarto website project the output needs to land in the <code>_site/</code> or output directory. Thus,</p>
 </section>
 <section id="render_in_isolation" class="level2">
 <h2 class="anchored" data-anchor-id="render_in_isolation"><code>render_in_isolation()</code></h2>
@@ -109,7 +114,7 @@ font-style: inherit;">unlink</span> page_A.qmd</span></code></pre></div></div>
 </div>
 </div>
 </div>
-<p>Here I show pairing with <code>{targets}</code> to run in parallel:</p>
+<p>Pairing with <code>{targets}</code> to run in parallel:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">library</span>(targets)</span>
@@ -666,26 +671,8 @@ Note
 <p>The function returns a list with <code>$success</code>, <code>$error</code>, <code>$tempdir</code>, and <code>$duration_sec</code>. With <code>keep_failed = TRUE</code>, the tempdir is preserved for debugging and its path is returned in <code>$tempdir</code>. Temp directories are created in <code>/tmp</code> (not R’s session temp), so they survive the R process exiting.</p>
 </section>
 </section>
-<section id="summary-and-other-performance-tips" class="level2">
-<h2 class="anchored" data-anchor-id="summary-and-other-performance-tips">Summary and other performance tips</h2>
-<ul>
-<li><code>freeze</code> helps a lot, but it only covers computation. Quarto still spends a lot of time rendering (1-2s per page adds up when you have 100+ pages).</li>
-<li>That said, sharing freeze artifacts via git (Quarto’s own suggestion) quickly becomes unwieldy – Once my <code>.git/</code> folder grew to 2 gb, I decided to stop tracking <code>_freeze</code> files. I recommend sharing them through some other mechanism.</li>
-<li>Use CI/CD (e.g.&nbsp;GitHub Actions) to handle full site renders.</li>
-<li>Serving the <code>_site</code> directory directly and running <code>quarto render [PAGE]</code> from the CLI is much faster than <code>quarto preview</code>. This speeds up the development loop; it’s not relevant for production rendering.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># In your project directory</span></span>
-<span id="cb5-2"><span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">caddy</span> file-server <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">--listen</span> :4210 <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">--root</span> _site</span></code></pre></div></div>
 </section>
-<section id="references" class="level2">
+<section id="references" class="level1">
 
 
 
@@ -694,38 +681,41 @@ font-style: inherit;">--root</span> _site</span></code></pre></div></div>
 
 
 <script data-goatcounter="https://victor2wy.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body" data-entry-spacing="0">
-<div id="ref-quarto-perf-2024" class="csl-entry">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline"><span class="nocase">quarto-dev</span>, <span>“Parallel rendering feature request.”</span> 2024. Available: <a href="https://github.com/orgs/quarto-dev/discussions/2749">https://github.com/orgs/quarto-dev/discussions/2749</a></div>
-</div>
-<div id="ref-mackinlay-quarto" class="csl-entry">
-<div class="csl-left-margin">[2] </div><div class="csl-right-inline">D. Mackinlay, <span>“Quarto #this-is-slow.”</span> Available: <a href="https://danmackinlay.name/notebook/quarto#this-is-slow">https://danmackinlay.name/notebook/quarto#this-is-slow</a></div>
-</div>
-<div id="ref-quarto-roadmap-2026" class="csl-entry">
-<div class="csl-left-margin">[3] </div><div class="csl-right-inline">Posit, <span>“What’s next for quarto 2.”</span> 2026. Available: <a href="https://opensource.posit.co/blog/2026-04-06_whats-next-quarto-2/">https://opensource.posit.co/blog/2026-04-06_whats-next-quarto-2/</a></div>
-</div>
 <div id="ref-quarto-concurrency-hpc" class="csl-entry">
-<div class="csl-left-margin">[4] </div><div class="csl-right-inline"><span class="nocase">quarto-dev</span>, <span>“HPC parallel render bug.”</span> 2024. Available: <a href="https://github.com/quarto-dev/quarto-cli/issues/5861">https://github.com/quarto-dev/quarto-cli/issues/5861</a></div>
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline"><span class="nocase">quarto-dev</span>, <span>“HPC parallel render bug.”</span> 2024. Available: <a href="https://github.com/quarto-dev/quarto-cli/issues/5861">https://github.com/quarto-dev/quarto-cli/issues/5861</a></div>
+</div>
+<div id="ref-quarto-disc-perf-2024" class="csl-entry">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline"><span class="nocase">quarto-dev</span>, 2024. Available: <a href="https://github.com/orgs/quarto-dev/discussions/4684">https://github.com/orgs/quarto-dev/discussions/4684</a></div>
 </div>
 <div id="ref-quarto-concurrency-param" class="csl-entry">
-<div class="csl-left-margin">[5] </div><div class="csl-right-inline"><span class="nocase">quarto-devs</span>, <span>“Parameterized parallel report conflicts.”</span> 2024. Available: <a href="https://github.com/quarto-dev/quarto-cli/issues/4730">https://github.com/quarto-dev/quarto-cli/issues/4730</a></div>
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline"><span class="nocase">quarto-devs</span>, <span>“Parameterized parallel report conflicts.”</span> 2024. Available: <a href="https://github.com/quarto-dev/quarto-cli/issues/4730">https://github.com/quarto-dev/quarto-cli/issues/4730</a></div>
+</div>
+<div id="ref-quarto-perf-2024" class="csl-entry">
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline"><span class="nocase">quarto-dev</span>, <span>“Parallel rendering feature request.”</span> 2024. Available: <a href="https://github.com/orgs/quarto-dev/discussions/2749">https://github.com/orgs/quarto-dev/discussions/2749</a></div>
+</div>
+<div id="ref-mackinlay-quarto" class="csl-entry">
+<div class="csl-left-margin">[5] </div><div class="csl-right-inline">D. Mackinlay, <span>“Quarto is slow.”</span> Available: <a href="https://danmackinlay.name/notebook/quarto_websites.html">https://danmackinlay.name/notebook/quarto_websites.html</a></div>
+</div>
+<div id="ref-quarto-roadmap-2026" class="csl-entry">
+<div class="csl-left-margin">[6] </div><div class="csl-right-inline">Posit, <span>“What’s next for quarto 2.”</span> 2026. Available: <a href="https://opensource.posit.co/blog/2026-04-06_whats-next-quarto-2/">https://opensource.posit.co/blog/2026-04-06_whats-next-quarto-2/</a></div>
 </div>
 <div id="ref-quarto-includes-docs" class="csl-entry">
-<div class="csl-left-margin">[6] </div><div class="csl-right-inline">Quarto, <span>“Includes.”</span> Available: <a href="https://quarto.org/docs/authoring/includes.html">https://quarto.org/docs/authoring/includes.html</a></div>
+<div class="csl-left-margin">[7] </div><div class="csl-right-inline">Quarto, <span>“Includes.”</span> Available: <a href="https://quarto.org/docs/authoring/includes.html">https://quarto.org/docs/authoring/includes.html</a></div>
 </div>
 </div></section><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p><code>.qmd</code> files are like Jupyter notebooks: code and its output live together alongside author-written narrative. The “<code>md</code>” part conveys that the filetype is markdown at heart, a simple, lightweight, human-readable document. The “<code>q</code>” stands for “Quarto,” which today spans a wide set of capabilities across supported languages (R, Python, Julia, Observable JS) and output formats.↩︎</p></li>
-<li id="fn2"><p><span class="citation" data-cites="quarto-concurrency-hpc">[4]</span> and <span class="citation" data-cites="quarto-concurrency-param">[5]</span> describe concurrency issues, with some members suggesting workarounds, but with no official fix from Quarto yet.↩︎</p></li>
-<li id="fn3"><p>The DRY (Don’t Repeat Yourself) principle is a core software development philosophy stating that “every piece of knowledge must have a single, unambiguous, authoritative representation within a system”.↩︎</p></li>
+<li id="fn1"><p>well technically I should say it is a vscode-fork, still cool!↩︎</p></li>
+<li id="fn2"><p>but there is actually a specific Quarto cache feature that is different from freeze, still I think it is easy to think of them both as caching because in essence they are↩︎</p></li>
+<li id="fn3"><p><code>caddy file-server --listen :4210 --root _site</code> is SO much faster than quarto preview, tysm D. Mackinlay↩︎</p></li>
 </ol>
 </section></div> ]]></description>
   <category>Python</category>
   <category>R</category>
   <category>Quarto</category>
-  <guid>https://victoryuan.com/posts/2026-07-08-large-quarto-websites/</guid>
-  <pubDate>Wed, 08 Jul 2026 00:00:00 GMT</pubDate>
-  <media:content url="https://victoryuan.com/posts/2026-07-08-large-quarto-websites/quarto-render-time.png" medium="image" type="image/png" height="115" width="144"/>
+  <guid>https://victoryuan.com/posts/2026-07-10-large-quarto-websites/</guid>
+  <pubDate>Fri, 10 Jul 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://victoryuan.com/posts/2026-07-10-large-quarto-websites/quarto-render-time.png" medium="image" type="image/png" height="115" width="144"/>
 </item>
 <item>
   <title>Speeding up UMAP plots for single cell gene expression analysis</title>
