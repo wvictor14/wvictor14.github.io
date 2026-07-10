@@ -1,7 +1,6 @@
 ---
 title: "Large quarto projects and speed"
-date: 7/14/2026
-draft: false
+date: 7/10/2026
 categories:
   - Python
   - R
