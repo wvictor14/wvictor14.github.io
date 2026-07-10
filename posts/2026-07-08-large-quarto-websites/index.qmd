@@ -1,6 +1,7 @@
 ---
 title: "Large quarto projects and speed"
-date: 7/8/2026
+date: 7/14/2026
+draft: false
 categories:
   - Python
   - R
@@ -15,54 +16,66 @@ editor_options:
   chunk_output_type: console
 ---
 
-Quarto has slowly become one of my daily tools as a data scientist. Pretty much any analytical task involving data analysis, I turn to Quarto instead of Jupyter notebooks or R Markdown. More than that, Quarto isn't just for "notebook" analysis; it can also be used to create wiki-like websites with analytical content. Quarto is designed exactly for this kind of product, enabling reproducibility and integration with Python, R, JavaScript, and HTML/CSS.
+At work I am often asked to share my analysis and keep updating it as more data comes in. In the beginning, I used powerpoints because it's easy to copy paste plots from positron / vscode directly. But as the volume of data coming grew, it became clear that I needed a better system so that I spent less time updating analysis (necessary, but boring) and more time doing new analysis.
+
+I thought Quarto would be a good choice for this project, and I always wanted to use Quarto for something bigger. And for the most part, it did.
+
+With the release of [release of Positron IDE](https://positron.posit.co/release-notes/release-2025-07.html) and it's tight integration for Quarto, I felt like it queitly has become a daily tool. Plus I enjoy the added benefit of sounding like a hardcore programmer now that I can say I use vscode as my daily IDE of choice [^vscode]. 
+
+[^vscode]: well technically I should say it is a vscode-fork, still cool!
+
+One reason I chose quarto for this project was because it can handle multiple R/python environments, and caching, which I anticipated to help as website, analysis needs, and data grows - and they always do. The nice thing about quarto and `.qmd` notebooks specifically is that it also enables code-driven development and multi-author collaboration possible. Though, after 5 years of PhD and 3 years of industry work, I think I can count on one hand the number of times I had to "collaboratively" edit the same analysis notebook. I ponder if the all the hours spent figuring out the [confusing differences between git terms](https://jvns.ca/blog/2023/11/01/confusing-git-terminology/) like `branch`, forks, `detached HEAD`, `HEAD~1`/`HEAD^` / `HEAD~` (they are all the same), `origin/main` vs local `main` was worth it.   
 
 ::: {.columns .gap-4}
 
 ::: {.column}
 
-Quarto has made my life much easier in a lot of ways, *but because I use it so much, I also spend a lot of time fighting it*, specifically around limitations in scalability and performance. This post is an *in-the-weeds* experience about those limitations and some of the strategies I've been using to work around them.
-
-This isn't an unknown problem. Others have discussed the same performance issues [@quarto-perf-2024; @mackinlay-quarto], and the Quarto team is aware and seems to be planning some significant performance-related upgrades [@quarto-roadmap-2026]. Crossing my fingers these issues become irrelevant soon.
+I was not unaware of the problems around performance with quarto. I had already read the numerous discussion in the past about limitations of serial/parallel rendering [@quarto-concurrency-hpc, @quarto-concurrency-param, @quarto-perf-2024; @quarto-disc-perf-2024, @mackinlay-quarto]. Perhaps because there were community workarounds, and maybe also because the Quarto team was aware and stated plans to improve performance [@quarto-roadmap-2026], I felt like Quarto was a good choice for my project. 
 
 :::
 
 ::: {.column}
 
-![An optimistic render time by size of quarto project where the average page-level render time is 1-3 seconds (faster than a typical project)](quarto-render-time.png){#fig-render-time}
+![An optimistic render time by size of quarto project where the average page-level render time is 1-3 seconds. See [render_in_isolation.R](render_in_isolation.R) for code](quarto-render-time.png){#fig-render-time}
 
 :::
 
 :::
 
-## Quarto for a large >100 page scientific website
 
-I manage a project that involves creating and updating webpages on a Quarto website with close to 100 pages of analytical documents. "Document" here refers to a `.qmd`[^1] that programmatically (through R, Python, and/or JavaScript) analyzes data and generates outputs like graphs and figures that live alongside narrative text -- a perfect use case for Quarto. Two types of events prompt site updates:
+## Fighting with Quarto
 
-- Regular data refreshes (weekly, monthly) trigger targeted re-rendering of downstream pages.
-- New scientific questions require new dedicated webpages for their associated analyses to live in.
+I knew Quarto had performance problems before I had started. At least, I knew in this sort of vague way that every software has certain "problems". I had read the github discussions and community workarounds but the exact details were muddy. Well, I now know very clearly that there are two issues with scaling Quarto to large websites. 
 
-Each page takes about 20 seconds to 1 minute to render. We use [freeze](https://quarto.org/docs/projects/code-execution.html#freeze) combined with targets to so that updates to data dependencies trigger webpage re-renders with a dependency-driven manner **(A)**. This greatly speeds up page-specific updates, but whole website wide renders **(B)** still takes about 1-3s / page making total render time around **10-20 minutes**. This is a significant bottleneck in the workflow: render time now requires real consideration when planning updates.
+**The first issue** is that quarto generates intermediate files during render, meaning that rendering a `.qmd` in parallel is not supported by default. 
 
-This post is about speeding up part (A) using targets + parallel rendering of specific web pages.
+This issue I was already aware of. It appeared to me that easy workarounds exist: copy qmd into a new environmnet and render there, copy outputs back. And this is indeed what proposed community solutions contained - though not completely generalizable to my specific project (website + usage of [`includes`](https://quarto.org/docs/authoring/includes.html) [@quarto-includes-docs]). It was relatively easy to ask Claude to generate me a more robust solution that worked well in my own personal project. I will share that solution here, in case it might benefit others, who also encounter troubles with the workarounds provided on the quarto github issues/discussions.
 
-[^1]: `.qmd` files are like Jupyter notebooks: code and its output live together alongside author-written narrative. The "`md`" part conveys that the filetype is markdown at heart, a simple, lightweight, human-readable document. The "`q`" stands for "Quarto," which today spans a wide set of capabilities across supported languages (R, Python, Julia, Observable JS) and output formats.
+So the first issue was *easy*, the solution enables parallel renders, combined with freeze means that computations only happen in a very event-driven and dependency-depenedent manner (hello good friend [`r-targets`](https://kazuyanagimoto.com/blog/2025/0426_research_workflow/)).
 
+**The second issue** is that even with quarto's `freeze`, which I would describe as caching [^freeze], Quarto still takes 1-2 seconds to render each page on full website renders. Meaning that it will take at minimum 2 minutes to render the full website of 120 pages. In practice, because I have a combination of pages, some that utilize freezing and others that do benefit from re-rendering every time, pre- and post- render scripts, the total time it takes is reaching 10-15 minutes. Combine that with local vs deployment previews, it can take a few hours to make *simple* changes to a deployed website. On the stakeholder-management side, it is hard to explain to a user that their "small change" will be live in a few hours. 
 
+I empathize with them, why does it need to take so long to re-render the whole website, especially when the changes *involve no code or underlying data changes*? 
 
-## Slowness with quarto render
+Unfortunately, I'm not aware of any solutions to this limitation. So today, I handle the full website renders by offloading that to a server with Prefect to run renders on schedule and on events like through GHA - this was not trivial, and is the end result of a long process of trying other approaches. If I look at the amount of time I spent writing analysis versus figuring out how to *automate the boring stuff*, I wonder if an job title more reflective of my work would be "dev ops" or "data" engineer. For that, I have to thank the quarto team for leading me to this hat-swapping opportunity.
 
-Slowness stems from the fact that Quarto renders documents serially and can't be parallelized, due to concurrency problems [@quarto-perf-2024]. A few GitHub issues describe some bespoke solutions[^2], but none are generalizable enough. Specifically, they don't work for me for two reasons: the solutions target standalone HTML documents rather than a full website, and I rely on [`includes`](https://quarto.org/docs/authoring/includes.html) [@quarto-includes-docs] to keep my website DRY[^3], which brings its own complications for parallelization.
+[^freeze]: but there is actually a specific Quarto cache feature that is different from freeze, still I think it is easy to think of them both as caching because in essence they are
 
-[^2]: @quarto-concurrency-hpc and @quarto-concurrency-param describe concurrency issues, with some members suggesting workarounds, but with no official fix from Quarto yet.
+# Why I still stand by my choice
 
-[^3]: The DRY (Don't Repeat Yourself) principle is a core software development philosophy stating that "every piece of knowledge must have a single, unambiguous, authoritative representation within a system".
+Quarto, despite your flaws, I still think you were the best choice for my situation. The problems I listed were not gating, the website runs, I can write my analyses from the comfort of R/python, and make some nice looking webpages that my collaborators appreciate. Quarto has a very active community and developer team which means there are gems and tips[^caddy] hidden all over that are delightful to discover. 
+
+I do wish that I spent less time waiting for my website to render, but at the same, I am grateful for learning a little bit more about DevOps, orchestration, and automation in general. I wonder for example, if Quarto didn't have these performance limitations, when would I have learned skills? 
+
+[^caddy]: `caddy file-server --listen :4210 --root _site` is SO much faster than quarto preview, tysm D. Mackinlay
+
+# Technical Appendix: parallel quarto render solution
 
 ### Why `includes` complicates parallel rendering
 
 A `.qmd` document can be treated like a function: parameterized and reused as a shared component that other `.qmd` documents call into. For example, I might have a `penguins.qmd` that analyzes penguin body measurements, and a series of per-species documents that each include `penguins.qmd`, passing in a different species as a parameter.
 
-This is a great way to follow DRY principles in an "analysis notebook" workflow: write the analysis once, reuse it across many pages. But it comes at a cost for parallelization. Rendering a `.qmd` produces intermediate files during the render process. When two documents that both include the same shared `.qmd` render at the same time, their intermediate state collides: each process overwrites the other's files mid-render, and both renders error out.
+This is a great way to follow DRY principles in an "analysis notebook" workflow: write the analysis once, reuse it across many pages. But it comes that it complicates parallelizing the renders. Rendering a `.qmd` produces intermediate files during the render process. When two documents that both include the same shared `.qmd` render at the same time, their intermediate state collides: each process overwrites the other's files mid-render, and both renders error out.
 
 One community [workaround](https://github.com/quarto-dev/quarto-cli/issues/4730#issuecomment-1469364296)) symlinks the `.qmd` under a unique name, renders that, then cleans up:
 
@@ -72,7 +85,7 @@ quarto render page_A.qmd -P counter:1 --output page_A.html
 unlink page_A.qmd
 ```
 
-Though this works for standalone parameterized reports, it breaks in a Quarto website project because the output lands in a shared `_site/` directory. It also doesn't handle the project-level dependencies those renders need: `_quarto.yml`, `.Rprofile`, `renv/`, `R/` helper functions, and shared data. The following `render_in_isolation` function tries to address these issues to allow parallel rendering for Quarto websites.
+Though this works for standalone parameterized reports, but in a Quarto website project the output needs to land in the `_site/` or output directory. Thus,
 
 ## `render_in_isolation()`
 
@@ -103,7 +116,7 @@ flowchart TD
     I --> J
 ```
 
-Here I show pairing with `{targets}` to run in parallel:
+Pairing with `{targets}` to run in parallel:
 
 ```r
 library(targets)
@@ -259,16 +272,5 @@ After `quarto::quarto_render()` completes, the function copies `_freeze/<page>/`
 
 The function returns a list with `$success`, `$error`, `$tempdir`, and `$duration_sec`. With `keep_failed = TRUE`, the tempdir is preserved for debugging and its path is returned in `$tempdir`. Temp directories are created in `/tmp` (not R's session temp), so they survive the R process exiting.
 
-## Summary and other performance tips
 
-- `freeze` helps a lot, but it only covers computation. Quarto still spends a lot of time rendering (1-2s per page adds up when you have 100+ pages).
-- That said, sharing freeze artifacts via git (Quarto's own suggestion) quickly becomes unwieldy -- Once my `.git/` folder grew to 2 gb, I decided to stop tracking `_freeze` files. I recommend sharing them through some other mechanism.
-- Use CI/CD (e.g. GitHub Actions) to handle full site renders.
-- Serving the `_site` directory directly and running `quarto render [PAGE]` from the CLI is much faster than `quarto preview`. This speeds up the development loop; it's not relevant for production rendering.
-
-```bash
-# In your project directory
-caddy file-server --listen :4210 --root _site
-```
-
-## References
+# References
