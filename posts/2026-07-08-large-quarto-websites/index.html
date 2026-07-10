@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-07-10">
+<meta name="dcterms.date" content="2026-07-14">
 
 <title>Large quarto projects and speed – Victor Yuan</title>
 <style>
@@ -210,7 +210,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
   <ul>
   <li><a href="#fighting-with-quarto" id="toc-fighting-with-quarto" class="nav-link active" data-scroll-target="#fighting-with-quarto">Fighting with Quarto</a></li>
   <li><a href="#why-i-still-stand-by-my-choice" id="toc-why-i-still-stand-by-my-choice" class="nav-link" data-scroll-target="#why-i-still-stand-by-my-choice">Why I still stand by my choice</a></li>
-  <li><a href="#technical-appendix-parallel-quarto-render-solution" id="toc-technical-appendix-parallel-quarto-render-solution" class="nav-link" data-scroll-target="#technical-appendix-parallel-quarto-render-solution">Technical Appendix: parallel quarto render solution</a>
+  <li><a href="#appendix-parallel-quarto-render-solution" id="toc-appendix-parallel-quarto-render-solution" class="nav-link" data-scroll-target="#appendix-parallel-quarto-render-solution">Appendix: parallel quarto render solution</a>
   <ul class="collapse">
   <li><a href="#why-includes-complicates-parallel-rendering" id="toc-why-includes-complicates-parallel-rendering" class="nav-link" data-scroll-target="#why-includes-complicates-parallel-rendering">Why <code>includes</code> complicates parallel rendering</a></li>
   <li><a href="#render_in_isolation" id="toc-render_in_isolation" class="nav-link" data-scroll-target="#render_in_isolation"><code>render_in_isolation()</code></a>
@@ -220,8 +220,9 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
   <li><a href="#freeze-and-output-management" id="toc-freeze-and-output-management" class="nav-link" data-scroll-target="#freeze-and-output-management">Freeze and output management</a></li>
   <li><a href="#error-handling" id="toc-error-handling" class="nav-link" data-scroll-target="#error-handling">Error handling</a></li>
   </ul></li>
-  </ul></li>
+  <li><a href="#summary-and-other-performance-tips" id="toc-summary-and-other-performance-tips" class="nav-link" data-scroll-target="#summary-and-other-performance-tips">Summary and other performance tips</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -246,7 +247,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 10, 2026</p>
+      <p class="date">July 14, 2026</p>
     </div>
   </div>
   
@@ -290,11 +291,11 @@ Figure&nbsp;1: An optimistic render time by size of quarto project where the ave
 </section>
 <section id="why-i-still-stand-by-my-choice" class="level1">
 <h1>Why I still stand by my choice</h1>
-<p>Quarto, despite your flaws, I still think you were the best choice for my situation. The problems I listed were not gating, the website runs, I can write my analyses from the comfort of R/python, and make some nice looking webpages that my collaborators appreciate. Quarto has a very active community and developer team which means there are gems and tips<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> hidden all over that are delightful to discover.</p>
-<p>I do wish that I spent less time waiting for my website to render, but at the same, I am grateful for learning a little bit more about DevOps, orchestration, and automation in general. I wonder for example, if Quarto didn’t have these performance limitations, when would I have learned skills?</p>
+<p>Quarto, despite all your flaws, I still think you were the best choice for my situation. The problems I listed were not gating, the website runs, I can write my analyses from the comfort of R/python, and make some nice looking webpages that my collaborators appreciate. Quarto has a very activity community and developer team which means there are gems and tips<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> hidden all over that are delightful to discover.</p>
+<p>I do wish that I spent less time waiting for my website to render, but at the same, I am grateful for learning a little bit more about DevOps, orchestration, and automation. I wonder, if Quarto didn’t have these performance limitations, when would I have learned how to set up robust CI/CD for analytics?</p>
 </section>
-<section id="technical-appendix-parallel-quarto-render-solution" class="level1">
-<h1>Technical Appendix: parallel quarto render solution</h1>
+<section id="appendix-parallel-quarto-render-solution" class="level1">
+<h1>Appendix: parallel quarto render solution</h1>
 <section id="why-includes-complicates-parallel-rendering" class="level3">
 <h3 class="anchored" data-anchor-id="why-includes-complicates-parallel-rendering">Why <code>includes</code> complicates parallel rendering</h3>
 <p>A <code>.qmd</code> document can be treated like a function: parameterized and reused as a shared component that other <code>.qmd</code> documents call into. For example, I might have a <code>penguins.qmd</code> that analyzes penguin body measurements, and a series of per-species documents that each include <code>penguins.qmd</code>, passing in a different species as a parameter.</p>
@@ -498,12 +499,20 @@ Note
 <p>The function returns a list with <code>$success</code>, <code>$error</code>, <code>$tempdir</code>, and <code>$duration_sec</code>. With <code>keep_failed = TRUE</code>, the tempdir is preserved for debugging and its path is returned in <code>$tempdir</code>. Temp directories are created in <code>/tmp</code> (not R’s session temp), so they survive the R process exiting.</p>
 </section>
 </section>
+<section id="summary-and-other-performance-tips" class="level2">
+<h2 class="anchored" data-anchor-id="summary-and-other-performance-tips">Summary and other performance tips</h2>
+<ul>
+<li><code>freeze</code> helps a lot, but it only covers computation. Quarto still spends a lot of time rendering (1-2s per page adds up when you have 100+ pages).</li>
+<li>That said, sharing freeze artifacts via git (Quarto’s own suggestion) quickly becomes unwieldy – Once my <code>.git/</code> folder grew to 2 gb, I decided to stop tracking <code>_freeze</code> files. I recommend sharing them through some other mechanism.</li>
+<li>Use CI/CD (e.g.&nbsp;GitHub Actions) to handle full site renders.</li>
+</ul>
 </section>
-<section id="references" class="level1">
+<section id="references" class="level2">
 
 
 
 
+</section>
 </section>
 
 
