@@ -29,7 +29,7 @@ One reason I chose quarto for this project was because it can handle multiple R/
 
 ::: {.column}
 
-I was not unaware of the problems around performance with quarto. I had already read the numerous discussion in the past about limitations of serial/parallel rendering [@quarto-concurrency-hpc, @quarto-concurrency-param, @quarto-perf-2024; @quarto-disc-perf-2024, @mackinlay-quarto]. Perhaps because there were community workarounds, and maybe also because the Quarto team was aware and stated plans to improve performance [@quarto-roadmap-2026], I felt like Quarto was a good choice for my project. 
+I was not unaware of the problems around performance with quarto. I had already read the numerous discussion in the past about limitations of serial/parallel rendering [@quarto-concurrency-hpc, @quarto-concurrency-param, @quarto-perf-2024; @quarto-disc-perf-2024, @mackinlay-quarto]. Perhaps because there were community workarounds, and maybe also because the Quarto team was aware and stated plans to improve performance [@quarto-roadmap-2026], I still felt like Quarto the right choice. 
 
 :::
 
