@@ -41,3 +41,7 @@ readr::read_csv(here('collections', 'blogroll.csv')) |>
     locations = cells_body()
   )
 ```
+
+# Favorite blogposts
+
+- Yihui's 2018 post on the ["notebook-war"](https://yihui.org/en/2018/09/notebook-war/), a reference to the friction between coding for data analysis (typically in notebooks) vs developing software. Yihui also notes some differences between jupyter notebooks and `rmd` (that apply to `qmd`).
