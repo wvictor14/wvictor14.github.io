@@ -13,10 +13,10 @@ format:
 # About me
 
 ::: {.colophon}
-BIOINFORMATICS DATA SCIENTIST · BIOTECH · VANCOUVER, BC
+BIOINFORMATICS DATA SCIENTIST la· BIOTECH · VANCOUVER, BC
 :::
 
-Hello! I'm a **data scientist** working in the **Biotech** industry. I am currently working for **Sonoma Biotherapeutics**, a Treg cell therapy company develop novel drugs to treat autoimmune disease. I spend all day thinking about data and how to use programming, computation, statistics to make sense of it.
+I'm a data scientist at **Sonoma Biotherapeutics**, a Treg cell therapy company developing treatments for autoimmune disease. I write the pipelines and analysis behind our drug discovery, clinical, and translational work.
 
 :::
 
@@ -34,9 +34,9 @@ Hello! I'm a **data scientist** working in the **Biotech** industry. I am curren
 
 My skills and current technical interests include:
 
-- **Analytics and Visualization**. Tool of choice R[^tidyverse], python, and a little bit of javascript. My preferred reportable format is *html* [^1]. I recently won the [[post-posit-2025-contest|Posit Annual Plotnine and Table contests]].
-- **Data Engineering**. I value reproducibility, visibility, and integrity. Relevant stack: quarto for reproducible scientific documents, CI/CD (github actions) for automated testing and deployment, prefect/dagster/r-targets for orchestration and pipeline implementation.
-- **Bioinformatics, Statistics, and Machine Learning**. RNA, DNAm, epigenetics, single cell, TCR-seq. Domains: autoimmune tissue/pbmc, placental / pregnancy / developmental bio. 
+- **Analytics and Visualization**.  R (tidyverse, ggplot2), Python, some JavaScript[^tidyverse]. My preferred reportable format is *html* [^1]. I recently won the [Posit Annual Plotnine and Table contests](posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.qmd).
+- **Data engineering.** Quarto for reproducible reports, GitHub Actions for CI/CD, Prefect, Dagster, and `targets` for pipeline orchestration. I care about reproducibility: knowing where a number came from and being able to rerun it.
+- **Bioinformatics, statistics, and machine learning.** RNA-seq, DNA methylation, single-cell, TCR-seq. Applied mostly to autoimmune tissue/PBMC and placental/pregnancy biology.
 
 [^tidyverse]: I'm a big fan of tidyverse, specifically ggplot2.
 [^1]: Unfortunately, I spend all day in *pptx*.
@@ -45,5 +45,5 @@ My skills and current technical interests include:
 I earned my PhD from the **University of British Columbia (2022), Vancouver BC**, studying epigenetics and placental biology in Dr. Wendy Robinson's lab. There I created several machine learning models on placental DNA methylation datasets, and published bioinformatic software packages. Before that, I graduated with a **BSc in Molecular Biology from Concordia University, Montreal QC** and did my Undergraduate Thesis in development of CRISPR protocols in *C. albicans* in Dr. Whiteway's lab.
 
 <!--- Beyond the Data --->
-Outside of work, you’ll likely find me at a rock climbing gym, obsessing for the perfect pour-over and espresso, or riding with a tiny human on an electric longtail while constantly bemoaning car culture.
+Outside of work, you can find me at a rock climbing gym, obsessing for the perfect pour-over and espresso, or riding with a tiny human on an electric longtail while constantly bemoaning car culture.
 
