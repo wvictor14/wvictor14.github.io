@@ -27,6 +27,11 @@ jobs:
 
       - name: "Restore R dependencies from renv.lock"
         uses: r-lib/actions/setup-renv@v2
+        continue-on-error: true
+
+      - name: "Install missing packages with pak"
+        run: |
+          R --quiet --slave -e 'pak::pak(c("readr", "gt", "dplyr", "tidyr", "here", "yaml", "showtext", "sysfonts"))'
       # Back to our regularly scheduled Quarto output
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
