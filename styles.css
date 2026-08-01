@@ -226,6 +226,73 @@
   }
 }
 
+/* Custom listing template (listing-templates/card-list.ejs.md):
+   minimal cards for the projects page. Image slot is omitted
+   entirely (not left blank) when a project has none. */
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.card-list-item {
+  border: 1px solid var(--brand-hairline, #8A9089);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-list-image {
+  display: block;
+  line-height: 0;
+  border-bottom: 1px solid var(--brand-hairline, #8A9089);
+}
+
+.card-list-image img {
+  width: 100%;
+  height: 140px;
+  object-fit: contain;
+  display: block;
+}
+
+.card-list-body {
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.card-list-date {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.75rem;
+  color: var(--brand-hairline, #8A9089);
+}
+
+.card-list-title {
+  font-size: 1.05rem;
+  text-decoration: none;
+  color: var(--brand-black, #14181C);
+}
+
+.card-list-title:hover {
+  color: var(--brand-teal, #1B7A72);
+}
+
+.card-list-description {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.card-list-categories {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.card-list-categories .listing-category {
+  font-size: 0.65rem;
+  padding: 0.05rem 0.35rem;
+}
+
 /* Navbar: hairline instead of a default drop shadow. */
 .navbar {
   border-bottom: 1px solid var(--brand-hairline, #8A9089);
