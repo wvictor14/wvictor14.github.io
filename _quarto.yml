@@ -21,13 +21,13 @@ website:
     right:
       - text: Menu
         menu:
-          - href: projects
+          - href: projects/index.html
             icon: puzzle-fill
             text: Projects
-          - href: posts
+          - href: posts/index.html
             icon: book-fill
             text: Blog
-          - href: collections
+          - href: collections/index.html
             icon: gem
             text: Collections
           - icon: rss
@@ -36,9 +36,6 @@ website:
           - icon: github
             href: https://www.github.com/wvictor14
             text: GitHub
-          - icon: envelope
-            href: emailto:victor.2wy@gmail.com
-            text: Email
     tools:
       - icon: linkedin
         href: https://www.linkedin.com/in/victor2wy/

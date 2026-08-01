@@ -9,6 +9,7 @@ categories:
   - bioinformatics
 image: labourcan.gif
 from: markdown+emoji
+also-known-as: post-posit-2025-contest
 ---
 
 ::: {.callout-tip title = "Wow! :crown:"}
