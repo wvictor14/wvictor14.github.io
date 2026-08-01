@@ -7,6 +7,9 @@ execute:
   freeze: false
 ---
 
+# Software that I currently interested in:
+
+- [testit](https://github.com/yihui/testit) - a testing package for R with minimal dependencies, alternative to testthat
 
 # blogroll
 

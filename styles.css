@@ -5,6 +5,29 @@
   color: var(--brand-paper, #FFF8F5);
 }
 
+/* gt tables: match the site's plain hairline aesthetic instead of
+   gt's own white fills, which sit as a white block on the cream page. */
+.gt_table,
+.gt_table .gt_heading,
+.gt_table .gt_col_heading,
+.gt_table .gt_row,
+.gt_table .gt_stub,
+.gt_table .gt_stub_row_group,
+.gt_table .gt_summary_row,
+.gt_table .gt_striped,
+.gt_table .gt_footnotes,
+.gt_table .gt_sourcenotes {
+  background-color: transparent !important;
+}
+
+.gt_table.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: transparent !important;
+}
+
+.gt_table .gt_row {
+  border-bottom: 1px solid var(--brand-hairline, #8A9089) !important;
+}
+
 /* Reading comfort for post/page body copy. Font family now comes
    from _brand.yml (typography.base), applied site-wide. Page uses
    page-layout: full, so the whole content column (not just <p>) is
