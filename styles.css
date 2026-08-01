@@ -1,5 +1,33 @@
 /* css styles */
 
+::selection {
+  background: var(--brand-black, #14181C);
+  color: var(--brand-paper, #FFF8F5);
+}
+
+/* gt tables: match the site's plain hairline aesthetic instead of
+   gt's own white fills, which sit as a white block on the cream page. */
+.gt_table,
+.gt_table .gt_heading,
+.gt_table .gt_col_heading,
+.gt_table .gt_row,
+.gt_table .gt_stub,
+.gt_table .gt_stub_row_group,
+.gt_table .gt_summary_row,
+.gt_table .gt_striped,
+.gt_table .gt_footnotes,
+.gt_table .gt_sourcenotes {
+  background-color: transparent !important;
+}
+
+.gt_table.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: transparent !important;
+}
+
+.gt_table .gt_row {
+  border-bottom: 1px solid var(--brand-hairline, #8A9089) !important;
+}
+
 /* Reading comfort for post/page body copy. Font family now comes
    from _brand.yml (typography.base), applied site-wide. Page uses
    page-layout: full, so the whole content column (not just <p>) is
@@ -16,6 +44,10 @@
 #quarto-document-content li,
 #quarto-document-content blockquote {
   line-height: 1.75;
+}
+
+#quarto-document-content a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 500px) {
@@ -115,6 +147,10 @@
   text-decoration: none;
 }
 
+.contact-row a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 700px) {
   .hero {
     flex-direction: column-reverse;
@@ -203,7 +239,7 @@
 }
 
 .title-list-title:hover {
-  color: var(--brand-teal, #1B7A72);
+  text-decoration: underline;
 }
 
 .title-list-categories {
@@ -224,6 +260,73 @@
   .title-list-date {
     width: auto;
   }
+}
+
+/* Custom listing template (listing-templates/card-list.ejs.md):
+   minimal cards for the projects page. Image slot is omitted
+   entirely (not left blank) when a project has none. */
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.card-list-item {
+  border: 1px solid var(--brand-hairline, #8A9089);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-list-image {
+  display: block;
+  line-height: 0;
+  border-bottom: 1px solid var(--brand-hairline, #8A9089);
+}
+
+.card-list-image img {
+  width: 100%;
+  height: 140px;
+  object-fit: contain;
+  display: block;
+}
+
+.card-list-body {
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.card-list-date {
+  font-family: var(--brand-monospace, "IBM Plex Mono", monospace);
+  font-size: 0.75rem;
+  color: var(--brand-hairline, #8A9089);
+}
+
+.card-list-title {
+  font-size: 1.05rem;
+  text-decoration: none;
+  color: var(--brand-black, #14181C);
+}
+
+.card-list-title:hover {
+  text-decoration: underline;
+}
+
+.card-list-description {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.card-list-categories {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.card-list-categories .listing-category {
+  font-size: 0.65rem;
+  padding: 0.05rem 0.35rem;
 }
 
 /* Navbar: hairline instead of a default drop shadow. */

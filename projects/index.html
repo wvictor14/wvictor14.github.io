@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -42,14 +45,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-815693a67c2d650026497f98203dd583.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-815693a67c2d650026497f98203dd583.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-815693a67c2d650026497f98203dd583.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e119fcba128df92c41378509c9978655.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-e119fcba128df92c41378509c9978655.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e119fcba128df92c41378509c9978655.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-1fbe61ada9b795ee0f571699375d79f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-1fbe61ada9b795ee0f571699375d79f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-1fbe61ada9b795ee0f571699375d79f2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-a42e1c9082d62a8517f6decb91b1b4b3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-a42e1c9082d62a8517f6decb91b1b4b3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-a42e1c9082d62a8517f6decb91b1b4b3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -87,9 +90,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-categories','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
       
-      searchColumns: ["listing-project","listing-brand","listing-website","listing-format","listing-execute","listing-engines","listing-language","listing-title","listing-date","listing-image","listing-path","listing-outputHref","listing-date-modified","listing-author","listing-description","listing-filename","listing-file-modified","listing-reading-time","listing-word-count","listing-last-modified"],
+      searchColumns: ["listing-project","listing-brand","listing-website","listing-format","listing-execute","listing-engines","listing-language","listing-title","listing-date","listing-image","listing-categories","listing-description","listing-path","listing-outputHref","listing-date-modified","listing-author","listing-filename","listing-file-modified","listing-reading-time","listing-word-count","listing-last-modified"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -117,7 +120,7 @@ gtag('config', 'G-ZLSXEBDXV5', { 'anonymize_ip': true});
 </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -170,32 +173,42 @@ window.Quarto = {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="../projects"> <i class="bi bi-puzzle-fill" role="img">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-menu" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Menu</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-menu">    
+        <li>
+    <a class="dropdown-item" href="../projects/index.html"><i class="bi bi-puzzle-fill" role="img">
 </i> 
-<span class="menu-text">Projects</span></a>
+ <span class="dropdown-text">Projects</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../posts"> <i class="bi bi-book-fill" role="img">
+        <li>
+    <a class="dropdown-item" href="../posts/index.html"><i class="bi bi-book-fill" role="img">
 </i> 
-<span class="menu-text">Blog</span></a>
+ <span class="dropdown-text">Blog</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../collections"> <i class="bi bi-gem" role="img">
+        <li>
+    <a class="dropdown-item" href="../collections/index.html"><i class="bi bi-gem" role="img">
 </i> 
-<span class="menu-text">Collections</span></a>
+ <span class="dropdown-text">Collections</span></a>
   </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="../posts/index.xml"> <i class="bi bi-rss" role="img">
+        <li>
+    <a class="dropdown-item" href="../posts/index.xml"><i class="bi bi-rss" role="img">
 </i> 
-<span class="menu-text"></span></a>
+ <span class="dropdown-text">RSS</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="https://www.github.com/wvictor14"><i class="bi bi-github" role="img">
+</i> 
+ <span class="dropdown-text">GitHub</span></a>
+  </li>  
+    </ul>
+  </li>
 </ul>
           </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools tools-wide">
-    <a href="https://www.github.com/wvictor14" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+            <div class="quarto-navbar-tools">
     <a href="https://www.linkedin.com/in/victor2wy/" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-linkedin"></i></a>
-    <a href="emailto:victor.2wy@gmail.com" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-envelope"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -235,36 +248,122 @@ window.Quarto = {
 
 
 <div class="quarto-listing quarto-listing-container-custom" id="listing-listing">
-<div class="title-list list">
+<div class="card-list list">
 
-  <div class="title-list-item" data-index="0" data-listing-date-sort="1717891200000" data-listing-file-modified-sort="1783969781927" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="260">
-    <div class="title-list-date">Jun 9, 2024</div>
-    <div class="title-list-body">
-      <a href="../projects/bcchildcarebot/index.html" class="title-list-title">Surfacing daycare vacancies in Vancouver</a>
+  <div class="card-list-item" data-index="0" data-categories="Y3JlYXRvcg==" data-listing-date-sort="1785542400000" data-listing-file-modified-sort="1785608627799" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="1">
+    
+      <a href="../projects/quarto-graph/index.html" class="card-list-image">
+        <img src="../projects/quarto-graph/quarto-graph.png" alt="">
+      </a>
+    
+    <div class="card-list-body">
+      <a href="../projects/quarto-graph/index.html" class="card-list-title">quarto-graph</a>
+      
+        <div class="card-list-description">A quarto extension that adds wikilinks, backlinks, and graph navigation to quarto websites.</div>
+      
+      
+        <div class="card-list-categories">
+        
+          <div class="listing-category">creator</div>
+        
+        </div>
       
     </div>
   </div>
 
-  <div class="title-list-item" data-index="1" data-listing-date-sort="1715731200000" data-listing-file-modified-sort="1783969781927" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="253">
-    <div class="title-list-date">May 15, 2024</div>
-    <div class="title-list-body">
-      <a href="../projects/rbiotechsalary/index.html" class="title-list-title">An open data pipeline for transparent biotech compensation</a>
+  <div class="card-list-item" data-index="1" data-categories="Y3JlYXRvcg==" data-listing-date-sort="1717891200000" data-listing-file-modified-sort="1785608627797" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="260">
+    
+      <a href="../projects/bcchildcarebot/index.html" class="card-list-image">
+        <img src="../projects/bcchildcarebot/bcchildcarebot_dashboard.png" alt="">
+      </a>
+    
+    <div class="card-list-body">
+      <a href="../projects/bcchildcarebot/index.html" class="card-list-title">Surfacing daycare vacancies in Vancouver</a>
+      
+        <div class="card-list-description">Automated pipeline and dashboard tracking BC's daily child care vacancy data.</div>
+      
+      
+        <div class="card-list-categories">
+        
+          <div class="listing-category">creator</div>
+        
+        </div>
       
     </div>
   </div>
 
-  <div class="title-list-item" data-index="2" data-listing-date-sort="1577836800000" data-listing-file-modified-sort="1783969781927" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="42">
-    <div class="title-list-date">Jan 1, 2020</div>
-    <div class="title-list-body">
-      <a href="../projects/planet/index.html" class="title-list-title">planet</a>
+  <div class="card-list-item" data-index="2" data-categories="Y3JlYXRvcg==" data-listing-date-sort="1715731200000" data-listing-file-modified-sort="1785608627799" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="253">
+    
+      <a href="../projects/rbiotechsalary/index.html" class="card-list-image">
+        <img src="../projects/rbiotechsalary/rbiotechsalary.png" alt="">
+      </a>
+    
+    <div class="card-list-body">
+      <a href="../projects/rbiotechsalary/index.html" class="card-list-title">An open data pipeline for transparent biotech compensation</a>
+      
+        <div class="card-list-description">A community-sourced open data pipeline and Shiny app for biotech compensation trends.</div>
+      
+      
+        <div class="card-list-categories">
+        
+          <div class="listing-category">creator</div>
+        
+        </div>
       
     </div>
   </div>
 
-  <div class="title-list-item" data-index="3" data-listing-date-sort="1546300800000" data-listing-file-modified-sort="1783969781927" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="37">
-    <div class="title-list-date">Jan 1, 2019</div>
-    <div class="title-list-body">
-      <a href="../projects/placentalmethylomebrowser/index.html" class="title-list-title">Placental Methylome Browser</a>
+  <div class="card-list-item" data-index="3" data-categories="Y29udHJpYnV0b3I=" data-listing-date-sort="1692662400000" data-listing-file-modified-sort="1785608627799" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="21">
+    
+    <div class="card-list-body">
+      <a href="../projects/tidyseurat/index.html" class="card-list-title">tidyseurat</a>
+      
+        <div class="card-list-description">Contributed dplyr-style slice_* verb support to this tidy interface for Seurat single-cell objects.</div>
+      
+      
+        <div class="card-list-categories">
+        
+          <div class="listing-category">contributor</div>
+        
+        </div>
+      
+    </div>
+  </div>
+
+  <div class="card-list-item" data-index="4" data-categories="Y3JlYXRvcg==" data-listing-date-sort="1577836800000" data-listing-file-modified-sort="1785608627797" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="42">
+    
+      <a href="../projects/planet/index.html" class="card-list-image">
+        <img src="../projects/planet/logo.png" alt="">
+      </a>
+    
+    <div class="card-list-body">
+      <a href="../projects/planet/index.html" class="card-list-title">planet</a>
+      
+        <div class="card-list-description">An R package predicting cell composition, ethnicity, age, and disease from placental DNA methylation.</div>
+      
+      
+        <div class="card-list-categories">
+        
+          <div class="listing-category">creator</div>
+        
+        </div>
+      
+    </div>
+  </div>
+
+  <div class="card-list-item" data-index="5" data-categories="Y3JlYXRvcg==" data-listing-date-sort="1546300800000" data-listing-file-modified-sort="1785608627797" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="37">
+    
+    <div class="card-list-body">
+      <a href="../projects/placentalmethylomebrowser/index.html" class="card-list-title">Placental Methylome Browser</a>
+      
+        <div class="card-list-description">A Shiny app for exploring DNA methylation data from placental samples.</div>
+      
+      
+        <div class="card-list-categories">
+        
+          <div class="listing-category">creator</div>
+        
+        </div>
       
     </div>
   </div>
