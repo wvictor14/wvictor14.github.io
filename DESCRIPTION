@@ -17,6 +17,7 @@ Imports:
     tidyr,
     pak,
     yaml,
-    here,
+    readr,
+    gt,
     showtext,
     sysfonts
