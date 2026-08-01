@@ -2,6 +2,7 @@
 title: Surfacing daycare vacancies in Vancouver
 date: 2024-06-09
 image: bcchildcarebot_dashboard.png
+categories: [creator]
 description: "Automated pipeline and dashboard tracking BC's daily child care vacancy data."
 ---
 

@@ -8,7 +8,6 @@
       </a>
     <% } %>
     <div class="card-list-body">
-      <div class="card-list-date"><%= item.date %></div>
       <a href="<%- item.path %>" class="card-list-title"><%= item.title %></a>
       <% if (item.description) { %>
         <div class="card-list-description"><%= item.description %></div>

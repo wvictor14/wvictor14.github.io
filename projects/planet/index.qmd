@@ -2,6 +2,7 @@
 title: planet
 date: 2020-01-01
 image: logo.png
+categories: [creator]
 description: "An R package predicting cell composition, ethnicity, age, and disease from placental DNA methylation."
 ---
 
