@@ -9,14 +9,12 @@ logo:
 color:
   palette:
     black: "#14181C"
-    paper: "#FFFFFF"
-    orange: "#FF6F20"
-    teal: "#1B7A72"
+    paper: "#FFF8F5"
     hairline: "#8A9089"
     pink: "#FF3D7F"
   foreground: black
   background: paper
-  primary: orange
+  primary: black
   danger: pink
 
 typography:
@@ -35,9 +33,10 @@ typography:
     color: black
   monospace: IBM Plex Mono
   link:
-    color: teal
+    color: black
+    decoration: none
 
 defaults:
   bootstrap:
     defaults:
-      navbar-bg: "#FFFFFF"
+      navbar-bg: "#FFF8F5"

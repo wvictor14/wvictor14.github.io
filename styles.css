@@ -1,5 +1,10 @@
 /* css styles */
 
+::selection {
+  background: var(--brand-black, #14181C);
+  color: var(--brand-paper, #FFF8F5);
+}
+
 /* Reading comfort for post/page body copy. Font family now comes
    from _brand.yml (typography.base), applied site-wide. Page uses
    page-layout: full, so the whole content column (not just <p>) is
@@ -16,6 +21,10 @@
 #quarto-document-content li,
 #quarto-document-content blockquote {
   line-height: 1.75;
+}
+
+#quarto-document-content a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 500px) {
@@ -115,6 +124,10 @@
   text-decoration: none;
 }
 
+.contact-row a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 700px) {
   .hero {
     flex-direction: column-reverse;
@@ -203,7 +216,7 @@
 }
 
 .title-list-title:hover {
-  color: var(--brand-teal, #1B7A72);
+  text-decoration: underline;
 }
 
 .title-list-categories {
@@ -274,7 +287,7 @@
 }
 
 .card-list-title:hover {
-  color: var(--brand-teal, #1B7A72);
+  text-decoration: underline;
 }
 
 .card-list-description {
