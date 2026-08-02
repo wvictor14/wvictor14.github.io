@@ -6,4 +6,4 @@ description: A quarto extension that adds wikilinks, backlinks, and graph naviga
 image: quarto-graph.png
 ---
 
-[quarto-graph](https://victoryuan.com/quarto-graph/)
+link to [quarto-graph website](https://victoryuan.com/quarto-graph/)

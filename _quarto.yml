@@ -21,13 +21,13 @@ website:
     right:
       - text: Menu
         menu:
-          - href: projects/index.html
+          - href: projects/index.qmd
             icon: puzzle-fill
             text: Projects
-          - href: posts/index.html
+          - href: posts/index.qmd
             icon: book-fill
             text: Blog
-          - href: collections/index.html
+          - href: collections/index.qmd
             icon: gem
             text: Collections
           - icon: rss
