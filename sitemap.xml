@@ -2,66 +2,70 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://victoryuan.com/projects/tidyseurat/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.476Z</lastmod>
+    <lastmod>2026-08-02T05:06:27.553Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.474Z</lastmod>
+    <lastmod>2026-08-02T05:06:27.549Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/placentalmethylomebrowser/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.474Z</lastmod>
+    <lastmod>2026-08-02T05:06:27.551Z</lastmod>
   </url>
   <url>
-    <loc>https://victoryuan.com/projects/bcchildcarebot/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.474Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.462Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2025-03-28-dynamic-navsets/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.462Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.470Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/license.html</loc>
-    <lastmod>2026-08-02T04:16:52.460Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/collections/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.458Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.460Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2026-07-10-large-quarto-websites/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.472Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.463Z</lastmod>
+    <loc>https://victoryuan.com/projects/lavi-theme/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.551Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/posts/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.472Z</lastmod>
+    <lastmod>2026-08-02T05:06:27.547Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.538Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2026-07-10-large-quarto-websites/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.547Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.535Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/collections/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.533Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/license.html</loc>
+    <lastmod>2026-08-02T05:06:27.535Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.545Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2025-03-28-dynamic-navsets/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.537Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.537Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/projects/bcchildcarebot/index.html</loc>
+    <lastmod>2026-08-02T05:06:27.549Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/rbiotechsalary/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.476Z</lastmod>
+    <lastmod>2026-08-02T05:06:27.553Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/quarto-graph/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.476Z</lastmod>
+    <lastmod>2026-08-02T05:06:27.553Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/planet/index.html</loc>
-    <lastmod>2026-08-02T04:16:52.475Z</lastmod>
+    <lastmod>2026-08-02T05:06:27.551Z</lastmod>
   </url>
 </urlset>
