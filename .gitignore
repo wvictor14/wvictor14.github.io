@@ -16,3 +16,5 @@ index-listing.json
 *:Zone.Identifier
 **/*.quarto_ipynb
 .vscode/settings.json
+
+/.luarc.json
