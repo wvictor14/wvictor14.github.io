@@ -13,7 +13,7 @@ format:
 # About me
 
 ::: {.colophon}
-BIOINFORMATICS DATA SCIENTIST la· BIOTECH · VANCOUVER, BC
+BIOINFORMATICS DATA SCIENTIST · BIOTECH · VANCOUVER, BC
 :::
 
 I'm a data scientist at **Sonoma Biotherapeutics**, a Treg cell therapy company developing treatments for autoimmune disease. I write the pipelines and analysis behind our drug discovery, clinical, and translational work.
