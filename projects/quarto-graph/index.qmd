@@ -1,0 +1,11 @@
+---
+title: quarto-graph
+date: 2026-08-01
+categories: [creator]
+description: A quarto extension that adds wikilinks, backlinks, and graph navigation to quarto websites. 
+image: quarto-graph.png
+---
+
+[quarto-graph documentation site](https://victoryuan.com/quarto-graph/)
+
+![quarto-graph](image.png)

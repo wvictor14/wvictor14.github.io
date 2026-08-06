@@ -1,0 +1,15 @@
+---
+title: 🟣 A lavi theme for Positron IDE
+date: 2026-07-31
+categories: [creator]
+image: image.png
+description: A custom theme for positron IDE inspired by the iconic lavi vim theme.
+---
+
+Repo here: [wvictor14/lavi-positron-theme](https://github.com/wvictor14/lavi-positron-theme)
+
+You can find the theme by searching "Lavi" in Positron's extensions marketplace.
+
+Credit to [b0o/lavi 🪻](https://github.com/b0o/lavi) for inspiration and source tmTheme files.
+
+![lavi + positron](image.png)

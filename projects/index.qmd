@@ -1,12 +1,12 @@
 ---
 listing:
-  template: ../listing-templates/title-list.ejs.md
+  template: ../listing-templates/card-list.ejs.md
   contents:
     - "*.qmd"
   sort:
     - "date desc"
     - "title desc"
-  fields: [date, title, categories]
+  fields: [date, title, categories, image, description]
 title: Projects
 ---
 

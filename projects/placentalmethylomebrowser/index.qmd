@@ -1,6 +1,8 @@
 ---
 title: Placental Methylome Browser
 date: 2019-01-01
+categories: [creator]
+description: "A Shiny app for exploring DNA methylation data from placental samples."
 ---
 
 A project where me and one of our lab's rotation students, Yifan Yin, created a shiny app to

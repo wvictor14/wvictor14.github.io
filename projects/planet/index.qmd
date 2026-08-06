@@ -1,6 +1,9 @@
 ---
 title: planet
 date: 2020-01-01
+image: logo.png
+categories: [creator]
+description: "An R package predicting cell composition, ethnicity, age, and disease from placental DNA methylation."
 ---
 
 An R package for all of the bioinformatic tools I created from my PhD. They all use epigenetic patterns to predict: cell composition, ethnicity, age, and disease (preeclampsia), all from using placental DNA methylation data as input. 

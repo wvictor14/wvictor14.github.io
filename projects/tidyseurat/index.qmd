@@ -1,0 +1,10 @@
+---
+title: tidyseurat
+date: 2023-08-22
+categories: [contributor]
+description: "Contributed dplyr-style slice_* verb support to this tidy interface for Seurat single-cell objects."
+---
+
+[tidyseurat](https://github.com/stemangiola/tidyseurat) brings a tidyverse-friendly grammar to Seurat single-cell objects.
+
+I contributed [`slice_head`, `slice_tail`, `slice_min`, `slice_max`, and `slice_sample`](https://github.com/stemangiola/tidyseurat/pull/68) support, merged in [PR #68](https://github.com/stemangiola/tidyseurat/pull/68).

@@ -11,11 +11,13 @@ Suggests:
     ggplot2,
     gt
 Imports:
+    here,
     quarto,
     dplyr,
     tidyr,
     pak,
     yaml,
-    here,
+    readr,
+    gt,
     showtext,
     sysfonts

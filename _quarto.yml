@@ -19,24 +19,26 @@ website:
   navbar:
     search: true
     right:
-      - href: projects
-        icon: puzzle-fill
-        text: Projects
-      - href: posts
-        icon: book-fill
-        text: Blog
-      - href: collections
-        icon: gem
-        text: Collections
-      - icon: rss
-        href: posts/index.xml
+      - text: Menu
+        menu:
+          - href: projects/index.qmd
+            icon: puzzle-fill
+            text: Projects
+          - href: posts/index.qmd
+            icon: book-fill
+            text: Blog
+          - href: collections/index.qmd
+            icon: gem
+            text: Collections
+          - icon: rss
+            href: posts/index.xml
+            text: RSS
+          - icon: github
+            href: https://www.github.com/wvictor14
+            text: GitHub
     tools:
-      - icon: github
-        href: https://www.github.com/wvictor14
       - icon: linkedin
         href: https://www.linkedin.com/in/victor2wy/
-      - icon: envelope
-        href: emailto:victor.2wy@gmail.com
   body-footer: |
     <script data-goatcounter="https://victor2wy.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
