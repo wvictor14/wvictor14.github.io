@@ -344,4 +344,24 @@ pcaTruePlot = Plot.plot({
 html`${sideBySide(["XIST expression per sample, colored by Anthropic's answer", xistTruePlot], ["PCA of the top 100 most variable XY probes, colored by Anthropic's answer", pcaTruePlot])}`
 ```
 
-Apparently, some 3 males (blue dots in right cluster) 
+
+Apparently, some 3 males (blue dots in right cluster) express XIST. And a bunch of samples are "unknown". This is clearly a mistake in Anthropic's evaluation. How can the answer involve saying essentially "I don't know" for some samples? How could that be "objective truth".
+
+## Why I can't trust Anthropic anymore
+
+I can only theorize how such a blatantly incorrect answer made it into one of Anthropic's published benchmarks. What's more disturbing is thinking about how this brings serious questions into the level of standards Anthropic imposes on their work:
+
+1. The questions are written by "domain experts". Who are these domain experts and why are they submitting non-answers? The question itself is also a bit odd, at first I thought extraneous information was provided to intentionally mislead, with the hopes that a model with superior complex reasoning capabilities would be able to push through. But now I wonder if the question was low effot.
+2. Anthropic claims multiple rounds of quality control, yet this question-answer pair made it through. 
+
+> To minimize inherently unsolvable questions while still leaving room for those that might be AI-solvable, we required each question author to submit a validation notebook demonstrating that the signal does, in fact, exist in the data (even if finding it from scratch might be difficult). 
+
+Anthropic indicates that another round of QC is applied to questions their panel of human experts couldn't solve 
+
+> That left us with a set of questions that could not be solved by our panel of experts. This could mean (1) the question was malformed or broken, (2) the question is inherently unsolvable (e.g.,the signal isn’t in the data), or (3) the question is theoretically solvable but humans lack the knowledge required to solve it. **After QC’ing with benchmarkers and additional experts**, we removed 4 questions that were due to (1), leaving 23 human-difficult questions.
+
+To be clear, the problem is unsolvable not because any of the 3 cited conditions above. It's unsolvable becuase the "ground-truth" answer is wrong itself.
+
+# In conclusion, 
+
+I think the conclusion here is that, maybe the AI providers should stick to what they're good at, building AI models? Lots of AI companies are trying to hire "LLM trainers" for building these types of models. I'm guessing there's a real lack of quality from this type of system. CompBioBench in contrast, which is built by bioinformaticians by a real life sciences company, a veteran in the space, has thoughtful relevant questions in comparison.  What also struck me with all these questions/prompts, is that the questions themselves require experts to write. The LLM performance is tied to how well the question is constrcuted, how much context is provided, and that part is  definitely better if done by an experienced hand.
