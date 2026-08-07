@@ -2,6 +2,8 @@
 title: I tested Anthropic's Bioinformatics LLM Benchmark BioMysteryBench
 execute:
   echo: false
+resources:
+  - "*.csv"
 ---
 
 Undeniably, AI is rapidly changing the way science is being done. How positive those impacts are, is difficult to measure [^ai-adoption-in-science].
@@ -149,7 +151,9 @@ I had deepseek do this one for me with this prompt
 
 > Read in this .csv file. Plot the expression levels of the probes measuring the transcripts from the gene XIST. 
 
-Then, classify based on XIST expression: if XIST expression is high, classify as female, otherwise it is a male.
+Then, classify based on XIST expression: if XIST expression is high, classify as female, otherwise it is a male (left). 
+
+If we didn't have XIST expression, or if we wanted to make this a bit more robust, we could base our classification on a combination of genes using PCA (right).
 
 
 ```{python}
@@ -184,7 +188,7 @@ else:
 
 anno["chr"] = anno["REFSEQ"].map(chr_map)
 xy = anno[anno["chr"].isin(["X", "Y"])]
-print(f"{len(xy)} XY chromosome transcripts")
+#print(f"{len(xy)} XY chromosome transcripts")
 
 xy_genes = expr[xy["REFSEQ"]].dropna(axis=1)
 top_xy = xy_genes.loc[:, xy_genes.var(axis=0).sort_values(ascending=False).index[:100]]
@@ -209,19 +213,49 @@ sex_calls = pd.DataFrame({
     "xist": xist.values,
 })
 sex_calls.to_csv("sex_calls.csv", index=False)
-print(sex_calls["sex"].value_counts().to_string())
+# print(sex_calls["sex"].value_counts().to_string())
 ```
 
 ```{ojs}
 plotStyle = ({ background: "transparent", fontSize: "14px" })
 sexColor = ({ domain: ["male", "female"], range: ["#4c78a8", "#e15759"], legend: true })
+trueSexColor = ({ domain: ["male", "female", "unknown"], range: ["#4c78a8", "#e15759", "#9aa0a6"], legend: true })
 sexCalls = FileAttachment("sex_calls.csv").csv({typed: true})
+sexAnswer = FileAttachment("sex_answer.csv").csv({typed: true})
+pcaData = sexCalls.map(d => {
+  const a = sexAnswer.find(s => s.sample === d.sample)
+  return { ...d, trueSex: a ? a.anthropic : null, agree: a ? a.agree : null }
+})
 ```
 
 ```{ojs}
+xistPlot = Plot.plot({
+  width: 330,
+  height: 490,
+  style: { ...plotStyle, fontSize: "10px" },
+  x: { label: "XIST expression", grid: true },
+  y: {
+    label: "Sample",
+    domain: sexCalls.map(d => d.sample).sort((a, b) => a - b),
+    padding: 0
+  },
+  color: sexColor,
+  marks: [
+    Plot.barX(sexCalls, {
+      x: "xist",
+      y: "sample",
+      fill: "sex",
+      insetTop: 0,
+      insetBottom: 0,
+      title: d => `${d.sample} · ${d.sex}\nXIST: ${d.xist.toFixed(2)}`
+    }),
+    Plot.ruleX([0])
+  ]
+})
+
 sexPcaPlot = Plot.plot({
-  width: 680,
-  height: 420,
+  width: 330,
+  height: 430,
   style: plotStyle,
   x: { label: "PC1" },
   y: { label: "PC2", grid: true },
@@ -238,43 +272,76 @@ sexPcaPlot = Plot.plot({
     Plot.ruleY([0])
   ]
 })
-html`<div style="font-weight: 600; margin: 0.5rem 0 0.25rem;">PCA of the top 100 most variable XY probes, colored by inferred sex</div>${sexPcaPlot}`
 ```
 
 ```{ojs}
-xistPlot = Plot.plot({
-  width: 680,
-  height: 280,
-  style: plotStyle,
-  x: {
+function sideBySide(...pairs) {
+  const row = document.createElement("div")
+  row.style.cssText = "display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start;"
+  for (const [caption, fig] of pairs) {
+    const col = document.createElement("div")
+    col.style.cssText = "flex: 1 1 0; min-width: 0;"
+    const c = document.createElement("div")
+    c.style.cssText = "font-weight: 600; margin: 0.5rem 0 0.25rem;"
+    c.textContent = caption
+    col.append(fig, c)
+    row.appendChild(col)
+  }
+  return row
+}
+html`${sideBySide(["XIST expression per sample; only expressed in females", xistPlot], ["PCA of the top 100 most variable XY probes, colored by inferred sex", sexPcaPlot])}`
+```
+
+Clearly, samples 1-6 are females, rest are males. But when I looked the answer, I was really surprised to find that my answer was wrong. Here are the same two plots, colored by Anthropic's answer:
+
+```{ojs}
+xistTruePlot = Plot.plot({
+  width: 330,
+  height: 490,
+  style: { ...plotStyle, fontSize: "10px" },
+  x: { label: "XIST expression", grid: true },
+  y: {
     label: "Sample",
-    tickRotate: -90,
-    tickSize: 0,
-    fontSize: 10,
-    domain: sexCalls.map(d => d.sample).sort((a, b) => a - b)
+    domain: sexCalls.map(d => d.sample).sort((a, b) => a - b),
+    padding: 0
   },
-  y: { label: "XIST expression", grid: true },
-  color: sexColor,
+  color: trueSexColor,
   marks: [
-    Plot.barY(sexCalls, {
-      x: "sample",
-      y: "xist",
-      fill: "sex",
-      title: d => `${d.sample} · ${d.sex}\nXIST: ${d.xist.toFixed(2)}`
+    Plot.barX(pcaData, {
+      x: "xist",
+      y: "sample",
+      fill: "trueSex",
+      insetTop: 0,
+      insetBottom: 0,
+      title: d => `${d.sample} · Anthropic: ${d.trueSex}\nXIST: ${d.xist.toFixed(2)}`
     }),
+    Plot.ruleX([0])
+  ]
+})
+
+pcaTruePlot = Plot.plot({
+  width: 330,
+  height: 430,
+  style: plotStyle,
+  x: { label: "PC1" },
+  y: { label: "PC2", grid: true },
+  color: trueSexColor,
+  marks: [
+    Plot.dot(pcaData, {
+      x: "pc1",
+      y: "pc2",
+      fill: "trueSex",
+      r: 5,
+      title: d => `${d.sample} · Anthropic: ${d.trueSex}\nPC1: ${d.pc1.toFixed(2)}, PC2: ${d.pc2.toFixed(2)}, XIST: ${d.xist.toFixed(2)}`
+    }),
+    Plot.ruleX([0]),
     Plot.ruleY([0])
   ]
 })
-html`<div style="font-weight: 600; margin: 1rem 0 0.25rem;">XIST expression per sample; only expressed in females</div>${xistPlot}`
 ```
 
 ```{ojs}
-Inputs.table(sexCalls, { sort: true, maxHeight: 320 })
+html`${sideBySide(["XIST expression per sample, colored by Anthropic's answer", xistTruePlot], ["PCA of the top 100 most variable XY probes, colored by Anthropic's answer", pcaTruePlot])}`
 ```
 
-```{ojs}
-answerList = sexCalls.map(d => `Sample ${d.sample}; ${d.sex}`).join("\n")
-html`<details style="margin: 1rem 0;"><summary style="font-weight: 600; cursor: pointer;">Answer (${sexCalls.length} samples)</summary><pre style="font-size: 13px; line-height: 1.5;">${answerList}</pre></details>`
-```
-
-    
+Apparently, some 3 males (blue dots in right cluster) 
