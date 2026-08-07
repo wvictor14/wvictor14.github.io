@@ -1,17 +1,25 @@
 ---
-title: I tested Anthropic's Bioinformatics LLM Benchmark BioMysteryBench
+title: Comparing Anthropic's vs Genentech's Bioinformatics LLM Benchmarks
 execute:
   echo: false
 resources:
   - "*.csv"
 ---
 
-Undeniably, AI is rapidly changing the way science is being done. How positive those impacts are, is difficult to measure [^ai-adoption-in-science].
+Undeniably, AI is rapidly changing the way science is being done. As large language models (LLMs) become more advanced, their applications are diversifying. The capabilities of new models are often described against different dimensions of performance through domain-specific benchmarks. Benchmarks are useful in comparing models specific tasks that are more relevant to users  of said models.  
+
+<!---
+But how positive those impacts are, is difficult to measure [^ai-adoption-in-science]. 
 
 [^ai-adoption-in-science]: One study suggests that publications leveraging AI are more likely to be cited, and early AI-adopters are more likely to be professional successful. But AI-prone work is leading to less innovation, with more [research circulating the same crowded problems](https://www.nature.com/articles/s41586-025-09922-y), leaving science as whole less interconnected and poorer off.
+--->
 
+Creating high quality relevant benchmarks is not a straightforward task. You can understand this by looking at the diversity in approaches different benchmarks take. Generally, there are these three components to each benchmark:
 
-To measure how well LLM's can perform specific tasks, AI researchers build "benchmarks" - a systematic set of inputs to give a model, paired with instructions on how to evaluate outputs. Benchmarks are useful because they attempt to quantify the usefulness of AI. But benchmarks are hard to create, they are highly domain specific, requiring teams of experts to contribute feedback that only years of experience and training can prepare for.
+- How the tasks are created
+- How task quality is ensured
+- How model performance is measured
+
 
 In bioinformatics, there are many benchmarks that were developed with different approaches. Here I examine probably the two most well known ones recently released: [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) released by pharma giant Genentech, and Anthropic's [BioMysteryBench](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench).
 
@@ -19,12 +27,11 @@ In this post I looked at some of the questions and evaluations in these benchmar
 
 # Who is developing bioinformatics benchmarks
 
-CompBioBench was released on April 4th, 2026 by Genentech, a San Francisco Pharma company that this year celebrating their [50th year anniversary](https://www.gene.com/stories/celebrating-50-years-of-science-and-changing-lives). They have over 40+ drugs on the market today, currently has ~600 active clinical trials worldwide, and invests over [$15 billion in R&D each year](https://www.gene.com/download/pdf/Genentech-Fact-Sheet_April-2026.pdf). The reputation of the authors affiliations set an expectation on their dataset. This is a benchmark created by some of the most experienced practictioners in the industry.
+Genentech, a 50-year-old pharma company with dozens of approved drugs, released [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) on April 4th, 2026. The reputation of the authors affiliations set an expectation on their dataset. This is a benchmark created by some of the most experienced practictioners in the industry.
 
 BioMysteryBench was created by Anthropic, possibly one of the most important companies in the world right now. They are known for producing the world's leading LLM models, and their investments in life sciences research is highly intriguing, but their investments in life sciences is in the early days, and does not carry the same level of validation as Genentech. Anthropic is a software company interested in life sciences applications.
 
-# Deep analysis of model performance
-
+# How rigorously these benchmarks are documented
 
 First difference worth talking about is that Genentech published their benchmark on biorxiv, which is a very common preprint journal in the bioinformatics field. Their benchmark, problem statement, and results are presented in standard scientific article format. This means, everything is deeply documented. And, the article itself is hosted by biorxiv, which is a non-affiliated organization, that will retain this original published version and also handle author-submitted updates.
 
@@ -94,9 +101,7 @@ html`<div style="font-weight: 600; margin: 0.5rem 0 0.25rem;">Domain</div>${benc
 html`<div style="font-weight: 600; margin: 1rem 0 0.25rem;">Question Style</div>${benchmarkChart("Question Style", styleOrder)}`
 ```
 
-
 From this chart, we can see that *BioMysteryBench has only one single cell RNAseq question*! That's crazy. Single cell RNAseq might be the most important novel technologies developed in the last decade, and we are at a point where the methods are mature, datasets are plentiful, and so are published peer reviewed well-cited articles. Lacking evaluations on this critical assay type is like evaluating AI on generating accurate physics simulation but saying let's leave out the third dimension. 
-
 
 What I do like about Anthropic's work is that they more heavily capture bulk RNAseq ("Transcriptomics" in the graphs) - it's definitely the bread & butter of next-gen assay types. I also like that they cover proteomics.
 
@@ -118,12 +123,12 @@ This is a 4/5 ATACseq question:
 
 > Q. atac.doublet.q1.bed.gz contains a fragment file from a scATAC-seq sample (hg38). Barcodes with low read counts have been filtered out. Look for doublets. Return the barcode of any one doublet, if any. Respond only with the label of the barcode in the format: “AAATGGAACGTTAAAG-1”, or “None”.
 
-Doublet detection is standard step in most single cell workflows. The authors note that all model attempts involved applying standard doublet filtering, but the correct answer required using a more advanced doublet detection package called AMULET. AMULET is able to detect the homotypic doublets, which are when a droplet includes two cells that are the same cell type. Because they are the same cell type, "standard" doublet detection programs which rely on expression patterns, cannot detect these. 
+Doublet detection is standard step in most single cell workflows. The authors note that all model attempts involved applying standard doublet filtering, but the correct answer required using a more advanced doublet detection package called AMULET[^doublet]. AMULET is able to detect the homotypic doublets, which are when a droplet includes two cells that are the same cell type. Because they are the same cell type, "standard" doublet detection programs which rely on expression patterns, cannot detect these. 
 
-This is an interesting result because:
+[^doublet]: It surprises me that standard scATACseq workflows ignores homotypic doublets because in other assay types like scRNAseq it is standard. (Why is this not already part of the standard workflow?)
 
-1. I learned that apparently standard scATACseq workflows ignores homotypic doublets. This surprises me, because in other assay types like scRNAseq it is standard. And why is this not already part of the standard workflow?
-2. The impact of failing to detect homotypic doublets is not discussed. In general leaving a doublet consistenting of two of the same cell types with the same functional readouts, is likely minimally impactful on the analysis. The cases where homotypic doublets might have a large impact are pretty rare, and likely other analyses (like looking at read depth) will inform how much attention is needed to this issue.
+
+The impact of failing to detect homotypic doublets is not discussed. In general leaving a doublet consistenting of two of the same cell types with the same functional readouts, is likely minimally impactful on the analysis. The cases where homotypic doublets might have a large impact are pretty rare, and likely other analyses (like looking at read depth) will inform how much attention is needed to this issue.
 
 The binary yes/no did this model provide the correct answer result of this question is illustrated by this example. The "wrong" answers were not that wrong, and their impact on the resulting analysis is unclear (it's a synthetic example). 
 
@@ -143,7 +148,9 @@ I picked this one, because it stood out to me. It stood out to me, because it's 
 
 For RNAseq, or in this case, microarrays, that involves looking at genes on the sex chromosome. 
 
-The easiest one to look at is XIST, a gene that is responsible for "dosage compensation" - a phenomenon where females downregulat X-chromosome derived gene products, as a result of having  one more x-chromosome than males.
+The easiest one to look at is XIST, a gene that is essential for female-specific "dosage compensation"[^XIST].
+
+[^XIST]: a phenomenon where females downregulat X-chromosome derived gene products, as a result of having  one more x-chromosome than males.
 
 [^1st-year]: OK, it might take them a week.
 
@@ -344,10 +351,9 @@ pcaTruePlot = Plot.plot({
 html`${sideBySide(["XIST expression per sample, colored by Anthropic's answer", xistTruePlot], ["PCA of the top 100 most variable XY probes, colored by Anthropic's answer", pcaTruePlot])}`
 ```
 
-
 Apparently, some 3 males (blue dots in right cluster) express XIST. And a bunch of samples are "unknown". This is clearly a mistake in Anthropic's evaluation. How can the answer involve saying essentially "I don't know" for some samples? How could that be "objective truth".
 
-## Why I can't trust Anthropic anymore
+## Wrong Answers in BioMysteryBench
 
 I can only theorize how such a blatantly incorrect answer made it into one of Anthropic's published benchmarks. What's more disturbing is thinking about how this brings serious questions into the level of standards Anthropic imposes on their work:
 
@@ -364,4 +370,11 @@ To be clear, the problem is unsolvable not because any of the 3 cited conditions
 
 # In conclusion, 
 
-I think the conclusion here is that, maybe the AI providers should stick to what they're good at, building AI models? Lots of AI companies are trying to hire "LLM trainers" for building these types of models. I'm guessing there's a real lack of quality from this type of system. CompBioBench in contrast, which is built by bioinformaticians by a real life sciences company, a veteran in the space, has thoughtful relevant questions in comparison.  What also struck me with all these questions/prompts, is that the questions themselves require experts to write. The LLM performance is tied to how well the question is constrcuted, how much context is provided, and that part is  definitely better if done by an experienced hand.
+This wasn't a comprehensive systematic dive into these benchmarks. But I did learn a few things:
+
+- LLM Benchmarks, specifically Bioinformatics-specific ones, are really hard to create well. High quality is really hard to get right, and requires huge amount of resources: domain experts need to be involved to conceive and design the tasks. Anthropic hired an indepedenent team of human experts to tackle the prompts alongside their tested models, which is huge advantage. QC however, they can improve on.
+
+- The level of detail between the two benchmarks are on two ends of the spectrum. CompBioBench provided microscopic levels of information that one could spend weeks dissecting. I know exactly the domains that CBB covers and can find detailed overviews of question/answers. Anthropic's is scant in comparison. The information is highly useful in evaluating the quality of the benchmarks and builds trust in the evaluation numbers. I hope Anthropic will consider more rigorous documentation and publication for future datasets.
+
+- The most difficult questions in each benchmark are not that difficult for an experienced biological data scientist. The performance of state-of-the-art models on the hardest questions suggests to me that we are still aways from true AGI in bioinformatics. However, their performance does demonstrate an extremely high capability that I wouldn't have believed would be possible just one year ago. I think those that will succeed in this new age will be those that can use LLMs most effectively.
+
