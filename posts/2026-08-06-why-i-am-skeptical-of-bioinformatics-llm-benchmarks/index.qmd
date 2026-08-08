@@ -64,7 +64,7 @@ benchmarkData = FileAttachment("benchmark-comparison.csv").csv({typed: true})
 domainOrder = ["Single-cell", "Epigenomics", "Genomics", "Transcriptomics", "Human Genetics", "Machine Learning", "Others"]
 styleOrder = ["Metadata Recovery", "Synthetic/Augmented Data", "Routine Analysis", "Retrieval", "Tooling"]
 benchmarkOrder = ["CompBioBench", "BioMysteryBench"]
-benchmarkColor = ({ domain: benchmarkOrder, range: ["#4c78a8", "#b7d6d6"] })
+benchmarkColor = ({ domain: benchmarkOrder, range: ["#000000", "#aaaaaa"] })
 
 function benchmarkChart(categoryType, order) {
   const chartData = benchmarkData.filter(d => d.category_type === categoryType)
@@ -74,9 +74,9 @@ function benchmarkChart(categoryType, order) {
     marginLeft: 200,
     marginRight: 50,
     style: { background: "transparent", fontSize: "13px" },
-    fx: { domain: benchmarkOrder, label: null },
-    y: { domain: order, label: null },
-    x: { label: "Number of questions", grid: true },
+    fx: { domain: benchmarkOrder, label: null},
+    y: { domain: order, label: null, tickSize: 0},
+    x: { label: "Number of questions", grid: true, tickSize: 0},
     color: benchmarkColor,
     marks: [
       Plot.barX(chartData, { x: "count", y: "category", fx: "benchmark", fill: "benchmark" }),
@@ -101,11 +101,11 @@ html`<div style="font-weight: 600; margin: 0.5rem 0 0.25rem;">Domain</div>${benc
 html`<div style="font-weight: 600; margin: 1rem 0 0.25rem;">Question Style</div>${benchmarkChart("Question Style", styleOrder)}`
 ```
 
-From this chart, we can see that *BioMysteryBench has only one single cell RNAseq question*! That's crazy. Single cell RNAseq might be the most important novel technologies developed in the last decade, and we are at a point where the methods are mature, datasets are plentiful, and so are published peer reviewed well-cited articles. Lacking evaluations on this critical assay type is like evaluating AI on generating accurate physics simulation but saying let's leave out the third dimension. 
+From this chart, we can see that *BioMysteryBench has only one single cell RNAseq question*! That's crazy. Single cell RNAseq might be the most important novel technologies [developed in the last decade](https://www.nature.com/articles/s41573-023-00688-4), and we are at a point where the methods are mature, datasets are plentiful, and so are published peer reviewed well-cited articles. Lacking evaluations on this critical assay type is like evaluating AI on generating accurate physics simulation but saying let's leave out the third dimension. 
 
 What I do like about Anthropic's work is that they more heavily capture bulk RNAseq ("Transcriptomics" in the graphs) - it's definitely the bread & butter of next-gen assay types. I also like that they cover proteomics.
 
-A notable omission from both benchmarks is spatial RNAseq. Spatial is becoming an increasingly important readout in life sciences research and seeing lots of active methods development. Many are likely using AI for spatial analysis, so a benchark here would be extremely helpful. 
+A notable omission from both benchmarks is spatial RNAseq. Spatial is becoming an increasingly [important readout in life sciences research and is developing at a rapid pace](https://www.mdpi.com/2073-4409/12/16/2042). Many are going to be using AI for spatial analysis, so a benchmark on here would be extremely helpful. 
 
 # How difficult are these problems
 
@@ -179,7 +179,7 @@ import os
 import urllib.request
 
 import pandas as pd
-from IPython.display import display
+from IPython.display import HTML, display
 
 expr = pd.read_csv("Cancers.csv", index_col=0)
 
@@ -211,21 +211,13 @@ gpl4133 = load_platform_table("GPL4133")
 acc887 = set(gpl887["GenBank Accession"].dropna())
 acc4133 = set(gpl4133["GenBank Accession"].dropna())
 
-platform_counts = pd.DataFrame(
-    {
-        "Set": [
-            "GPL887",
-            "GPL4133",
-            "Intersection",
-        ],
-        "Features": [
-            len(acc887),
-            len(acc4133),
-            len(acc887 & acc4133),
-        ],
-    }
+display(
+    HTML(
+        f"<p>The microarray platform GPL887 has {len(acc887)} features. "
+        f"GPL4133 has {len(acc4133)} features. "
+        f"The intersection between the two platforms is {len(acc887 & acc4133)} features.</p>"
+    )
 )
-display(platform_counts)
 
 # Cancers.csv column names mix GenBank accessions with Agilent SPOTIDs
 # (e.g. "A_24_P704878"), so match on both when identifying which physical
@@ -255,7 +247,6 @@ sample_platform = pd.DataFrame(
         "platform": [group_platform[s] for s in expr.index],
     }
 )
-sample_platform.to_csv("sample_platform.csv", index=False)
 
 # For each sample and each platform, what fraction of that platform's
 # EXCLUSIVE probe set (accessions/spotids on that chip only, not shared
@@ -271,11 +262,10 @@ for platform, ref in platform_refs.items():
     for s, pct in zip(expr.index, pct_non_missing.values):
         rows.append({"sample": s, "platform": platform, "pct_non_missing": pct})
 platform_membership = pd.DataFrame(rows)
-platform_membership.to_csv("platform_membership.csv", index=False)
+ojs_define(platformMembership=platform_membership.to_dict(orient="records"))
 ```
 
 ```{ojs}
-platformMembership = FileAttachment("platform_membership.csv").csv({ typed: true })
 platformOrder = ["GPL887", "GPL4133"]
 sampleDomain = platformMembership.map(d => d.sample).filter((s, i, a) => a.indexOf(s) === i).sort((a, b) => a - b)
 
@@ -298,7 +288,7 @@ platformMembershipPlot = Plot.plot({
   x: { domain: [0, 100], label: null },
   color: {
     domain: ["non-missing", "missing"],
-    range: ["#4c78a8", "#dbe4ee"],
+    range: ["#000000", "#888888"],
     legend: true
   },
   marks: [
@@ -313,6 +303,7 @@ platformMembershipPlot = Plot.plot({
       fill: "metric",
       insetTop: 0,
       insetBottom: 0,
+      strokeWidth: 0,
       title: d => `${d.sample} · ${d.platform}\n${d.metric}: ${d.value.toFixed(1)}%`
     })
   ]
@@ -329,9 +320,10 @@ So from this analysis of which samples have non-missing values for which transcr
 
 ## Sex'ing  pancreatic cancer samples
 
-Now we can focus our effort on determining the sex of samples 1-6 pancreatic cancer samples.
 
-Here we can rely on good ol' XIST expression, a gene that is highly expressed in females and not expressed in males, to determine the sex here. To be extra sure we can also include a y-chromosome gene RPS4Y1. To be extra extra sure, we can include a larger panel of X-chromosome genes + PCA + clustering.
+Now we can turn our effort towards determining the sex of the pancreatic cancer samples 1-6.
+
+Here we can determine sex of these samples based on the expression patterns of good old [XIST](https://en.wikipedia.org/wiki/XIST), a transcript that is highly expressed in females and not expressed in males. To be extra sure, we can also include a y-chromosome gene RPS4Y1 (expected expressed in males, not in females). To be *extra __extra*__ sure, we can include a larger panel of X-chromosome genes (with PCA + clustering).
 
 
 ::: {.prompt data-model="deepseek-flash"}
@@ -343,7 +335,6 @@ Subset to samples 1-6 (pancreatic cancer). Generate three graphs, 1. y-axis samp
 import os
 
 import pandas as pd
-from IPython.display import display
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
@@ -363,8 +354,7 @@ subset_a_markers = pd.DataFrame(
         "RPS4Y1": expr6[rps4y1_probe].values,
     }
 )
-subset_a_markers.to_csv("subset_a_markers.csv", index=False)
-display(subset_a_markers)
+ojs_define(subsetAMarkers=subset_a_markers.to_dict(orient="records"))
 
 # XY probes restricted to just these 6 samples (all on the same platform,
 # so no cross-platform missingness to worry about) — this is the full
@@ -381,39 +371,29 @@ xy_variance = xy_genes.var(axis=0).sort_values(ascending=False)
 variance_floor = xy_variance.quantile(0.90)
 selected_xy = xy_variance[xy_variance >= variance_floor].index
 
-xy_probe_counts = pd.DataFrame(
-    {
-        "metric": ["Candidate XY probes (this subset)", "Variance floor (90th pct)", "Probes used in PCA"],
-        "value": [len(xy_variance), round(variance_floor, 3), len(selected_xy)],
-    }
-)
-display(xy_probe_counts)
-
 top_xy = xy_genes[selected_xy]
 X6 = StandardScaler().fit_transform(top_xy)
 pcs6 = PCA(n_components=2, random_state=0).fit_transform(X6)
 
 subset_a_xy_pca = pd.DataFrame({"sample": expr6.index, "pc1": pcs6[:, 0], "pc2": pcs6[:, 1]})
-subset_a_xy_pca.to_csv("subset_a_xy_pca.csv", index=False)
+ojs_define(subsetAXyPca=subset_a_xy_pca.to_dict(orient="records"))
 ```
 
 ```{ojs}
-subsetAMarkers = FileAttachment("subset_a_markers.csv").csv({ typed: true })
-subsetAXyPca = FileAttachment("subset_a_xy_pca.csv").csv({ typed: true })
 subsetASampleDomain = subsetAMarkers.map(d => d.sample).sort((a, b) => a - b)
 
 function subsetABarChart(gene) {
   return Plot.plot({
-    width: 260,
+    width: 180,
     height: 220,
     style: { background: "transparent", fontSize: "11px" },
-    x: { label: `${gene} expression`, grid: true },
-    y: { label: "Sample", domain: subsetASampleDomain, padding: 0.2 },
+    x: { label: `${gene} expression`, grid: true,  tickSize: 0},
+    y: { label: "Sample", domain: subsetASampleDomain, padding: 0.2,  tickSize: 0},
     marks: [
       Plot.barX(subsetAMarkers, {
         x: gene,
         y: "sample",
-        fill: "#4c78a8",
+        fill: "#616161",
         title: d => `Sample ${d.sample}\n${gene}: ${d[gene].toFixed(2)}`
       }),
       Plot.ruleX([0])
@@ -422,17 +402,17 @@ function subsetABarChart(gene) {
 }
 
 subsetAPcaScatter = Plot.plot({
-  width: 260,
+  width: 180,
   height: 220,
   style: { background: "transparent", fontSize: "11px" },
-  x: { label: "PC1" },
-  y: { label: "PC2", grid: true },
+  x: { label: "PC1", tickSize: 0},
+  y: { label: "PC2", tickSize: 0},
   marks: [
     Plot.dot(subsetAXyPca, {
       x: "pc1",
       y: "pc2",
       r: 5,
-      fill: "#4c78a8",
+      fill: "#616161",
       title: d => `Sample ${d.sample}\nPC1: ${d.pc1.toFixed(2)}, PC2: ${d.pc2.toFixed(2)}`
     }),
     Plot.ruleX([0]),
@@ -440,7 +420,7 @@ subsetAPcaScatter = Plot.plot({
   ]
 })
 
-html`<div style="display:flex; flex-wrap:wrap; gap:1.5rem; align-items:flex-start;">
+html`<div style="display:flex; flex-wrap:wrap; justify-content:center; gap:1.5rem; align-items:flex-start;">
   <div><div style="font-weight:600; margin-bottom:0.25rem;">XIST expression</div>${subsetABarChart("XIST")}</div>
   <div><div style="font-weight:600; margin-bottom:0.25rem;">RPS4Y1 expression</div>${subsetABarChart("RPS4Y1")}</div>
   <div><div style="font-weight:600; margin-bottom:0.25rem;">PCA, top 100 variable XY probes</div>${subsetAPcaScatter}</div>
@@ -448,334 +428,226 @@ html`<div style="display:flex; flex-wrap:wrap; gap:1.5rem; align-items:flex-star
 ```
 
 
+Based on XIST and RPS4Y1 expression, samples 2-3 are likely females, and samples 1, 4, 5, 6 are males. However, the PCA on all XY genes do not separate samples 2/3 from the rest. Cancer is an extremely abnormal process, that might be associated with gene expression changes obscuring the expression of sex-specific genes [^cancer-sex].
+
+[^cancer-sex]: In fact, XIST is expressed in 4% of male cancer samples. See [figure 1G pancreatic cancer expressio of XIST in males vs females](https://www.cell.com/cell-systems/fulltext/S2405-4712(22)00403-3?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471222004033%3Fshowall%3Dtrue).
+
+
+::: {.prompt data-model="deepseek-flash"}
+Generate a plot that shows the a density function of Y chromosome transcript expression - 1 density line for each sample, and color samples 2 and 3 a different color from the rest.
+:::
+
 ```{python}
-import json
-import os
-import urllib.request
+import numpy as np
+from scipy.stats import gaussian_kde
 
-import pandas as pd
-from IPython.display import display
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
+# Density of Y-chromosome transcript expression, one curve per sample.
+y_cols = [c for c in xy[xy["chr"] == "Y"]["REFSEQ"] if c in expr6.columns]
+y_genes = expr6[y_cols].dropna(axis=1)
 
-expr = pd.read_csv("Cancers.csv", index_col=0)
-anno = pd.read_csv("refseq_to_symbol_map.csv")
+grid = np.linspace(y_genes.values.min() - 1, y_genes.values.max() + 1, 200)
+density_rows = []
+for sample, row in y_genes.iterrows():
+    kde = gaussian_kde(row.values)
+    for x, d in zip(grid, kde(grid)):
+        density_rows.append({"sample": sample, "x": x, "density": d})
 
-cache = "chr_map.csv"
-if os.path.exists(cache):
-    chr_map = dict(pd.read_csv(cache).values.tolist())
-else:
-    chr_map = {}
-    ids = sorted(anno["REFSEQ"].dropna().unique())
-    for i in range(0, len(ids), 1000):
-        payload = json.dumps(
-            {
-                "q": ids[i : i + 1000],
-                "scopes": "refseq",
-                "fields": "genomic_pos.chr",
-                "species": "human",
-            }
-        ).encode()
-        req = urllib.request.Request(
-            "https://mygene.info/v3/query",
-            data=payload,
-            headers={"Content-Type": "application/json"},
-        )
-        with urllib.request.urlopen(req, timeout=60) as r:
-            for hit in json.load(r):
-                if "notfound" not in hit and hit.get("genomic_pos"):
-                    pos = hit["genomic_pos"]
-                    chr_map[hit["query"]] = (
-                        pos[0]["chr"] if isinstance(pos, list) else pos["chr"]
-                    )
-    pd.DataFrame(sorted(chr_map.items()), columns=["REFSEQ", "chr"]).to_csv(
-        cache, index=False
-    )
-
-anno["chr"] = anno["REFSEQ"].map(chr_map)
-xy = anno[anno["chr"].isin(["X", "Y"])]
-
-# Cancers.csv merges two microarray platforms (GPL887, GPL4133); a probe
-# measured on only one platform is NaN for every sample on the other.
-# Intersect to probes common to both platforms before any downstream
-# selection, so a platform gap can't silently read as "zero expression."
-common_probes = expr.dropna(axis=1).columns
-xy_common = [p for p in xy["REFSEQ"] if p in common_probes]
-
-probe_counts = pd.DataFrame(
-    {
-        "metric": [
-            "Total probes",
-            "Common to both platforms",
-            "Common probes on chrX/chrY",
-        ],
-        "count": [expr.shape[1], len(common_probes), len(xy_common)],
-    }
-)
-display(probe_counts)
-
-xy_genes = expr[xy_common]
-top_xy = xy_genes.loc[:, xy_genes.var(axis=0).sort_values(ascending=False).index[:100]]
-X = StandardScaler().fit_transform(top_xy)
-pca_xy = PCA(n_components=2, random_state=0).fit_transform(X)
-
-cluster = KMeans(n_clusters=2, n_init=10, random_state=0).fit_predict(pca_xy)
-
-marker_probes = {
-    "RPS4Y1": "NM_001008",
-    "KDM5D": "NM_004653",
-    "DDX3Y": "NM_004660",
-    "SPINK1": "NM_003122",
-    "CELA2A": "NM_033440",
-    "ZP4": "NM_021186",
-    "PAX8": "NM_003466",
-    "FOLR1": "NM_016725",
-}
-
-sex_calls = pd.DataFrame(
-    {
-        "sample": expr.index,
-        "cluster": cluster,
-        "pc1": pca_xy[:, 0],
-        "pc2": pca_xy[:, 1],
-        **{symbol: expr[probe].values for symbol, probe in marker_probes.items()},
-    }
-)
-sex_calls.to_csv("sex_calls.csv", index=False)
-
-
-def platform_pca(mask):
-    sub = expr.loc[mask]
-    genes = sub.dropna(axis=1)
-    top = genes.loc[:, genes.var(axis=0).sort_values(ascending=False).index[:100]]
-    Xp = StandardScaler().fit_transform(top)
-    pcs = PCA(n_components=2, random_state=0).fit_transform(Xp)
-    return pd.DataFrame({"sample": sub.index, "pc1": pcs[:, 0], "pc2": pcs[:, 1]})
-
-# Two more PCA runs, each fit only on its own platform's samples, using that
-# platform's entire probe set (not the cross-platform intersection, and not
-# restricted to chrX/chrY) — top 100 most variable probes recomputed fresh
-# within each subset.
-is_subset_a = expr.index.isin(range(1, 7))
-pca_subset_a = platform_pca(is_subset_a)
-pca_subset_b = platform_pca(~is_subset_a)
-pca_subset_a.to_csv("pca_subset_a.csv", index=False)
-pca_subset_b.to_csv("pca_subset_b.csv", index=False)
+y_density = pd.DataFrame(density_rows)
+ojs_define(subsetAYDensity=y_density.to_dict(orient="records"))
 ```
 
 ```{ojs}
-plotStyle = ({ background: "transparent", fontSize: "14px" })
-clusterColor = ({ domain: [0, 1], range: ["#4c78a8", "#b7d6d6"], legend: true })
-trueSexColor = ({ domain: ["male", "female", "unknown"], range: ["#4c78a8", "#e15759", "#9aa0a6"] })
-trueSexLegend = Plot.legend({ color: { ...trueSexColor, legend: true } })
-sexCalls = FileAttachment("sex_calls.csv").csv({typed: true})
-sexAnswer = FileAttachment("sex_answer.csv").csv({typed: true})
-pcaSubsetA = FileAttachment("pca_subset_a.csv").csv({typed: true})
-pcaSubsetB = FileAttachment("pca_subset_b.csv").csv({typed: true})
-pcaData = sexCalls.map(d => {
-  const a = sexAnswer.find(s => s.sample === d.sample)
-  return { ...d, trueSex: a ? a.anthropic : null, agree: a ? a.agree : null }
-})
-pcaSubsetAData = pcaSubsetA.map(d => {
-  const a = sexAnswer.find(s => s.sample === d.sample)
-  return { ...d, trueSex: a ? a.anthropic : null }
-})
-pcaSubsetBData = pcaSubsetB.map(d => {
-  const a = sexAnswer.find(s => s.sample === d.sample)
-  return { ...d, trueSex: a ? a.anthropic : null }
-})
-```
+highlightColor = ({ domain: ["Samples 2, 3", "1, 4-6"], range: ["#000000", "#bbbbbb"], legend: true })
 
-```{ojs}
-sexPcaPlot = Plot.plot({
-  width: 330,
-  height: 430,
-  style: plotStyle,
-  x: { label: "PC1" },
-  y: { label: "PC2", grid: true },
-  color: clusterColor,
+subsetAYDensityPlot = Plot.plot({
+  width: 500,
+  height: 280,
+  style: { background: "transparent", fontSize: "11px" },
+  x: { label: "Y-chromosome transcript expression" },
+  y: { label: "Density", grid: true, tickSize: 0},
+  color: highlightColor,
   marks: [
-    Plot.dot(sexCalls, {
-      x: "pc1",
-      y: "pc2",
-      fill: "cluster",
-      r: 5,
-      title: d => `${d.sample} · cluster ${d.cluster}\nPC1: ${d.pc1.toFixed(2)}, PC2: ${d.pc2.toFixed(2)}`
+    Plot.line(subsetAYDensity, {
+      x: "x",
+      y: "density",
+      stroke: d => [2, 3].includes(d.sample) ? "Samples 2, 3" : "1, 4-6",
+      z: "sample",
+      title: d => `Sample ${d.sample}`
     }),
-    Plot.ruleX([0]),
     Plot.ruleY([0])
   ]
 })
 
-function trueSexPcaPlot(data) {
-  return Plot.plot({
-    width: 330,
-    height: 430,
-    style: plotStyle,
-    x: { label: "PC1" },
-    y: { label: "PC2", grid: true },
-    color: trueSexColor,
-    marks: [
-      Plot.dot(data, {
-        x: "pc1",
-        y: "pc2",
-        fill: "trueSex",
-        r: 5,
-        title: d => `${d.sample} · Anthropic: ${d.trueSex}\nPC1: ${d.pc1.toFixed(2)}, PC2: ${d.pc2.toFixed(2)}`
-      }),
-      Plot.ruleX([0]),
-      Plot.ruleY([0])
+html`<div style="display:flex; justify-content:center;"><div><div style="font-weight:600; margin-bottom:0.25rem;">Y-chromosome transcript density per sample</div>${subsetAYDensityPlot}</div></div>`
+```
+
+
+::: {.prompt data-model="deepseek-flash"}
+
+Generate a heatmap that shows male/female based on my analysis (platform, tissue, marker analysis), annotate with anthropics answer. Calculate a final accuracy (% correct).
+
+:::
+
+```{python}
+import numpy as np
+import pandas as pd
+
+sample_platform_lookup = sample_platform.set_index("sample")["platform"]
+sex_answer = pd.read_csv("sex_answer.csv")
+platform_to_tissue = {"GPL4133": "pancreatic", "GPL887": "ovarian"}
+
+final_calls = pd.DataFrame({"sample": expr.index})
+final_calls["platform"] = final_calls["sample"].map(sample_platform_lookup)
+final_calls["tissue"] = final_calls["platform"].map(platform_to_tissue)
+final_calls["XIST"] = expr[xist_probe].values  # only measured on GPL4133 (samples 1-6)
+final_calls["RPS4Y1"] = expr[rps4y1_probe].values
+
+# Pancreatic samples: XIST vs RPS4Y1 (both real signal on GPL4133).
+# Ovarian samples: no working sex marker on GPL887 with what's been
+# validated so far (RPS4Y1 is flat noise there, std ~0.27 vs ~4.9 on
+# GPL4133), so fall back on tissue-of-origin — ovarian cancer occurs
+# in genetically female patients.
+final_calls["my_call"] = np.where(
+    final_calls["tissue"] == "ovarian",
+    "female",
+    np.where(final_calls["XIST"] > final_calls["RPS4Y1"], "female", "male"),
+)
+final_calls = final_calls.merge(sex_answer[["sample", "anthropic"]], on="sample")
+final_calls["match"] = np.where(final_calls["my_call"] == final_calls["anthropic"], "match", "no match")
+
+# XIST is genuinely missing (NaN) for all ovarian samples. pandas keeps
+# that as a float NaN, which serializes to a bare, unquoted `NaN` token —
+# invalid JSON that breaks JSON.parse() in the browser. Swap NaN for None
+# (-> JSON null) before handing this to ojs_define.
+final_calls_json = final_calls.astype(object).where(final_calls.notna(), None).to_dict(orient="records")
+ojs_define(subsetAFinalCalls=final_calls_json)
+
+
+def accuracy_row(label, subset):
+    correct = int((subset["match"] == "match").sum())
+    n = len(subset)
+    return {"label": label, "correct": correct, "n": n, "pct": round(100 * correct / n, 1)}
+
+
+accuracy_cards = pd.DataFrame(
+    [
+        accuracy_row("Overall", final_calls),
+        accuracy_row("Pancreatic", final_calls[final_calls["tissue"] == "pancreatic"]),
+        accuracy_row("Ovarian", final_calls[final_calls["tissue"] == "ovarian"]),
     ]
-  })
+)
+ojs_define(subsetAAccuracyCards=accuracy_cards.to_dict(orient="records"))
+```
+
+```{ojs}
+// Platform/tissue/XIST/RPS4Y1 stay monotone gray. My call/Anthropic use a
+// low-saturation pink/blue pair — enough to read at a glance without being
+// loud. Match is plain black/white, high contrast, the one column that
+// should jump out over everything else.
+grayShades = ({
+  platform: { GPL4133: "#dddddd", GPL887: "#f5f5f5" },
+  tissue: { pancreatic: "#dddddd", ovarian: "#f5f5f5" }
+})
+sexColors = ({ male: "#dbe6f2", female: "#f3dde3", unknown: "#eeeeee" })
+matchColors = ({ match: "#000000", "no match": "#ffffff" })
+
+xistScale = d3.scaleSequential(d3.interpolateGreys).domain(d3.extent(subsetAFinalCalls, d => d.XIST))
+rps4y1Scale = d3.scaleSequential(d3.interpolateGreys).domain(d3.extent(subsetAFinalCalls, d => d.RPS4Y1))
+
+function textColorFor(bg) {
+  return d3.lab(bg).l < 55 ? "white" : "black"
 }
-subsetAPcaPlot = trueSexPcaPlot(pcaSubsetAData)
-subsetBPcaPlot = trueSexPcaPlot(pcaSubsetBData)
-```
 
-```{ojs}
-function sideBySide(...pairs) {
-  const row = document.createElement("div")
-  row.style.cssText = "display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start;"
-  for (const [caption, fig] of pairs) {
-    const col = document.createElement("div")
-    col.style.cssText = "flex: 0 1 330px; min-width: 300px;"
-    const c = document.createElement("div")
-    c.style.cssText = "font-weight: 600; margin: 0.5rem 0 0.25rem;"
-    c.textContent = caption
-    col.append(fig, c)
-    row.appendChild(col)
-  }
-  return row
-}
-html`<div style="margin: 0.5rem 0 1rem; display:flex; align-items:center; gap:0.5rem;"><strong>Color (samples 1-6 / 7-49 charts below):</strong> Anthropic's answer ${trueSexLegend}</div>`
-```
+function finalCallsHeatmap() {
+  const columns = [
+    { key: "platform", label: "Platform", colors: grayShades.platform, group: "My analysis" },
+    { key: "tissue", label: "Tissue", colors: grayShades.tissue, group: "My analysis" },
+    { key: "XIST", label: "XIST", scale: xistScale, group: "My analysis" },
+    { key: "RPS4Y1", label: "RPS4Y1", scale: rps4y1Scale, group: "My analysis" },
+    { key: "my_call", label: "My call", colors: sexColors, group: "My analysis" },
+    { key: "anthropic", label: "Anthropic", colors: sexColors, group: null },
+    { key: "match", label: "Match", colors: matchColors, group: null }
+  ]
 
-```{ojs}
-html`${sideBySide(
-  ["All samples, top 100 XY probes (cluster)", sexPcaPlot],
-  ["Samples 1-6 only, own platform top 100 probes", subsetAPcaPlot],
-  ["Samples 7-49 only, own platform top 100 probes", subsetBPcaPlot]
-)}`
-```
-
-```{ojs}
-markerGroups = [
-  { label: "XY markers", genes: ["RPS4Y1", "KDM5D", "DDX3Y"] },
-  { label: "Pancreatic markers", genes: ["SPINK1", "CELA2A"] },
-  { label: "Ovarian markers", genes: ["ZP4", "PAX8", "FOLR1"] }
-]
-markerGenes = markerGroups.flatMap(g => g.genes)
-
-heatColor = d3.scaleSequential(d3.interpolateRdBu).domain([3, -3])
-
-heatmapData = markerGenes.reduce((acc, gene) => {
-  const values = pcaData.map(d => d[gene])
-  const mean = d3.mean(values)
-  const sd = d3.deviation(values) || 1
-  acc[gene] = values.map(v => (v - mean) / sd)
-  return acc
-}, {})
-
-function markerHeatmap() {
   const table = document.createElement("table")
-  table.style.cssText = "border-collapse: collapse; font-size: 11px;"
+  table.style.cssText = "border-collapse: collapse; font-size: 9px;"
 
   const groupRow = document.createElement("tr")
-  groupRow.append(document.createElement("th"), document.createElement("th"))
-  for (const g of markerGroups) {
+  groupRow.appendChild(document.createElement("th"))
+  let i = 0
+  while (i < columns.length) {
+    const group = columns[i].group
+    let span = 1
+    while (i + span < columns.length && columns[i + span].group === group && group != null) span++
     const th = document.createElement("th")
-    th.colSpan = g.genes.length
-    th.textContent = g.label
-    th.style.cssText = "text-align:center; padding:4px 6px; border-bottom:1px solid #ccc; font-weight:600;"
+    th.textContent = group ?? ""
+    th.colSpan = group ? span : 1
+    // Border only under the actual grouped columns, so the group's real
+    // span is visible instead of one line running under the whole table.
+    const border = group ? "border-bottom:1px solid #999;" : ""
+    th.style.cssText = `padding:1.8px 6px; font-weight:600; text-align:center; ${border}`
     groupRow.appendChild(th)
+    i += group ? span : 1
   }
   table.appendChild(groupRow)
 
-  const geneRow = document.createElement("tr")
-  const sampleTh = document.createElement("th")
-  sampleTh.textContent = "Sample"
-  sampleTh.style.cssText = "text-align:left; padding:2px 6px;"
-  const sexTh = document.createElement("th")
-  sexTh.textContent = "Anthropic"
-  sexTh.style.cssText = "text-align:left; padding:2px 6px;"
-  geneRow.append(sampleTh, sexTh)
-  for (const gene of markerGenes) {
+  const headerRow = document.createElement("tr")
+  headerRow.appendChild(document.createElement("th"))
+  for (const col of columns) {
     const th = document.createElement("th")
-    th.textContent = gene
-    th.style.cssText = "padding:2px 8px; font-weight:500; white-space:nowrap;"
-    geneRow.appendChild(th)
+    th.textContent = col.label
+    th.style.cssText = "padding:1.8px 6px; font-weight:600; text-align:center;"
+    headerRow.appendChild(th)
   }
-  table.appendChild(geneRow)
+  table.appendChild(headerRow)
 
-  pcaData.forEach((d, i) => {
+  for (const d of subsetAFinalCalls) {
     const tr = document.createElement("tr")
     const sampleTd = document.createElement("td")
     sampleTd.textContent = d.sample
-    sampleTd.style.cssText = "padding:1px 6px;"
-    const sexTd = document.createElement("td")
-    sexTd.textContent = d.trueSex ?? "-"
-    sexTd.style.cssText = `padding:1px 6px; color:${trueSexColor.range[trueSexColor.domain.indexOf(d.trueSex)] ?? "#999"};`
-    tr.append(sampleTd, sexTd)
-    for (const gene of markerGenes) {
-      const z = heatmapData[gene][i]
+    sampleTd.style.cssText = "padding:0.9px 6px; font-weight:600;"
+    tr.appendChild(sampleTd)
+    for (const col of columns) {
+      const value = d[col.key]
       const td = document.createElement("td")
-      td.title = `Sample ${d.sample} · ${gene}: ${d[gene].toFixed(2)} (z=${z.toFixed(2)})`
-      td.style.cssText = `padding:1px 8px; text-align:center; background:${heatColor(z)}; color:${Math.abs(z) > 1.5 ? "white" : "black"};`
-      td.textContent = z.toFixed(1)
+      let bg, text
+      if (col.scale) {
+        bg = value == null || Number.isNaN(value) ? "#f5f5f5" : col.scale(value)
+        text = value == null || Number.isNaN(value) ? "–" : value.toFixed(1)
+      } else {
+        bg = col.colors[String(value)] ?? "#f5f5f5"
+        text = String(value)
+      }
+      td.textContent = text
+      td.title = `Sample ${d.sample} · ${col.label}: ${text}`
+      td.style.cssText = `padding:0.9px 6px; text-align:center; background:${bg}; color:${textColorFor(bg)};`
       tr.appendChild(td)
     }
     table.appendChild(tr)
-  })
+  }
   return table
 }
 
-heatLegend = {
-  const stops = d3.range(0, 1.01, 0.1).map(t => heatColor(3 - t * 6))
-  const bar = document.createElement("div")
-  bar.style.cssText = `width:200px; height:14px; border-radius:2px; background:linear-gradient(to right, ${stops.join(",")});`
-  const wrap = document.createElement("div")
-  wrap.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; margin:0.5rem 0 0.75rem;"
-  const lo = document.createElement("span"); lo.textContent = "low (z)"
-  const hi = document.createElement("span"); hi.textContent = "high (z)"
-  wrap.append(lo, bar, hi)
-  return wrap
+function accuracyCard(d) {
+  const box = document.createElement("div")
+  box.style.cssText = "border:1px solid black; padding:0.5rem 0.75rem; font-family:monospace; font-size:13.8px; min-width:180px;"
+  const label = document.createElement("div")
+  label.style.cssText = "font-weight:600; margin-bottom:0.25rem;"
+  label.textContent = d.label
+  const value = document.createElement("div")
+  value.textContent = `Accuracy = ${d.correct}/${d.n} (${d.pct}%)`
+  box.append(label, value)
+  return box
 }
+
+html`<div style="display:flex; flex-direction:column; align-items:center;">
+<div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.75rem; margin-bottom:1rem;">
+  ${subsetAAccuracyCards.map(accuracyCard)}
+</div>
+${finalCallsHeatmap()}
+</div>`
 ```
 
-```{ojs}
-html`<div style="margin: 0.5rem 0;"><strong>Anthropic column:</strong> Anthropic's answer ${trueSexLegend}</div>${heatLegend}${markerHeatmap()}`
-```
-
-Clearly, samples 1-6 are females, rest are males. But when I looked the answer, I was really surprised to find that my answer was wrong. Here are the same two plots, colored by Anthropic's answer:
-
-```{ojs}
-pcaTruePlot = Plot.plot({
-  width: 330,
-  height: 430,
-  style: plotStyle,
-  x: { label: "PC1" },
-  y: { label: "PC2", grid: true },
-  color: trueSexColor,
-  marks: [
-    Plot.dot(pcaData, {
-      x: "pc1",
-      y: "pc2",
-      fill: "trueSex",
-      r: 5,
-      title: d => `${d.sample} · Anthropic: ${d.trueSex}\nPC1: ${d.pc1.toFixed(2)}, PC2: ${d.pc2.toFixed(2)}`
-    }),
-    Plot.ruleX([0]),
-    Plot.ruleY([0])
-  ]
-})
-```
-
-```{ojs}
-html`${sideBySide(["All samples, top 100 XY probes", pcaTruePlot])}`
-```
-
-Apparently, some 3 males (blue dots in right cluster) express XIST. And a bunch of samples are "unknown". This is clearly a mistake in Anthropic's evaluation. How can the answer involve saying essentially "I don't know" for some samples? How could that be "objective truth".
 
 ## Wrong Answers in BioMysteryBench
 
