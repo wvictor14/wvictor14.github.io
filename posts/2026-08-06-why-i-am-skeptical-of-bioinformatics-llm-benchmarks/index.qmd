@@ -684,3 +684,9 @@ This wasn't a comprehensive systematic dive into these benchmarks. But I did lea
 
 - The most difficult questions in each benchmark are not that difficult for an experienced biological data scientist. The performance of state-of-the-art models on the hardest questions suggests to me that we are still a ways from true AGI in bioinformatics. However, their performance does demonstrate an extremely high capability that I wouldn't have believed would be possible just one year ago. I think those that will succeed in this new age will be those that can use LLMs most effectively.
 
+# Appendix
+
+Some other references worth reading
+
+- Overview of variety of LLM benchmarks https://cameronrwolfe.substack.com/p/llm-bench
+- A survey of LLM-as-a-judge review https://arxiv.org/abs/2411.15594
