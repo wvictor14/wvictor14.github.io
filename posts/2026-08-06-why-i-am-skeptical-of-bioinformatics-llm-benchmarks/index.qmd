@@ -6,22 +6,7 @@ resources:
   - "*.csv"
 ---
 
-Undeniably, AI is rapidly changing the way science is being done. As large language models (LLMs) become more advanced, their applications are diversifying. The capabilities of new models are often described against different dimensions of performance through domain-specific benchmarks. Benchmarks are useful in comparing models specific tasks that are more relevant to users  of said models.  
-
-<!---
-But how positive those impacts are, is difficult to measure [^ai-adoption-in-science]. 
-
-[^ai-adoption-in-science]: One study suggests that publications leveraging AI are more likely to be cited, and early AI-adopters are more likely to be professional successful. But AI-prone work is leading to less innovation, with more [research circulating the same crowded problems](https://www.nature.com/articles/s41586-025-09922-y), leaving science as whole less interconnected and poorer off.
---->
-
-Creating high quality relevant benchmarks is not a straightforward task. You can understand this by looking at the diversity in approaches different benchmarks take. Generally, there are these three components to each benchmark:
-
-- How the tasks are created
-- How task quality is ensured
-- How model performance is measured
-
-
-In bioinformatics, there are many benchmarks that were developed with different approaches. Here I examine probably the two most well known ones recently released: [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) released by pharma giant Genentech, and Anthropic's [BioMysteryBench](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench).
+Every week a new large language model (LLM) is released, and with it comes a battery of numbers to prove it's incremental improvement against existing models. These numbers come from "benchmarks" - a series of evaluations that domain experts carefully create. Recently, Genentech and Anthropic, the latter being one of the oldest and most successful pharma companies and the former being a top AI company, released their own bioinformatics specific benchmarks. 
 
 In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and what it all means for Bioinformatics as a field in this age of AI. 
 
@@ -29,11 +14,13 @@ In this post I looked at some of the questions and evaluations in these benchmar
 
 Genentech, a 50-year-old pharma company with dozens of approved drugs, released [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) on April 4th, 2026. The reputation of the authors affiliations set an expectation on their dataset. This is a benchmark created by some of the most experienced practictioners in the industry.
 
-BioMysteryBench was created by Anthropic, possibly one of the most important companies in the world right now. They are known for producing the world's leading LLM models, and their investments in life sciences research is highly intriguing, but is still in early days, and does not carry the same level of validation as Genentech. Anthropic is a software company interested in life sciences applications.
+[BioMysteryBench](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench) was created by Anthropic, possibly one of the most important companies in the world right now. They are known for producing the world's leading LLM models, and their investments in life sciences research is highly intriguing, but is still in early days, and does not carry the same level of validation as Genentech. Anthropic is a software company interested in life sciences applications.
 
 # How rigorously these benchmarks are documented
 
-First difference worth talking about is that Genentech published their benchmark on biorxiv, which is a very common preprint journal in the bioinformatics field. Their benchmark, problem statement, and results are presented in standard scientific article format. This means, everything is deeply documented. And, the article itself is hosted by biorxiv, which is a non-affiliated organization, that will retain this original published version and also handle author-submitted updates.
+It's worth first discussing a little bit about how Genentech published their benchmark on bioRxiv[^biorxiv], which is a very common preprint journal in the bioinformatics field. Their benchmark, problem statement, and results are presented in standard scientific article format. This means, everything is deeply documented. And, the article itself is hosted by biorxiv, which is a non-affiliated organization, that will retain this original published version and also handle author-submitted updates.
+
+[^biorxiv]: is a free online preprint server for life sciences research. Operated by Cold Spring Harbor Laboratory, it allows researchers to share early versions of scientific papers before formal peer review.
 
 In contrast, Anthropic announced BioMysteryBench with a blog post. As you can imagine, the difference between a published article and blog post is vast. Their is no standard format for a "blog post" like there is for a journal article. There is no in depth section describing how the questions were developed, there are no supplementary figures, and in general it is really hard to find details.
 
