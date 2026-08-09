@@ -23,7 +23,7 @@ In this post I looked at some of the questions and evaluations in these benchmar
 
 # Anthropic and Genentech's benchmarking philosophy
 
-There are many ways to design LLM benchmarks. Previous bioinformatics benchmarks like [BixBench](https://arxiv.org/abs/2503.00096) evaluate LLM performance whether conclusions match up with scientists'. But in science, often there are multiple reasonable approaches to a question, that might end up leading to differing but reasonable conclusions. Other benchmarks like scBench are fairly prescriptive in the series of "steps" that a model must take to complete a task, but that hampers creativity which is a core tenant of innovative scientific research.
+There are many [ways to design LLM benchmarks](https://cameronrwolfe.substack.com/p/llm-bench). Previous bioinformatics benchmarks like [BixBench](https://arxiv.org/abs/2503.00096) evaluate LLM performance whether conclusions match up with scientists'. But in science, often there are multiple reasonable approaches to a question, that might end up leading to differing but reasonable conclusions. Other benchmarks like scBench are fairly prescriptive in the series of "steps" that a model must take to complete a task, but that hampers creativity which is a core tenant of innovative scientific research.
 
 It's both notable and validating that Anthropic and Genentech, independently and concurrently, decided on the same strategy for model evaluation. Both benchmarks are designed such that there is a single data-verifiable ground truth answer, and evaluations are non-prescriptive in how to arrive at that answer. Multiple paths are not necessarily encouraged, but models are free to "wander" different paths to reach their conclusions.
 
@@ -703,10 +703,3 @@ LLM Benchmarks, specifically Bioinformatics-specific ones, are really hard to cr
 The level of quality and detail between the two benchmarks are on two ends of a spectrum. CompBioBench provided microscopic levels of information that one could spend weeks dissecting. BioMysteryBench is scant in comparison. The information is highly useful in evaluating the quality of the benchmarks and builds trust in the evaluation numbers. After my experience researching both benchmarks, I am left with trust in CompBioBench due to their documentation, reproducibility, and transparency; BioMysteryBench on the other hand, I cannot trust any of their numbers.
 
 I found the most difficult questions in each benchmark are indeed difficult. But definitely not unsolvable. The benchmarks are designed such that tasks have a single ground truth answer. But bioinformatics and science in general is much more common that there isn't a right answer. Instead there are varying approaches, all of which can be reasonable, but can lead to differing reasonable conclusions. The benchmarks here explicitly avoid simulating these types of scenarios, because they are difficult (or impossible) to evaluate. This is good, we need objective evaluations. But it makes me wonder are we really testing LLMs at the tasks scientists face, or are just those that are easy to grade?
-
-# Appendix
-
-Some other references worth reading
-
-- Overview of variety of LLM benchmarks https://cameronrwolfe.substack.com/p/llm-bench
-- A survey of LLM-as-a-judge review https://arxiv.org/abs/2411.15594
