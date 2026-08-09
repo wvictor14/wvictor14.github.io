@@ -9,6 +9,8 @@ project:
     browser: false # Optional: automatically open a browser
     navigate: false # Optional: automatically navigate the browser
 
+jupyter: python3
+
 brand: _brand.yml
 
 website:
