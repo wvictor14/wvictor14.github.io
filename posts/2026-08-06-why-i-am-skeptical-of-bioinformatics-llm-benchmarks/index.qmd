@@ -12,34 +12,43 @@ csl: https://www.zotero.org/styles/ieee
 reading-time: true
 ---
 
-Every week a new large language model (LLM) is released, and with it comes a battery of numbers to prove its incremental improvement over existing models. These numbers come from "benchmarks" - a series of evaluations that domain experts carefully create. Recently, Genentech and Anthropic released their own bioinformatics-specific benchmarks: the former one of the oldest and most successful pharma companies, the latter a top AI company. 
+Every week a new large language model (LLM) is released, and with it comes a battery of numbers to prove its incremental improvement over existing models. These numbers come from "benchmarks" -- a series of evaluations that domain experts carefully create. Recently, two very different companies released bioinformatics-specific benchmarks: Genentech[^genentech], one of the oldest and most successful pharma companies, and Anthropic[^anthropic], a top AI company. The two companies couldn't be more different, and I think it shows in their benchmarks.
 
-In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and what it all means for Bioinformatics as a field in this age of AI. 
+In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and why I think these results show that I'm not going to replaced by AI anytime soon.
 
-# Who is developing bioinformatics benchmarks
+[^genentech]: Genentech, a 50-year-old pharma company with dozens of approved drugs and hundreds of clinical trials, released [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) [@compbiobench] on April 4th, 2026. The reputation of the authors' affiliations sets an expectation on their dataset. This is a benchmark created by some of the most experienced practitioners in the industry.
 
-Genentech, a 50-year-old pharma company with dozens of approved drugs, released [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) [@compbiobench] on April 4th, 2026. The reputation of the authors' affiliations sets an expectation on their dataset. This is a benchmark created by some of the most experienced practitioners in the industry.
+[^anthropic]: [BioMysteryBench](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench) [@biomysterybench] was created by Anthropic, possibly one of the most important companies in the world right now. They are known for producing the world's leading LLM models. Their investments in life sciences research are highly intriguing. We will see what the pay off (if any) will be - we are still in early days.
 
-[BioMysteryBench](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench) [@biomysterybench] was created by Anthropic, possibly one of the most important companies in the world right now. They are known for producing the world's leading LLM models, and their investments in life sciences research are highly intriguing, but are still in early days, and do not carry the same level of validation as Genentech. Anthropic is a software company interested in life sciences applications.
+# Benchmark Philosophy
+
+There are many ways to design LLM benchmarks. Previous bioinformatics benchmarks like [BixBench](https://arxiv.org/abs/2503.00096) evaluate LLM performance whether conclusions match up with scientists'. But oftentimes in science, there are multiple reasonable approaches to a question, that might end up leading to differing but reasonable conclusions. Other benchmarks like scBench are fairly prescriptive in the series of "steps" that a model must take to complete a task, but that hampers creativity which is a core tenant of innovative scientific research.
+
+It's notable and validating that both Anthropic and Genentech both, independently and concurrently, decided on the same strategy. Both benchmarks are designed such that there is a single data-verifiable ground truth answer, and evaluations are non-prescriptive in how to arrive at that answer. Multiple paths are not necessarily encouraged, but models are free to "wander" different paths to reach their conclusions.
+
+Both benchmarks have several metadata retrieval / inference questions. These are easily verifiable questions where the model is presented some data (transcriptomic, epigenetic, etc.) and asked questions about the sample identity: *are these samples male/female? what tissue are these samples from?*. These are good questions because they require leveraging biological and technological knowledge, and can require interaction with additional datasets to reach the answer (e.g. mapping transcripts identifiers to genes using a public database).
+
+CompBioBench notably heavily leverages synthetic and data augmentation. For example genomic content from contaminant species can be added to an existing dataset, and then the model is tasked with identifying the contaminant species. 
+
+The last notable difference is how the answer is scored. CompBioBench uses an "exact string match" of the agent's answer and the ground truth, so the tasks are very explicit about the answer format, with some tolerance for numerical answers. BioMysteryBench, on the other hand, uses an LLM-as-a-judge.
+
+I initially thought a deterministic evaluation was clearly the better approach. But after researching LLM-as-as-judge approach, I learned: it's very common, there are advantages and disadvantages[^llm-as-a-judge]; and ultimately I'm unsure if one approach is significantly better than the other. 
+
+[^llm-as-a-judge]: One advantage of LLM-as-a-judge approach is that due to model reasoning capabilities, LLMs can catch "cheating". An example of cheating in bioinformatics might be if a model chooses to solve the task, not by using a bioinformatics approach, like comparing classifying a transcriptomic profile against known gene signatures, but instead by finding the answer through some shortcut, like matching a sample's identity to a published database or article [@gu2024survey].
 
 # How rigorously these benchmarks are documented
 
-It's worth first discussing a little bit about how Genentech published their benchmark on bioRxiv[^biorxiv], which is a very common preprint server in the bioinformatics field. Their benchmark, problem statement, and results are presented in standard scientific article format. This means everything is deeply documented. And the article itself is hosted by bioRxiv, a non-affiliated organization that will retain the original published version and also handle author-submitted updates.
+It's worth first discussing the difference in how these two teams chose to publish their results.
 
-[^biorxiv]: is a free online preprint server for life sciences research. Operated by Cold Spring Harbor Laboratory, it allows researchers to share early versions of scientific papers before formal peer review.
+Genentech published their benchmark on bioRxiv, which is a popular preprint server in the bioinformatics field. Their benchmark, problem statement, and results are presented in standard scientific article format. This means everything is deeply documented. And the article itself is hosted by bioRxiv, meaning a non-affiliated organization is ensuring the original content stays accessible[^journal-vs-blog].
 
-In contrast, Anthropic announced BioMysteryBench with a blog post. As you can imagine, the difference between a published article and blog post is vast. There is no standard format for a "blog post" like there is for a journal article. There is no in depth section describing how the questions were developed, there are no supplementary figures, and in general it is really hard to find details.
+[^journal-vs-blog]: And unlike a blog, which can be taken down or edited without any trace of original content, a preprint server is managed by a third party organization (bioRxiv is managed by Cold Spring Harbour), which includes keeping the original published article accessible and has a system for managing updates.
 
-For example, only after opening the questions dataset from Anthropic's [BioMysteryBench](https://huggingface.co/datasets/Anthropic/BioMysteryBench-full) [@biomysterybench-data] did I realize that they are using an LLM as a judge. The evaluations read like this:
+In contrast, Anthropic announced BioMysteryBench with a blog post. As you can imagine, the difference between a published article and blog post is vast. There is no standard format for a "blog post" like there is for a journal article. There is no in depth section describing how the questions were developed, there are no supplementary figures, and in general it is really hard to dig into details.
 
-"Score 1 if the answer is 'GENE A', score 0 if the model CHEATED or if provided a wrong answer". 
+The Genentech team, I imagine is likely preparing the article for submission at a peer-reviewed journal. This means transparency is not optional; it's required and enforced to some degree by the journal and the peer reviews. They must describe their methods fully; they must defend their decisions, and they must be comprehensive in their scope as reasonably possible; some journals even enforce reproducibility and open source code[^cbb-github]. CompBioBench showed that all top models performed similarly, including Anthropics but also GPT from OpenAi, and Gemini from Google (might I mention, similar performance at a much lower cost!). Anthropic chose only to evaluate and publish only their own models.
 
-LLM as a judge addresses when correct answers are provided in variable format (e.g. in sentence form, with punctuation, etc.). CompBioBench instead provides heavy guidance in the question to be submitted with a specific format: 
-
-> Return only the name of the inflamed cell type from this list: astrocyte, ...
-
-
-I like that this is deterministic. But I think Anthropic's usage of an LLM as a judge might be the better approach as more and more we are seeing LLMs develop clever work-arounds that rely on prior knowledge, or circumvent the rules. The "evaluate if the model cheated" line here is a nice guard.
+[^cbb-github]: Genentech published a github repo that hosts the code to fully reproduce their results for CompBioBench: [Genentech/compbiobench-runner](https://github.com/Genentech/compbiobench-runner), which is amazing exemplar for transparency and reproducibility. This type of practice is a big step in building trust in their results. 
 
 # The types of questions covered in these benchmarks
 
@@ -100,34 +109,35 @@ What I do like about Anthropic's work is that they more heavily capture bulk RNA
 
 A notable omission from both benchmarks is spatial RNAseq. Spatial is becoming an increasingly [important readout in life sciences research and is developing at a rapid pace](https://www.mdpi.com/2073-4409/12/16/2042) [@chen2023spatial]. Many are going to be using AI for spatial analysis, so a benchmark on here would be extremely helpful. 
 
-# What do the headline numbers say
+# The reported numbers
 
-Before diving into individual questions, it's worth looking at the headline results. The two benchmarks are not directly comparable - they evaluate different things (whole agentic workflows versus raw model generations), use different scoring methods, and cover different question types - but the numbers are useful for calibrating expectations.
+Before diving into individual questions, it's worth looking at the results from both publications. 
 
 | | CompBioBench | BioMysteryBench |
 |---|---|---|
 | **Questions** | 100 | 99 (76 human-solvable, 23 human-difficult) |
-| **What is evaluated** | Agentic CLI systems (Codex, Claude Code) | Raw model generations |
-| **Best overall** | Codex CLI (GPT-5.4): 83% | Opus 4.6: 77.4% on human-solvable |
-| **Hardest questions** | Claude Code: 69%, Codex CLI: 59% | Mythos: 30%, Opus 4.6: 23.5% on human-difficult |
+| **What models are evaluated** | Claude Code Opus 4.6, Codex GPT 5.4, Gemini 3.1 Pro | Claude Mythos Preview, Opus 4.7, Sonnet 4.6 |
+| **Best overall** | Codex CLI (GPT-5.4): 83% Accuracy[^CBB-results] | Opus 4.7: 78.9% on human-solvable |
 | **Task construction** | Synthetic or augmented data | Real, raw or minimally processed sequencing data |
 | **Scoring** | Deterministic format checks plus manual review | LLM-as-judge with cheat detection |
 
-Two things stand out. First, on the hardest questions both benchmarks drop to roughly the same floor: around 60-70% for CompBioBench's most difficult tier and 20-30% for BioMysteryBench's human-difficult set, with the gap reflecting how much harder the "human-difficult" label is. Second, note how much overlap there is in the underlying models - Anthropic's own post reports Opus 4.6 at 81% overall and 69% on the hardest questions when run as an agent on CompBioBench.
+[^CBB-results]: CompBioBench compared 4 Claude models, OpenAI's GPT 5.4, and Google's Gemini 3.1 Pro. The results show that the top models from these three companies had similar performance (within a few percentage points). But GPT 5.4 and Gemini 3.1 Pro costing half as much real dollars per task as Anthropic's models. Anthropic's BioMysteryBench only includes their own models in their benchmark. 
 
 # How difficult are these problems
 
 Moving onto the actual content of these benchmarks, I was curious how hard these questions are. I looked through a bunch of the hardest questions, and here I will just talk about one question from each.
 
-First, Genentech's CompBioBench has difficulty ratings 1-5 (5 is hardest), but notably, I could not find these difficulty ratings in any of their published data. That's bad! 
+First, Genentech's CompBioBench has difficulty ratings 1-5 (5 is hardest). I could not actually find these difficulty ratings for any of their published questions on huggingface. The only questions with known difficulty are therefore only the ones chosen as "selected examples" in their article's main text.  
 
 Anthropic's BioMysteryBench has a much simpler categorization: human-solvable, and human-difficult (or human-unsolvable). Let's not get into the definitions, but just focus on what are the hardest questions. 
 
+On the most difficult problems (level 4-5 on CompBioBench and "human-unsolvable" on BioMysteryBench), top models got 49-69% accuracy on CompBioBench, but only 19-27% on BioMysteryBench's questions. This suggests that BioMysteryBench has harder questions.
+
 ## CompBioBench Question Difficulty 4/5
 
-Since I couldn't find a difficult rating for CompBioBench questions, I had to use one of the "selected examples" described in the text. Notably there is 1 5/5/5 difficult problem in their dataset and it's not described in the main text, so I have no idea which one it is in the full dataset. 
+Since I couldn't find a difficult rating for CompBioBench questions, I had to use one of the "selected examples" described in the text. Notably there is 1 5/5/5 difficult problem in their dataset but it's not described in the main text. 
 
-This is a 4/5 ATACseq question: 
+This is a difficulty 4/5 ATACseq question: 
 
 > Q. atac.doublet.q1.bed.gz contains a fragment file from a scATAC-seq sample (hg38). Barcodes with low read counts have been filtered out. Look for doublets. Return the barcode of any one doublet, if any. Respond only with the label of the barcode in the format: “AAATGGAACGTTAAAG-1”, or “None”.
 
