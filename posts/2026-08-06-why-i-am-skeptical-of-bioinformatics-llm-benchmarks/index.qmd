@@ -14,21 +14,21 @@ reading-time: true
 
 Every week a new large language model (LLM) is released, and with it comes a battery of numbers to prove its incremental improvement over existing models. These numbers come from "benchmarks" -- a series of evaluations that domain experts carefully create. Recently, two very different companies released bioinformatics-specific benchmarks: Genentech[^genentech], one of the oldest and most successful pharma companies, and Anthropic[^anthropic], a top AI company. The two companies couldn't be more different, and I think it shows in their benchmarks.
 
-In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and why I think these results show that I'm not going to replaced by AI anytime soon.
+In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and why I think these results show that I'm not going to replaced by AI anytime soon. <!--- let's return to this --->
 
 [^genentech]: Genentech, a 50-year-old pharma company with dozens of approved drugs and hundreds of clinical trials, released [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) [@compbiobench] on April 4th, 2026. The reputation of the authors' affiliations sets an expectation on their dataset. This is a benchmark created by some of the most experienced practitioners in the industry.
 
 [^anthropic]: [BioMysteryBench](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench) [@biomysterybench] was created by Anthropic, possibly one of the most important companies in the world right now. They are known for producing the world's leading LLM models. Their investments in life sciences research are highly intriguing. We will see what the pay off (if any) will be - we are still in early days.
 
-# Benchmark Philosophy
+# Anthropic and Genentech's benchmarking philosophy
 
-There are many ways to design LLM benchmarks. Previous bioinformatics benchmarks like [BixBench](https://arxiv.org/abs/2503.00096) evaluate LLM performance whether conclusions match up with scientists'. But oftentimes in science, there are multiple reasonable approaches to a question, that might end up leading to differing but reasonable conclusions. Other benchmarks like scBench are fairly prescriptive in the series of "steps" that a model must take to complete a task, but that hampers creativity which is a core tenant of innovative scientific research.
+There are many ways to design LLM benchmarks. Previous bioinformatics benchmarks like [BixBench](https://arxiv.org/abs/2503.00096) evaluate LLM performance whether conclusions match up with scientists'. But in science, often there are multiple reasonable approaches to a question, that might end up leading to differing but reasonable conclusions. Other benchmarks like scBench are fairly prescriptive in the series of "steps" that a model must take to complete a task, but that hampers creativity which is a core tenant of innovative scientific research.
 
-It's notable and validating that both Anthropic and Genentech both, independently and concurrently, decided on the same strategy. Both benchmarks are designed such that there is a single data-verifiable ground truth answer, and evaluations are non-prescriptive in how to arrive at that answer. Multiple paths are not necessarily encouraged, but models are free to "wander" different paths to reach their conclusions.
+It's both notable and validating that Anthropic and Genentech, independently and concurrently, decided on the same strategy for model evaluation. Both benchmarks are designed such that there is a single data-verifiable ground truth answer, and evaluations are non-prescriptive in how to arrive at that answer. Multiple paths are not necessarily encouraged, but models are free to "wander" different paths to reach their conclusions.
 
-Both benchmarks have several metadata retrieval / inference questions. These are easily verifiable questions where the model is presented some data (transcriptomic, epigenetic, etc.) and asked questions about the sample identity: *are these samples male/female? what tissue are these samples from?*. These are good questions because they require leveraging biological and technological knowledge, and can require interaction with additional datasets to reach the answer (e.g. mapping transcripts identifiers to genes using a public database).
+For example, both benchmarks have many questions classified as "metadata retrieval". These types of questions involve presenting some data (transcriptomic, epigenetic, etc.) to the model and asking questions about the sample identity: *are these samples male/female? what tissue is this scRNAseq sample from?*. These are good questions because they are data verifiable - the identity of the sample is known but kept hidden from the model, and they are relevant; they require leveraging biological and technological knowledge, and can require interaction with additional datasets to reach the answer (e.g. mapping transcripts identifiers to genes using a public database).
 
-CompBioBench notably heavily leverages synthetic and data augmentation. For example genomic content from contaminant species can be added to an existing dataset, and then the model is tasked with identifying the contaminant species. 
+Another type of question that CompBioBench uses is synthetic and data augmentation. For example genomic content from contaminant species can be added to an existing dataset, and then the model is tasked with identifying the contaminant species. These are also "data-verifiable", and have the added benefit that only the authors know the answer to the question. In metadata retrieval, where samples are often pulled from published datasets, models have a small possibility of "cheating" - for example by finding the answer through matching to the paper itself, circumventing any usage of bioinformatics in it's solution. 
 
 The last notable difference is how the answer is scored. CompBioBench uses an "exact string match" of the agent's answer and the ground truth, so the tasks are very explicit about the answer format, with some tolerance for numerical answers. BioMysteryBench, on the other hand, uses an LLM-as-a-judge.
 
@@ -50,20 +50,23 @@ The Genentech team, I imagine is likely preparing the article for submission at 
 
 [^cbb-github]: Genentech published a github repo that hosts the code to fully reproduce their results for CompBioBench: [Genentech/compbiobench-runner](https://github.com/Genentech/compbiobench-runner), which is amazing exemplar for transparency and reproducibility. This type of practice is a big step in building trust in their results. 
 
-# The types of questions covered in these benchmarks
+# Coverage over bioinformatics subdomains
 
 Bioinformatics is a big field. There are highly specialized methods depending on species, tissue, and assay type. CompBioBench publishes a distribution of question types (each benchmark has 99-100 questions). BioMysteryBench has no details on distribution but does mention: 
 
 > In developing this eval, questions were primarily derived from raw or minimally processed DNA or RNA sequencing data since this is where many biological processing pipelines begin (WGS, scRNA-seq, methylation, ChIP-seq, metagenomics, Hi-C), and also included several questions drawn from proteomics and metabolomics.
 
-I mapped Anthropic's questions onto the question types that CompBioBench uses:
+To compare coverage ofer different types of bioinformatics tasks, I asked Deepseek to map Anthropic's questions onto the domain types that CompBioBench uses[^domain-mapping]:
+
+[^domain-mapping]: Some categories I relabelled to more generally capture the questions between both: Population Genetics → Human Genetics, Structure → Proteomics. Microbiology contains only BioMysteryBench questions; CompBioBench has none.
+
 
 ```{ojs}
 benchmarkData = FileAttachment("benchmark-comparison.csv").csv({typed: true})
 ```
 
 ```{ojs}
-domainOrder = ["Single-cell", "Epigenomics", "Genomics", "Transcriptomics", "Microbiology", "Human Genetics", "Machine Learning", "Proteomics", "Others"]
+domainOrder = ["Single-cell", "Epigenomics", "Genomics", "Transcriptomics", "Microbiology", "Human Genetics", "Machine Learning", "Proteomics", "Spatial", "Others"]
 styleOrder = ["Metadata Recovery", "Synthetic/Augmented Data", "Routine Analysis", "Retrieval", "Tooling"]
 benchmarkOrder = ["CompBioBench", "BioMysteryBench"]
 benchmarkColor = ({ domain: benchmarkOrder, range: ["#000000", "#aaaaaa"] })
@@ -103,11 +106,11 @@ html`<div style="font-weight: 600; margin: 0.5rem 0 0.25rem;">Domain</div>${benc
 html`<div style="font-weight: 600; margin: 1rem 0 0.25rem;">Question Style</div>${benchmarkChart("Question Style", styleOrder)}`
 ```
 
-From this chart, we can see that *BioMysteryBench has only one single cell RNAseq question*! That's crazy. Single cell RNAseq might be one of the most important novel technologies [developed in the last decade](https://www.nature.com/articles/s41573-023-00688-4) [@vandesande2023scrnaseq], and we are at a point where the methods are mature, datasets are plentiful, and so are published peer reviewed well-cited articles. Lacking evaluations on this critical assay type is like evaluating AI on generating accurate physics simulation but saying let's leave out the third dimension. 
+*BioMysteryBench has only one single cell RNAseq question*! Single cell RNAseq might be one of the most important novel technologies [developed in the last decade](https://www.nature.com/articles/s41573-023-00688-4) [@vandesande2023scrnaseq], and we are at a point where the methods are mature, datasets are plentiful, and so are published peer reviewed well-cited articles. Lacking evaluations on this critical assay type is like evaluating AI on generating accurate physics simulation but saying let's leave out the third dimension. 
 
-What I do like about Anthropic's work is that they more heavily capture bulk RNAseq ("Transcriptomics" in the graphs) - it's definitely the bread & butter of next-gen assay types. I also like that they cover proteomics.
+What I do like about Anthropic's work is that they more heavily skewed towards bulk RNAseq ("Transcriptomics" in the graphs) - it's sort of the bread & butter of next-generation sequencing assays, because of it's low cost and mature methods, so it's highly relevant. BioMysteryBench also seems to cover a bigger some other data types that are notably lacking in CompBioBench, like proteomics, and microbiology.
 
-A notable omission from both benchmarks is spatial RNAseq. Spatial is becoming an increasingly [important readout in life sciences research and is developing at a rapid pace](https://www.mdpi.com/2073-4409/12/16/2042) [@chen2023spatial]. Many are going to be using AI for spatial analysis, so a benchmark on here would be extremely helpful. 
+Spatial transcriptomics is another data type with minimal coverage: CompBioBench includes only two spatial questions, and BioMysteryBench none. Spatial is becoming an increasingly [important readout in life sciences research and is developing at a rapid pace](https://www.mdpi.com/2073-4409/12/16/2042) [@chen2023spatial]. Many are going to be using AI for spatial analysis, so a more comprehensive benchmark on spatial would be helpful. 
 
 # The reported numbers
 
@@ -115,27 +118,28 @@ Before diving into individual questions, it's worth looking at the results from 
 
 | | CompBioBench | BioMysteryBench |
 |---|---|---|
-| **Questions** | 100 | 99 (76 human-solvable, 23 human-difficult) |
+| **Questions** | 100 | 99 (76 human-solvable, 23 human-difficult)[^99-bmb] |
 | **What models are evaluated** | Claude Code Opus 4.6, Codex GPT 5.4, Gemini 3.1 Pro | Claude Mythos Preview, Opus 4.7, Sonnet 4.6 |
 | **Best overall** | Codex CLI (GPT-5.4): 83% Accuracy[^CBB-results] | Opus 4.7: 78.9% on human-solvable |
-| **Task construction** | Synthetic or augmented data | Real, raw or minimally processed sequencing data |
-| **Scoring** | Deterministic format checks plus manual review | LLM-as-judge with cheat detection |
+| **Scoring** | Deterministic string matchng | LLM-as-judge with cheat detection |
+
+[^99-bmb]: Currently, BMB is at 90 questions, with 9 questions being removed in a [post-publication review](https://huggingface.co/datasets/Anthropic/BioMysteryBench-full/blob/main/CHANGELOG.md).
 
 [^CBB-results]: CompBioBench compared 4 Claude models, OpenAI's GPT 5.4, and Google's Gemini 3.1 Pro. The results show that the top models from these three companies had similar performance (within a few percentage points). But GPT 5.4 and Gemini 3.1 Pro costing half as much real dollars per task as Anthropic's models. Anthropic's BioMysteryBench only includes their own models in their benchmark. 
 
-# How difficult are these problems
+# Question difficulty
 
 Moving onto the actual content of these benchmarks, I was curious how hard these questions are. I looked through a bunch of the hardest questions, and here I will just talk about one question from each.
 
 First, Genentech's CompBioBench has difficulty ratings 1-5 (5 is hardest). I could not actually find these difficulty ratings for any of their published questions on huggingface. The only questions with known difficulty are therefore only the ones chosen as "selected examples" in their article's main text.  
 
-Anthropic's BioMysteryBench has a much simpler categorization: human-solvable, and human-difficult (or human-unsolvable). Let's not get into the definitions, but just focus on what are the hardest questions. 
+Anthropic's BioMysteryBench has a much simpler binary categorization: human-solvable, and human-difficult (or human-unsolvable).
 
-On the most difficult problems (level 4-5 on CompBioBench and "human-unsolvable" on BioMysteryBench), top models got 49-69% accuracy on CompBioBench, but only 19-27% on BioMysteryBench's questions. This suggests that BioMysteryBench has harder questions.
+On the most difficult problems (level 4-5 on CompBioBench and "human-unsolvable" on BioMysteryBench), top models got 49-69% accuracy on CompBioBench, but only 19-27% on BioMysteryBench's questions. This suggests that BioMysteryBench has harder questions, which may mean that their benchmark will stay relevant longer, as models get better and better.
 
-## CompBioBench Question Difficulty 4/5
+# CompBioBench Question Difficulty 4/5
 
-Since I couldn't find a difficult rating for CompBioBench questions, I had to use one of the "selected examples" described in the text. Notably there is 1 5/5/5 difficult problem in their dataset but it's not described in the main text. 
+Since I couldn't find a difficult rating for CompBioBench questions, I had to use one of the "selected examples" described in the text. Notably there is one 5/5 difficult problem in their dataset but it's not described in the main text. 
 
 This is a difficulty 4/5 ATACseq question: 
 
@@ -145,28 +149,25 @@ Doublet detection is a standard step in most single cell workflows. The authors 
 
 [^doublet]: It surprises me that standard scATACseq workflows ignores homotypic doublets because in other assay types like scRNAseq it is standard. (Why is this not already part of the standard workflow?)
 
+The impact of failing to detect homotypic doublets is not discussed. In general leaving a doublet consisting of two cells of the same cell type with the same functional readouts is likely minimally impactful on the analysis. The cases where homotypic doublets might have a large impact are pretty rare, and likely other analyses (like looking at read depth) will inform how much attention is needed to this issue. This question is graded as a simple binary: did the model provide the correct barcode or not. But I would argue that the "wrong" answers were not that wrong. 
 
-The impact of failing to detect homotypic doublets is not discussed. In general leaving a doublet consisting of two cells of the same cell type with the same functional readouts is likely minimally impactful on the analysis. The cases where homotypic doublets might have a large impact are pretty rare, and likely other analyses (like looking at read depth) will inform how much attention is needed to this issue.
+I pull this example out because I thought it was one of the few that might be improved or replaced. In general I found most of CompBioBench's questions relevant, instructions are clear, and the evaluations are also clear. I think reliance on synthetic / augmented data is smart, there is not really a way for the model to cheat like in BioMysteryBench, when all the information for the solution must be derived from the data itself. 
 
-This question is graded as a simple binary: did the model provide the correct barcode or not. The "wrong" answers were not that wrong, and their impact on the resulting analysis is unclear (it's a synthetic example). 
-
-I pull this example out because I thought it was one of the few that might be improved or replaced. In general I found most of CompBioBench's questions relevant, instructions are clear, and the evaluations are also clear. I think reliance on synthetic / augmented data is smart, there is not really a way for the model to cheat like in BioMysteryBench, when all the information for the solution must be derived from the data itself. In BioMysteryBench, the "cheating" can occur because some of the samples are pulled from published data. 
-
-## BioMysteryBench Question "Human Unsolvable"
+# BioMysteryBench Question "Human Unsolvable"
 
 First off, on the term "Human Unsolvable" - the questions are designed by a human expert, they are all solvable questions with self-contained information. What they mean here is that another set of independent human experts could not get the right answer for these questions. I think the term "Human Unsolvable" is not technically correct, and is probably the result of some marketing strategy. They want people to think their models can be smarter than humans. 
+
+> It allows for “superhuman” question generation. By sourcing problems derived from controllable properties of data, BioMysteryBench does not depend on humans being able to solve the problems. In particular, BioMysteryBench contains a handful of problems that—despite having objective, ground-truth solutions—humans found difficult or impossible to solve on their own.
 
 I found the BioMysteryBench data easier to download. Here I worked through one of the unsolvable questions myself.
 
 > This microarray dataset contains expression data from various ovarian and pancreatic cancer biopsies ran on GPL 887 and GPL 4133 platforms, respectively. Based on the expression profile of each sample, assign a sex (male, female, or unknown) to each sample. The final output should be in the format of “Sample; sex” (eg Sample 1; male)
 
-I picked this one because at first glance it's trivially easy and fairly relevant problem: identifying sex of samples can be often helpful in determining sample mix ups, which is an unfortunate but inevitable encounter. 
+I picked this one because at first glance it's trivially easy and fairly relevant problem: identifying sex of samples can be often helpful in determining sample mix ups, which is an unfortunate but inevitable occurence. 
 
-Identifying sex from any kind of genomic data is a really common procedure. In general it involves:
+Identifying sex from any kind of genomic data is a common procedure. It relies on both biological knowledge (how sex differences translate on the genome level), and an understanding of the technology used. There are several parallel paths that one could take to verify sex; stronger defendable answers will involve using multiple lines of evidence.
 
-- Understanding how sex differences are surfaced in different assay types.
-
-For RNAseq, or in this case, microarrays, that involves visualizing genes on the sex chromosome such as XIST [^XIST], which will display sex-specific differential expression. 
+For RNAseq, or in this case, microarrays, one approach could involve visualizing genes on the sex chromosome such as XIST [^XIST], which will display sex-specific differential expression. 
 
 [^XIST]: a phenomenon where females downregulate X-chromosome derived gene products, as a result of having one more X chromosome than males.
 
@@ -178,11 +179,11 @@ The question gives a big hint - it implies one set of tissue samples were measur
 
 The other big piece of information in this question is that it tells you that one set of samples is ovarian. Ovaries is a female reproductive organ. Meaning if you identify which samples are ovarian, then you know the sex of these samples. So identifying tissue identity gives you half the answer already.
 
-This is the plan:
+In conclusion, my general plan for solving this question:
 
-Identify platform -> determines tissue -> ovary samples = female, remaining pancreatic samples determine sex by gene expression.
+Identify platform → determines tissue → ovary samples = female, remaining pancreatic samples determine sex by gene expression.
 
-### Identify platform
+## Identify platform
 
 So first we can map which probe sets correspond to which array, and that will tell us which set of samples are ovarian and which are pancreatic (if the question is correct).
 
@@ -331,7 +332,7 @@ html`<div style="font-size:${axisTitleFont}px; margin-bottom:0.25rem;"><strong>y
 ```
 
 
-So from this analysis of which samples have non-missing values for which transcripts leads us to determining:
+Based on probe coverage across the two microarray platforms:
 
 - samples 1-6 are GPL4133 and are pancreatic
 - remaining samples 7-49 are GPL887 and ovarian, and therefore female
@@ -499,6 +500,9 @@ subsetAYDensityPlot = Plot.plot({
 html`<div style="display:flex; justify-content:center;"><div><div style="font-weight:600; margin-bottom:0.25rem;">Y-chromosome transcript density per sample</div>${subsetAYDensityPlot}</div></div>`
 ```
 
+Y-chromosome transcripts are specific to males. The density plot shows that samples 2 and 3 have mostly background-level signal at Y-chromsome transcripts, indicating that these samples are likely female. They appear distinct from samples 1, 4-6, which have a "flatter" distribution, with more Y- transcripts having above-background levels of expression. 
+
+This analysis finalizes our answers. In the below table, I show every sample in this dataset, a column corresponding to each analysis, and final classification ("My Call"). I then added Anthropic's answer, and another column indicating if I got the answer right for each sample (I didn't, let's see why).
 
 ::: {.prompt data-model="deepseek-flash"}
 
@@ -659,40 +663,47 @@ function accuracyCard(d) {
 }
 
 html`<div style="display:flex; flex-direction:column; align-items:center;">
-<div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.75rem; margin-bottom:1rem;">
+${finalCallsHeatmap()}
+<div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.75rem; margin-top:1rem;">
   ${subsetAAccuracyCards.map(accuracyCard)}
 </div>
-${finalCallsHeatmap()}
 </div>`
 ```
 
+# Several Wrong Answers in BioMysteryBench
 
-## Wrong Answers in BioMysteryBench
+The overall accuracy of my classification was 46.9%, worst than random guessing. But in this section let me convince you that I'm right, the answer itself is broken:
 
-I can only theorize how such a blatantly incorrect answer made it into one of Anthropic's published benchmarks. Let me be precise about how wrong it is. Of the 43 ovarian cancer samples in this question, Anthropic's published answer key calls 21 of them "female" and 11 of them "male", with 11 "unknown". Ovarian cancer only occurs in people who have (or had) ovaries, which is to say, in genetically female patients. So 22 of those 43 answers, just over half, are either biologically wrong or refuse to commit.
+1. The answer contains several samples that whose sex is "unknown"
 
-What's more disturbing is thinking about how this brings serious questions into the level of standards Anthropic imposes on their work:
+This is problematic for two reasons:
 
-1. The questions are written by "domain experts". Who are these domain experts and why are they submitting non-answers? The question itself is also a bit odd, at first I thought extraneous information was provided to intentionally mislead, with the hopes that a model with superior complex reasoning capabilities would be able to push through. But now I wonder if the question was low effort.
-2. Anthropic claims multiple rounds of quality control, yet this question-answer pair made it through. 
+- it suggests that the sex is unverifiable from the provided data. While confounding tissue and technical artifacts may indeed obscure the sex-specific patterns that could be used to determine this answer, it's highly arguable that sex can still be determined with a reasonable level of confidence, especially given that whole transcriptome profiles were provided
+- having an "unknown" category as part of the answer, suggests that the task involves providing some level of "confidence" in identifying the label, and choosing an appropriate threshold to call samples as having too low-confidence. How do we, or the models know what a level of "reasonable confidence" is? In practice these kind of thresholds depend entirely on outside context (e.g. the impact of a false negative or false positive), here no context is provided to inform the level of thresholding.
 
-> To minimize inherently unsolvable questions while still leaving room for those that might be AI-solvable, we required each question author to submit a validation notebook demonstrating that the signal does, in fact, exist in the data (even if finding it from scratch might be difficult). 
+2. The answer itself states that ovarian samples were run on one array. Males don't have ovaries, females do. Instead the answer suggests that even after figuring which samples are ovarian, some of these are actually male samples, or have unknown sex. 
 
-Anthropic indicates that another round of QC is applied to questions their panel of human experts couldn't solve 
+Obviously, the question-answer is a total dud. It should be retracted. I noticed that since publication BioMysteryBench now has 90/99 of the original questions. If we look at the reasons cited for the removal of 9 questions we can see a troubling pattern:
 
-> That left us with a set of questions that could not be solved by our panel of experts. This could mean (1) the question was malformed or broken, (2) the question is inherently unsolvable (e.g., the signal isn't in the data), or (3) the question is theoretically solvable but humans lack the knowledge required to solve it. **After QC'ing with benchmarkers and additional experts**, we removed 4 questions that were due to (1), leaving 23 human-difficult questions.
+- *hb011 Answer key wrong*
+- *hb014 Answer key contradicted by every expert and model rerun*
+- *hb040 Infeasible*
 
-To be clear, the problem is unsolvable not because of any of the 3 cited conditions above. It's unsolvable because the "ground-truth" answer is itself wrong.
+It goes on. Additionally 24 questions have been modified for phrasing and format.
 
-# In conclusion
+The number of questions that were in the unsolvable set that have been removed are 7, meaning only 10/17 remain. If we recompute the accuracy to exclude those questions that were flawed, that means that the performance is closer to 60-70%. And I just found another question that is broken. How many more questions in BioMysteryBench are flawed? 
 
-This wasn't a comprehensive systematic dive into these benchmarks. But I did learn a few things:
+It's important to note that there is extensive quality control that Anthropic claims in task creation. This means that a significant percentage of the final questions made it through their quality control process (>10% questions are flawed, >25% needed modification). 
 
-- LLM Benchmarks, specifically Bioinformatics-specific ones, are really hard to create well. High quality is really hard to get right, and requires huge amount of resources: domain experts need to be involved to conceive and design the tasks. Anthropic hired an independent team of human experts to tackle the prompts alongside their tested models, which is a huge advantage. QC however, they can improve on.
+# Conclusions
 
-- The level of detail between the two benchmarks are on two ends of the spectrum. CompBioBench provided microscopic levels of information that one could spend weeks dissecting. I know exactly the domains that CBB covers and can find detailed overviews of question/answers. Anthropic's is scant in comparison. The information is highly useful in evaluating the quality of the benchmarks and builds trust in the evaluation numbers. I hope Anthropic will consider more rigorous documentation and publication for future datasets.
+This wasn't a comprehensive systematic dive into these benchmarks. But I did learn a few things.
 
-- The most difficult questions in each benchmark are not that difficult for an experienced biological data scientist. The performance of state-of-the-art models on the hardest questions suggests to me that we are still a ways from true AGI in bioinformatics. However, their performance does demonstrate an extremely high capability that I wouldn't have believed would be possible just one year ago. I think those that will succeed in this new age will be those that can use LLMs most effectively.
+LLM Benchmarks, specifically Bioinformatics-specific ones, are really hard to create well. High quality is really hard to get right, and requires huge amount of resources: domain experts need to be involved to conceive and design the tasks. Anthropic hired an independent team of human experts to tackle the prompts alongside their tested models, which is a huge advantage. QC however, they can improve on. 
+
+The level of quality and detail between the two benchmarks are on two ends of a spectrum. CompBioBench provided microscopic levels of information that one could spend weeks dissecting. BioMysteryBench is scant in comparison. The information is highly useful in evaluating the quality of the benchmarks and builds trust in the evaluation numbers. I hope Anthropic will consider more rigorous documentation and publication for future datasets.
+
+The most difficult questions in each benchmark are not that difficult for an experienced biological data scientist. The performance of state-of-the-art models on the hardest questions suggests to me that we are still a ways from true AGI in bioinformatics. However, their performance does demonstrate an extremely high capability that I wouldn't have believed would be possible just one year ago. I think those that will succeed in this new age will be those that can use LLMs most effectively.
 
 # Appendix
 
