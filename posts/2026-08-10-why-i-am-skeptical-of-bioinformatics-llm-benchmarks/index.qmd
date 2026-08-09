@@ -1,8 +1,9 @@
 ---
 title: Comparing Anthropic's vs Genentech's Bioinformatics LLM Benchmarks
+description: A deep dive on Anthropic and Genentech's bioinformatic LLM benchmarks, BioMysteryBench and CompBioBench. 
 author: Victor Yuan
-date: 2026-08-06
-categories: [bioinformatics, LLM, scRNAseq]
+date: 2026-08-10
+categories: [bioinformatics, LLM, scRNAseq, python]
 execute:
   echo: false
 resources:
@@ -689,21 +690,19 @@ Obviously, the question-answer is a total dud. It should be retracted. I noticed
 - *hb014 Answer key contradicted by every expert and model rerun*
 - *hb040 Infeasible*
 
-It goes on. Additionally 24 questions have been modified for phrasing and format.
+It goes on. An additional update modified 24 questions for phrasing and format.
 
-The number of questions that were in the unsolvable set that have been removed are 7, meaning only 10/17 remain. If we recompute the accuracy to exclude those questions that were flawed, that means that the performance is closer to 60-70%. And I just found another question that is broken. How many more questions in BioMysteryBench are flawed? 
+The number of questions that were in the unsolvable set that have been removed are 7, meaning only 10/17 remain. If we recompute (via napkin math) the accuracy to exclude those questions that were flawed, that means that the performance is likely closer to 50-80%. And I just found another question that is broken. How many more questions in BioMysteryBench are flawed? 
 
-It's important to note that there is extensive quality control that Anthropic claims in task creation. This means that a significant percentage of the final questions made it through their quality control process (>10% questions are flawed, >25% needed modification). 
+It's important to note that there is extensive quality control that Anthropic claims in task creation. This means that a significant percentage of the final questions made it through their quality control process (>10% questions are flawed, >25% needed modification). That is deeply concerning and calls into question the integrity of their benchmark, and the results described.
 
 # Conclusions
 
-This wasn't a comprehensive systematic dive into these benchmarks. But I did learn a few things.
+LLM Benchmarks, specifically Bioinformatics-specific ones, are really hard to create well. High quality is hard to achieve, and requires huge amount of resources: domain experts need to be involved to conceive, design, and crucially review the tasks after benchmarking. In BioMysteryBench, **their QC failed**: >10 of their questions were unsolvable (by anybody or anything, not just humans), 24 modified, despite validation notebooks and multiple review rounds.
 
-LLM Benchmarks, specifically Bioinformatics-specific ones, are really hard to create well. High quality is really hard to get right, and requires huge amount of resources: domain experts need to be involved to conceive and design the tasks. Anthropic hired an independent team of human experts to tackle the prompts alongside their tested models, which is a huge advantage. QC however, they can improve on. 
+The level of quality and detail between the two benchmarks are on two ends of a spectrum. CompBioBench provided microscopic levels of information that one could spend weeks dissecting. BioMysteryBench is scant in comparison. The information is highly useful in evaluating the quality of the benchmarks and builds trust in the evaluation numbers. After my experience researching both benchmarks, I am left with trust in CompBioBench due to their documentation, reproducibility, and transparency; BioMysteryBench on the other hand, I cannot trust any of their numbers.
 
-The level of quality and detail between the two benchmarks are on two ends of a spectrum. CompBioBench provided microscopic levels of information that one could spend weeks dissecting. BioMysteryBench is scant in comparison. The information is highly useful in evaluating the quality of the benchmarks and builds trust in the evaluation numbers. I hope Anthropic will consider more rigorous documentation and publication for future datasets.
-
-The most difficult questions in each benchmark are not that difficult for an experienced biological data scientist. The performance of state-of-the-art models on the hardest questions suggests to me that we are still a ways from true AGI in bioinformatics. However, their performance does demonstrate an extremely high capability that I wouldn't have believed would be possible just one year ago. I think those that will succeed in this new age will be those that can use LLMs most effectively.
+I found the most difficult questions in each benchmark are indeed difficult. But definitely not unsolvable. The benchmarks are designed such that tasks have a single ground truth answer. But bioinformatics and science in general is much more common that there isn't a right answer. Instead there are varying approaches, all of which can be reasonable, but can lead to differing reasonable conclusions. The benchmarks here explicitly avoid simulating these types of scenarios, because they are difficult (or impossible) to evaluate. This is good, we need objective evaluations. But it makes me wonder are we really testing LLMs at the tasks scientists face, or are just those that are easy to grade?
 
 # Appendix
 
