@@ -1,0 +1,31 @@
+benchmark,category_type,category,count,pct
+CompBioBench,Domain,Single-cell,21,21
+CompBioBench,Domain,Epigenomics,20,20
+CompBioBench,Domain,Genomics,20,20
+CompBioBench,Domain,Transcriptomics,17,17
+CompBioBench,Domain,Microbiology,0,0
+CompBioBench,Domain,Human Genetics,12,12
+CompBioBench,Domain,Machine Learning,7,7
+CompBioBench,Domain,Proteomics,1,1
+CompBioBench,Domain,Spatial,2,2
+CompBioBench,Domain,Others,0,0
+CompBioBench,Question Style,Metadata Recovery,27,27
+CompBioBench,Question Style,Synthetic/Augmented Data,26,26
+CompBioBench,Question Style,Routine Analysis,22,22
+CompBioBench,Question Style,Retrieval,17,17
+CompBioBench,Question Style,Tooling,8,8
+BioMysteryBench,Domain,Single-cell,1,1.1
+BioMysteryBench,Domain,Epigenomics,13,14.4
+BioMysteryBench,Domain,Genomics,14,15.6
+BioMysteryBench,Domain,Transcriptomics,34,37.8
+BioMysteryBench,Domain,Microbiology,16,17.8
+BioMysteryBench,Domain,Human Genetics,8,8.9
+BioMysteryBench,Domain,Machine Learning,0,0
+BioMysteryBench,Domain,Proteomics,4,4.4
+BioMysteryBench,Domain,Spatial,0,0
+BioMysteryBench,Domain,Others,0,0
+BioMysteryBench,Question Style,Metadata Recovery,70,77.8
+BioMysteryBench,Question Style,Retrieval,2,2.2
+BioMysteryBench,Question Style,Routine Analysis,11,12.2
+BioMysteryBench,Question Style,Synthetic/Augmented Data,3,3.3
+BioMysteryBench,Question Style,Tooling,4,4.4
