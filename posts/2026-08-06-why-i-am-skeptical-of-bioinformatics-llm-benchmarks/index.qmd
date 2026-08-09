@@ -1,45 +1,54 @@
 ---
-title: I tested Anthropic's Bioinformatics LLM Benchmark BioMysteryBench
+title: Comparing Anthropic's vs Genentech's Bioinformatics LLM Benchmarks
+author: Victor Yuan
+date: 2026-08-06
+categories: [bioinformatics, LLM, scRNAseq]
 execute:
   echo: false
 resources:
   - "*.csv"
+bibliography: references.bib
+csl: https://www.zotero.org/styles/ieee
+reading-time: true
 ---
 
-Undeniably, AI is rapidly changing the way science is being done. How positive those impacts are, is difficult to measure [^ai-adoption-in-science].
+Every week a new large language model (LLM) is released, and with it comes a battery of numbers to prove its incremental improvement over existing models. These numbers come from "benchmarks" -- a series of evaluations that domain experts carefully create. Recently, two very different companies released bioinformatics-specific benchmarks: Genentech[^genentech], one of the oldest and most successful pharma companies, and Anthropic[^anthropic], a top AI company. The two companies couldn't be more different, and I think it shows in their benchmarks.
 
-[^ai-adoption-in-science]: One study suggests that publications leveraging AI are more likely to be cited, and early AI-adopters are more likely to be professional successful. But AI-prone work is leading to less innovation, with more [research circulating the same crowded problems](https://www.nature.com/articles/s41586-025-09922-y), leaving science as whole less interconnected and poorer off.
+In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and why I think these results show that I'm not going to replaced by AI anytime soon.
 
+[^genentech]: Genentech, a 50-year-old pharma company with dozens of approved drugs and hundreds of clinical trials, released [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) [@compbiobench] on April 4th, 2026. The reputation of the authors' affiliations sets an expectation on their dataset. This is a benchmark created by some of the most experienced practitioners in the industry.
 
-To measure how well LLM's can perform specific tasks, AI researchers build "benchmarks" - a systematic set of inputs to give a model, paired with instructions on how to evaluate outputs. Benchmarks are useful because they attempt to quantify the usefulness of AI. But benchmarks are hard to create, they are highly domain specific, requiring teams of experts to contribute feedback that only years of experience and training can prepare for.
+[^anthropic]: [BioMysteryBench](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench) [@biomysterybench] was created by Anthropic, possibly one of the most important companies in the world right now. They are known for producing the world's leading LLM models. Their investments in life sciences research are highly intriguing. We will see what the pay off (if any) will be - we are still in early days.
 
-In bioinformatics, there are many benchmarks that were developed with different approaches. Here I examine probably the two most well known ones recently released: [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) released by pharma giant Genentech, and Anthropic's [BioMysteryBench](https://www.anthropic.com/research/Evaluating-Claude-For-Bioinformatics-With-BioMysteryBench).
+# Benchmark Philosophy
 
-In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and what it all means for Bioinformatics as a field in this age of AI. 
+There are many ways to design LLM benchmarks. Previous bioinformatics benchmarks like [BixBench](https://arxiv.org/abs/2503.00096) evaluate LLM performance whether conclusions match up with scientists'. But oftentimes in science, there are multiple reasonable approaches to a question, that might end up leading to differing but reasonable conclusions. Other benchmarks like scBench are fairly prescriptive in the series of "steps" that a model must take to complete a task, but that hampers creativity which is a core tenant of innovative scientific research.
 
-# Who is developing bioinformatics benchmarks
+It's notable and validating that both Anthropic and Genentech both, independently and concurrently, decided on the same strategy. Both benchmarks are designed such that there is a single data-verifiable ground truth answer, and evaluations are non-prescriptive in how to arrive at that answer. Multiple paths are not necessarily encouraged, but models are free to "wander" different paths to reach their conclusions.
 
-CompBioBench was released on April 4th, 2026 by Genentech, a San Francisco Pharma company that this year celebrating their [50th year anniversary](https://www.gene.com/stories/celebrating-50-years-of-science-and-changing-lives). They have over 40+ drugs on the market today, currently has ~600 active clinical trials worldwide, and invests over [$15 billion in R&D each year](https://www.gene.com/download/pdf/Genentech-Fact-Sheet_April-2026.pdf). The reputation of the authors affiliations set an expectation on their dataset. This is a benchmark created by some of the most experienced practictioners in the industry.
+Both benchmarks have several metadata retrieval / inference questions. These are easily verifiable questions where the model is presented some data (transcriptomic, epigenetic, etc.) and asked questions about the sample identity: *are these samples male/female? what tissue are these samples from?*. These are good questions because they require leveraging biological and technological knowledge, and can require interaction with additional datasets to reach the answer (e.g. mapping transcripts identifiers to genes using a public database).
 
-BioMysteryBench was created by Anthropic, possibly one of the most important companies in the world right now. They are known for producing the world's leading LLM models, and their investments in life sciences research is highly intriguing, but their investments in life sciences is in the early days, and does not carry the same level of validation as Genentech. Anthropic is a software company interested in life sciences applications.
+CompBioBench notably heavily leverages synthetic and data augmentation. For example genomic content from contaminant species can be added to an existing dataset, and then the model is tasked with identifying the contaminant species. 
 
-# Deep analysis of model performance
+The last notable difference is how the answer is scored. CompBioBench uses an "exact string match" of the agent's answer and the ground truth, so the tasks are very explicit about the answer format, with some tolerance for numerical answers. BioMysteryBench, on the other hand, uses an LLM-as-a-judge.
 
+I initially thought a deterministic evaluation was clearly the better approach. But after researching LLM-as-as-judge approach, I learned: it's very common, there are advantages and disadvantages[^llm-as-a-judge]; and ultimately I'm unsure if one approach is significantly better than the other. 
 
-First difference worth talking about is that Genentech published their benchmark on biorxiv, which is a very common preprint journal in the bioinformatics field. Their benchmark, problem statement, and results are presented in standard scientific article format. This means, everything is deeply documented. And, the article itself is hosted by biorxiv, which is a non-affiliated organization, that will retain this original published version and also handle author-submitted updates.
+[^llm-as-a-judge]: One advantage of LLM-as-a-judge approach is that due to model reasoning capabilities, LLMs can catch "cheating". An example of cheating in bioinformatics might be if a model chooses to solve the task, not by using a bioinformatics approach, like comparing classifying a transcriptomic profile against known gene signatures, but instead by finding the answer through some shortcut, like matching a sample's identity to a published database or article [@gu2024survey].
 
-In contrast, Anthropic announced BioMysteryBench with a blog post. As you can imagine, the difference between a published article and blog post is vast. Their is no standard format for a "blog post" like there is for a journal article. There is no in depth section describing how the questions were developed, there are no supplementary figures, and in general it is really hard to find details.
+# How rigorously these benchmarks are documented
 
-For example, only opening the questions dataset from Anthropic's [BioMysteryBench](https://huggingface.co/datasets/Anthropic/BioMysteryBench-full), did I realize that they are using LLM as a judge. The evaluations read like this:
+It's worth first discussing the difference in how these two teams chose to publish their results.
 
-"Score 1 if the answer is 'GENE A', score 0 if the model CHEATED or if provided a wrong answer". 
+Genentech published their benchmark on bioRxiv, which is a popular preprint server in the bioinformatics field. Their benchmark, problem statement, and results are presented in standard scientific article format. This means everything is deeply documented. And the article itself is hosted by bioRxiv, meaning a non-affiliated organization is ensuring the original content stays accessible[^journal-vs-blog].
 
-LLM as a judge addresses when correct answers are provided in variable format (e.g. in sentence form, with punctuation, etc.). CompBioBench instead provides heavy guidance in the question to be submitted with a specific format: 
+[^journal-vs-blog]: And unlike a blog, which can be taken down or edited without any trace of original content, a preprint server is managed by a third party organization (bioRxiv is managed by Cold Spring Harbour), which includes keeping the original published article accessible and has a system for managing updates.
 
-> Return only the name of the inflamed cell type from this list: astrocyte, ...
+In contrast, Anthropic announced BioMysteryBench with a blog post. As you can imagine, the difference between a published article and blog post is vast. There is no standard format for a "blog post" like there is for a journal article. There is no in depth section describing how the questions were developed, there are no supplementary figures, and in general it is really hard to dig into details.
 
+The Genentech team, I imagine is likely preparing the article for submission at a peer-reviewed journal. This means transparency is not optional; it's required and enforced to some degree by the journal and the peer reviews. They must describe their methods fully; they must defend their decisions, and they must be comprehensive in their scope as reasonably possible; some journals even enforce reproducibility and open source code[^cbb-github]. CompBioBench showed that all top models performed similarly, including Anthropics but also GPT from OpenAi, and Gemini from Google (might I mention, similar performance at a much lower cost!). Anthropic chose only to evaluate and publish only their own models.
 
-I like that this is deterministic. But I think Anthropic's usage of LLm as a judge might be the better approach as more and more we are seeing LLMs develop clever work-arounds that rely on prior knowledge, or circumventing rules. The "evaluate if the model cheated" line here is a nice guard.
+[^cbb-github]: Genentech published a github repo that hosts the code to fully reproduce their results for CompBioBench: [Genentech/compbiobench-runner](https://github.com/Genentech/compbiobench-runner), which is amazing exemplar for transparency and reproducibility. This type of practice is a big step in building trust in their results. 
 
 # The types of questions covered in these benchmarks
 
@@ -47,17 +56,17 @@ Bioinformatics is a big field. There are highly specialized methods depending on
 
 > In developing this eval, questions were primarily derived from raw or minimally processed DNA or RNA sequencing data since this is where many biological processing pipelines begin (WGS, scRNA-seq, methylation, ChIP-seq, metagenomics, Hi-C), and also included several questions drawn from proteomics and metabolomics.
 
-I mapped the Anthropic's questions onto the question types that CompBioBench uses:
+I mapped Anthropic's questions onto the question types that CompBioBench uses:
 
 ```{ojs}
 benchmarkData = FileAttachment("benchmark-comparison.csv").csv({typed: true})
 ```
 
 ```{ojs}
-domainOrder = ["Single-cell", "Epigenomics", "Genomics", "Transcriptomics", "Human Genetics", "Machine Learning", "Others"]
+domainOrder = ["Single-cell", "Epigenomics", "Genomics", "Transcriptomics", "Microbiology", "Human Genetics", "Machine Learning", "Proteomics", "Others"]
 styleOrder = ["Metadata Recovery", "Synthetic/Augmented Data", "Routine Analysis", "Retrieval", "Tooling"]
 benchmarkOrder = ["CompBioBench", "BioMysteryBench"]
-benchmarkColor = ({ domain: benchmarkOrder, range: ["#4c78a8", "#b7d6d6"] })
+benchmarkColor = ({ domain: benchmarkOrder, range: ["#000000", "#aaaaaa"] })
 
 function benchmarkChart(categoryType, order) {
   const chartData = benchmarkData.filter(d => d.category_type === categoryType)
@@ -67,9 +76,9 @@ function benchmarkChart(categoryType, order) {
     marginLeft: 200,
     marginRight: 50,
     style: { background: "transparent", fontSize: "13px" },
-    fx: { domain: benchmarkOrder, label: null },
-    y: { domain: order, label: null },
-    x: { label: "Number of questions", grid: true },
+    fx: { domain: benchmarkOrder, label: null},
+    y: { domain: order, label: null, tickSize: 0},
+    x: { label: "Number of questions", grid: true, tickSize: 0},
     color: benchmarkColor,
     marks: [
       Plot.barX(chartData, { x: "count", y: "category", fx: "benchmark", fill: "benchmark" }),
@@ -94,274 +103,600 @@ html`<div style="font-weight: 600; margin: 0.5rem 0 0.25rem;">Domain</div>${benc
 html`<div style="font-weight: 600; margin: 1rem 0 0.25rem;">Question Style</div>${benchmarkChart("Question Style", styleOrder)}`
 ```
 
-
-From this chart, we can see that *BioMysteryBench has only one single cell RNAseq question*! That's crazy. Single cell RNAseq might be the most important novel technologies developed in the last decade, and we are at a point where the methods are mature, datasets are plentiful, and so are published peer reviewed well-cited articles. Lacking evaluations on this critical assay type is like evaluating AI on generating accurate physics simulation but saying let's leave out the third dimension. 
-
+From this chart, we can see that *BioMysteryBench has only one single cell RNAseq question*! That's crazy. Single cell RNAseq might be one of the most important novel technologies [developed in the last decade](https://www.nature.com/articles/s41573-023-00688-4) [@vandesande2023scrnaseq], and we are at a point where the methods are mature, datasets are plentiful, and so are published peer reviewed well-cited articles. Lacking evaluations on this critical assay type is like evaluating AI on generating accurate physics simulation but saying let's leave out the third dimension. 
 
 What I do like about Anthropic's work is that they more heavily capture bulk RNAseq ("Transcriptomics" in the graphs) - it's definitely the bread & butter of next-gen assay types. I also like that they cover proteomics.
 
-A notable omission from both benchmarks is spatial RNAseq. Spatial is becoming an increasingly important readout in life sciences research and seeing lots of active methods development. Many are likely using AI for spatial analysis, so a benchark here would be extremely helpful. 
+A notable omission from both benchmarks is spatial RNAseq. Spatial is becoming an increasingly [important readout in life sciences research and is developing at a rapid pace](https://www.mdpi.com/2073-4409/12/16/2042) [@chen2023spatial]. Many are going to be using AI for spatial analysis, so a benchmark on here would be extremely helpful. 
+
+# The reported numbers
+
+Before diving into individual questions, it's worth looking at the results from both publications. 
+
+| | CompBioBench | BioMysteryBench |
+|---|---|---|
+| **Questions** | 100 | 99 (76 human-solvable, 23 human-difficult) |
+| **What models are evaluated** | Claude Code Opus 4.6, Codex GPT 5.4, Gemini 3.1 Pro | Claude Mythos Preview, Opus 4.7, Sonnet 4.6 |
+| **Best overall** | Codex CLI (GPT-5.4): 83% Accuracy[^CBB-results] | Opus 4.7: 78.9% on human-solvable |
+| **Task construction** | Synthetic or augmented data | Real, raw or minimally processed sequencing data |
+| **Scoring** | Deterministic format checks plus manual review | LLM-as-judge with cheat detection |
+
+[^CBB-results]: CompBioBench compared 4 Claude models, OpenAI's GPT 5.4, and Google's Gemini 3.1 Pro. The results show that the top models from these three companies had similar performance (within a few percentage points). But GPT 5.4 and Gemini 3.1 Pro costing half as much real dollars per task as Anthropic's models. Anthropic's BioMysteryBench only includes their own models in their benchmark. 
 
 # How difficult are these problems
 
 Moving onto the actual content of these benchmarks, I was curious how hard these questions are. I looked through a bunch of the hardest questions, and here I will just talk about one question from each.
 
-First, Genetech's CompBioBench has diffuclty ratings 1-5 (5 is hardest), but notably, I could not find these difficulty ratings in any of their published data. That's bad! 
+First, Genentech's CompBioBench has difficulty ratings 1-5 (5 is hardest). I could not actually find these difficulty ratings for any of their published questions on huggingface. The only questions with known difficulty are therefore only the ones chosen as "selected examples" in their article's main text.  
 
 Anthropic's BioMysteryBench has a much simpler categorization: human-solvable, and human-difficult (or human-unsolvable). Let's not get into the definitions, but just focus on what are the hardest questions. 
 
+On the most difficult problems (level 4-5 on CompBioBench and "human-unsolvable" on BioMysteryBench), top models got 49-69% accuracy on CompBioBench, but only 19-27% on BioMysteryBench's questions. This suggests that BioMysteryBench has harder questions.
+
 ## CompBioBench Question Difficulty 4/5
 
-Since I couldn't find a difficult rating for CompBioBench questions, I had to use one of the "selected examples" described in the text. Notably there is 1 5/5/5 difficult problem in their dataset and it's not described in the main text, so I have no idea which one it is in the full dataset. 
+Since I couldn't find a difficult rating for CompBioBench questions, I had to use one of the "selected examples" described in the text. Notably there is 1 5/5/5 difficult problem in their dataset but it's not described in the main text. 
 
-This is a 4/5 ATACseq question: 
+This is a difficulty 4/5 ATACseq question: 
 
 > Q. atac.doublet.q1.bed.gz contains a fragment file from a scATAC-seq sample (hg38). Barcodes with low read counts have been filtered out. Look for doublets. Return the barcode of any one doublet, if any. Respond only with the label of the barcode in the format: “AAATGGAACGTTAAAG-1”, or “None”.
 
-Doublet detection is standard step in most single cell workflows. The authors note that all model attempts involved applying standard doublet filtering, but the correct answer required using a more advanced doublet detection package called AMULET. AMULET is able to detect the homotypic doublets, which are when a droplet includes two cells that are the same cell type. Because they are the same cell type, "standard" doublet detection programs which rely on expression patterns, cannot detect these. 
+Doublet detection is a standard step in most single cell workflows. The authors note that all model attempts involved applying standard doublet filtering, but the correct answer required using a more advanced doublet detection package called AMULET [@thibodeau2021amulet] [^doublet]. AMULET is able to detect the homotypic doublets, which are when a droplet includes two cells that are the same cell type. Because they are the same cell type, "standard" doublet detection programs which rely on expression patterns cannot detect these. 
 
-This is an interesting result because:
+[^doublet]: It surprises me that standard scATACseq workflows ignores homotypic doublets because in other assay types like scRNAseq it is standard. (Why is this not already part of the standard workflow?)
 
-1. I learned that apparently standard scATACseq workflows ignores homotypic doublets. This surprises me, because in other assay types like scRNAseq it is standard. And why is this not already part of the standard workflow?
-2. The impact of failing to detect homotypic doublets is not discussed. In general leaving a doublet consistenting of two of the same cell types with the same functional readouts, is likely minimally impactful on the analysis. The cases where homotypic doublets might have a large impact are pretty rare, and likely other analyses (like looking at read depth) will inform how much attention is needed to this issue.
 
-The binary yes/no did this model provide the correct answer result of this question is illustrated by this example. The "wrong" answers were not that wrong, and their impact on the resulting analysis is unclear (it's a synthetic example). 
+The impact of failing to detect homotypic doublets is not discussed. In general leaving a doublet consisting of two cells of the same cell type with the same functional readouts is likely minimally impactful on the analysis. The cases where homotypic doublets might have a large impact are pretty rare, and likely other analyses (like looking at read depth) will inform how much attention is needed to this issue.
+
+This question is graded as a simple binary: did the model provide the correct barcode or not. The "wrong" answers were not that wrong, and their impact on the resulting analysis is unclear (it's a synthetic example). 
 
 I pull this example out because I thought it was one of the few that might be improved or replaced. In general I found most of CompBioBench's questions relevant, instructions are clear, and the evaluations are also clear. I think reliance on synthetic / augmented data is smart, there is not really a way for the model to cheat like in BioMysteryBench, when all the information for the solution must be derived from the data itself. In BioMysteryBench, the "cheating" can occur because some of the samples are pulled from published data. 
 
 ## BioMysteryBench Question "Human Unsolvable"
 
-First off on terminolog, the questions are designed by a human expert. Some questions were removed after a round of quality control - questions with insufficient information provided for example, or when an answer really didn't exist. So the questions are all technically human solvable, because they were written by a human expert. Human unsolvable here means that a panel of other human experts, could not arrive at the right answer.
+First off, on the term "Human Unsolvable" - the questions are designed by a human expert, they are all solvable questions with self-contained information. What they mean here is that another set of independent human experts could not get the right answer for these questions. I think the term "Human Unsolvable" is not technically correct, and is probably the result of some marketing strategy. They want people to think their models can be smarter than humans. 
 
 I found the BioMysteryBench data easier to download. Here I worked through one of the unsolvable questions myself.
 
 > This microarray dataset contains expression data from various ovarian and pancreatic cancer biopsies ran on GPL 887 and GPL 4133 platforms, respectively. Based on the expression profile of each sample, assign a sex (male, female, or unknown) to each sample. The final output should be in the format of “Sample; sex” (eg Sample 1; male)
 
-I picked this one, because it stood out to me. It stood out to me, because it's trivially easy. I think a first or second- year student from my grad school lab could figure this one out [^1st-year]. Idnetifying sex from any kind of genomic data is a really common procedure. In general it involves:
+I picked this one because at first glance it's trivially easy and fairly relevant problem: identifying sex of samples can be often helpful in determining sample mix ups, which is an unfortunate but inevitable encounter. 
 
-- Understanding that sex chromosomes exist and how that signal is surfaced in different assay types.
+Identifying sex from any kind of genomic data is a really common procedure. In general it involves:
 
-For RNAseq, or in this case, microarrays, that involves looking at genes on the sex chromosome. 
+- Understanding how sex differences are surfaced in different assay types.
 
-The easiest one to look at is XIST, a gene that is responsible for "dosage compensation" - a phenomenon where females downregulat X-chromosome derived gene products, as a result of having  one more x-chromosome than males.
+For RNAseq, or in this case, microarrays, that involves visualizing genes on the sex chromosome such as XIST [^XIST], which will display sex-specific differential expression. 
 
-[^1st-year]: OK, it might take them a week.
+[^XIST]: a phenomenon where females downregulate X-chromosome derived gene products, as a result of having one more X chromosome than males.
 
-I had deepseek do this one for me with this prompt
+However, the problem is complicated by: multiple tissues, multiple platforms, and cancerous signatures.
 
-> Read in this .csv file. Plot the expression levels of the probes measuring the transcripts from the gene XIST. 
+Even though gene expression sex differences are large, they might not be surfaced unless accounting for platform/batch and tissue effects. To be safe, we can start by identifying tissue.
 
-Then, classify based on XIST expression: if XIST expression is high, classify as female, otherwise it is a male (left). 
+The question gives a big hint - it implies one set of tissue samples were measured on one array (ovarian = GPL887), and the other tissues on another (pancreatic = GPL4133). We can see this clearly in that samples 1-6 have non-missing values for a large number of probes, that are not captured on the other. 
 
-If we didn't have XIST expression, or if we wanted to make this a bit more robust, we could base our classification on a combination of genes using PCA (right).
+The other big piece of information in this question is that it tells you that one set of samples is ovarian. Ovaries is a female reproductive organ. Meaning if you identify which samples are ovarian, then you know the sex of these samples. So identifying tissue identity gives you half the answer already.
 
+This is the plan:
+
+Identify platform -> determines tissue -> ovary samples = female, remaining pancreatic samples determine sex by gene expression.
+
+### Identify platform
+
+So first we can map which probe sets correspond to which array, and that will tell us which set of samples are ovarian and which are pancreatic (if the question is correct).
+
+::: {.prompt data-model="deepseek-flash"}
+Download and compare the probesets for GPL887 and GPL4133 microarrays. Based on the systematic missing values by probeset for some samples of the Cancers.csv, determine the platform for each sample. Return a data frame that has sample id in one column, and platform (GPL887 vs GPL4133) in another column. Also print the number of probes in both platforms, and the intersection in both.
+:::
 
 ```{python}
-import json
+import gzip
+import io
 import os
 import urllib.request
 
-import numpy as np
 import pandas as pd
-from sklearn.cluster import KMeans
+from IPython.display import HTML, display
+
+expr = pd.read_csv("Cancers.csv", index_col=0)
+
+
+def load_platform_table(gpl):
+    cache = f"{gpl}_probes.csv"
+    if os.path.exists(cache):
+        return pd.read_csv(cache, low_memory=False)
+    bucket = "GPLnnn" if int(gpl[3:]) < 1000 else f"GPL{gpl[3]}nnn"
+    url = f"https://ftp.ncbi.nlm.nih.gov/geo/platforms/{bucket}/{gpl}/annot/{gpl}.annot.gz"
+    with urllib.request.urlopen(url, timeout=60) as r:
+        raw = gzip.decompress(r.read()).decode("utf-8", errors="replace")
+    lines = raw.splitlines()
+    start = lines.index("!platform_table_begin") + 1
+    end = lines.index("!platform_table_end")
+    table = pd.read_csv(
+        io.StringIO("\n".join(lines[start:end])),
+        sep="\t",
+        low_memory=False,
+        usecols=["ID", "GenBank Accession", "Platform_SPOTID"],
+    )
+    table.to_csv(cache, index=False)
+    return table
+
+
+gpl887 = load_platform_table("GPL887")
+gpl4133 = load_platform_table("GPL4133")
+
+acc887 = set(gpl887["GenBank Accession"].dropna())
+acc4133 = set(gpl4133["GenBank Accession"].dropna())
+
+display(
+    HTML(
+        f"<p>The microarray platform GPL887 has {len(acc887)} features. "
+        f"GPL4133 has {len(acc4133)} features. "
+        f"The intersection between the two platforms is {len(acc887 & acc4133)} features.</p>"
+    )
+)
+
+# Cancers.csv column names mix GenBank accessions with Agilent SPOTIDs
+# (e.g. "A_24_P704878"), so match on both when identifying which physical
+# platform a probe belongs to.
+ref887 = acc887 | set(gpl887["Platform_SPOTID"].dropna())
+ref4133 = acc4133 | set(gpl4133["Platform_SPOTID"].dropna())
+
+# Don't assume which of the two sample groups is which platform — assign by
+# matching each group's uniquely-measured probes (present for that group,
+# missing for the other) against each platform's real probe list.
+group_masks = [expr.index.isin(range(1, 7)), ~expr.index.isin(range(1, 7))]
+group_platform = {}
+for mask in group_masks:
+    other = ~mask
+    private = set(expr.loc[mask].dropna(axis=1).columns) - set(
+        expr.loc[other].dropna(axis=1).columns
+    )
+    votes = {"GPL887": len(private & ref887), "GPL4133": len(private & ref4133)}
+    winner = max(votes, key=votes.get)
+    for s in expr.index[mask]:
+        group_platform[s] = winner
+
+sample_platform = pd.DataFrame(
+    {
+        "sample": expr.index,
+        "missing_probes": expr.isna().sum(axis=1).values,
+        "platform": [group_platform[s] for s in expr.index],
+    }
+)
+
+# For each sample and each platform, what fraction of that platform's
+# EXCLUSIVE probe set (accessions/spotids on that chip only, not shared
+# with the other platform's design) is non-missing for this sample.
+# Probes common to both platforms are excluded here — they're non-missing
+# regardless of which platform a sample ran on, so including them dilutes
+# the signal instead of separating it.
+platform_refs = {"GPL887": ref887 - ref4133, "GPL4133": ref4133 - ref887}
+rows = []
+for platform, ref in platform_refs.items():
+    cols = [c for c in ref if c in expr.columns]
+    pct_non_missing = expr[cols].notna().sum(axis=1) / len(cols) * 100
+    for s, pct in zip(expr.index, pct_non_missing.values):
+        rows.append({"sample": s, "platform": platform, "pct_non_missing": pct})
+platform_membership = pd.DataFrame(rows)
+ojs_define(platformMembership=platform_membership.to_dict(orient="records"))
+```
+
+```{ojs}
+platformOrder = ["GPL887", "GPL4133"]
+sampleDomain = platformMembership.map(d => d.sample).filter((s, i, a) => a.indexOf(s) === i).sort((a, b) => a - b)
+
+platformMembershipLong = platformMembership.flatMap(d => [
+  { sample: d.sample, platform: d.platform, metric: "non-missing", value: d.pct_non_missing },
+  { sample: d.sample, platform: d.platform, metric: "missing", value: 100 - d.pct_non_missing }
+])
+
+baseFont = 9
+axisTitleFont = baseFont * 1.3
+facetTitleFont = baseFont * 1.5
+
+platformMembershipPlot = Plot.plot({
+  width: 700,
+  height: 480,
+  marginLeft: 30,
+  style: { background: "transparent", fontSize: `${baseFont}px` },
+  fx: { domain: platformOrder, axis: null },
+  y: { domain: sampleDomain, padding: 0, label: null },
+  x: { domain: [0, 100], label: null },
+  color: {
+    domain: ["non-missing", "missing"],
+    range: ["#000000", "#888888"],
+    legend: true
+  },
+  marks: [
+    Plot.axisFx({ fontSize: facetTitleFont, label: null }),
+    Plot.axisY({ ticks: [1, 7, 10, 20, 30, 40, 49], tickSize: 0, fontSize: baseFont, label: null }),
+    Plot.axisX({ tickSize: 0, fontSize: baseFont, label: null }),
+    Plot.ruleX([0, 100], { stroke: "#999" }),
+    Plot.barX(platformMembershipLong, {
+      x: "value",
+      y: "sample",
+      fx: "platform",
+      fill: "metric",
+      insetTop: 0,
+      insetBottom: 0,
+      strokeWidth: 0,
+      title: d => `${d.sample} · ${d.platform}\n${d.metric}: ${d.value.toFixed(1)}%`
+    })
+  ]
+})
+
+html`<div style="font-size:${axisTitleFont}px; margin-bottom:0.25rem;"><strong>y:</strong> Sample &nbsp; <strong>x:</strong> % of platform's probeset</div>${platformMembershipPlot}`
+```
+
+
+So from this analysis of which samples have non-missing values for which transcripts leads us to determining:
+
+- samples 1-6 are GPL4133 and are pancreatic
+- remaining samples 7-49 are GPL887 and ovarian, and therefore female
+
+## Sex'ing  pancreatic cancer samples
+
+
+Now we can turn our effort towards determining the sex of the pancreatic cancer samples 1-6.
+
+Here we can determine sex of these samples based on the expression patterns of good old [XIST](https://en.wikipedia.org/wiki/XIST), a transcript that is highly expressed in females and not expressed in males. To be extra sure, we can also include a y-chromosome gene RPS4Y1 (expected expressed in males, not in females). To be *extra extra* sure, we can include a larger panel of X-chromosome genes (with PCA + clustering).
+
+
+::: {.prompt data-model="deepseek-flash"}
+Subset to samples 1-6 (pancreatic cancer). Generate three graphs, 1. y-axis samples, x-axis XIST expression, barchart. 2. same as graph 1, but x-axis is RPS4Y1 expression. 3. PCA on samples using the top 100 variable XY probes. Each point is a sample. 
+:::
+
+
+```{python}
+import os
+
+import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-expr = pd.read_csv("Cancers.csv", index_col=0)
+expr6 = pd.read_csv("Cancers.csv", index_col=0).loc[list(range(1, 7))]
 anno = pd.read_csv("refseq_to_symbol_map.csv")
-
-cache = "chr_map.csv"
-if os.path.exists(cache):
-    chr_map = dict(pd.read_csv(cache).values.tolist())
-else:
-    chr_map = {}
-    ids = sorted(anno["REFSEQ"].dropna().unique())
-    for i in range(0, len(ids), 1000):
-        payload = json.dumps({"q": ids[i : i + 1000], "scopes": "refseq", "fields": "genomic_pos.chr", "species": "human"}).encode()
-        req = urllib.request.Request("https://mygene.info/v3/query", data=payload, headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=60) as r:
-            for hit in json.load(r):
-                if "notfound" not in hit and hit.get("genomic_pos"):
-                    pos = hit["genomic_pos"]
-                    chr_map[hit["query"]] = pos[0]["chr"] if isinstance(pos, list) else pos["chr"]
-    pd.DataFrame(sorted(chr_map.items()), columns=["REFSEQ", "chr"]).to_csv(cache, index=False)
-
+chr_map = dict(pd.read_csv("chr_map.csv").values.tolist()) if os.path.exists("chr_map.csv") else {}
 anno["chr"] = anno["REFSEQ"].map(chr_map)
 xy = anno[anno["chr"].isin(["X", "Y"])]
-#print(f"{len(xy)} XY chromosome transcripts")
 
-xy_genes = expr[xy["REFSEQ"]].dropna(axis=1)
-top_xy = xy_genes.loc[:, xy_genes.var(axis=0).sort_values(ascending=False).index[:100]]
-X = StandardScaler().fit_transform(top_xy)
-pca_xy = PCA(n_components=2, random_state=0).fit_transform(X)
-
-k2 = KMeans(n_clusters=2, n_init=10, random_state=0).fit_predict(pca_xy)
-
-# XIST is transcribed from the inactivated X chromosome, so only females
-# express it. The cluster with the higher mean XIST is female.
 xist_probe = anno.loc[anno["SYMBOL"] == "XIST", "REFSEQ"].iloc[0]
-xist = expr[xist_probe].fillna(0)
-female_cluster = pd.Series(xist.values).groupby(k2).mean().idxmax()
-sex = np.where(k2 == female_cluster, "female", "male")
+rps4y1_probe = "NM_001008"
 
-sex_calls = pd.DataFrame({
-    "sample": expr.index,
-    "sex": sex,
-    "cluster": k2,
-    "pc1": pca_xy[:, 0],
-    "pc2": pca_xy[:, 1],
-    "xist": xist.values,
-})
-sex_calls.to_csv("sex_calls.csv", index=False)
-# print(sex_calls["sex"].value_counts().to_string())
+subset_a_markers = pd.DataFrame(
+    {
+        "sample": expr6.index,
+        "XIST": expr6[xist_probe].values,
+        "RPS4Y1": expr6[rps4y1_probe].values,
+    }
+)
+ojs_define(subsetAMarkers=subset_a_markers.to_dict(orient="records"))
+
+# XY probes restricted to just these 6 samples (all on the same platform,
+# so no cross-platform missingness to worry about) — this is the full
+# platform-specific XY probeset for this subset, not the smaller
+# cross-platform-intersected one used elsewhere in this post.
+xy_cols = [c for c in xy["REFSEQ"] if c in expr6.columns]
+xy_genes = expr6[xy_cols].dropna(axis=1)
+xy_variance = xy_genes.var(axis=0).sort_values(ascending=False)
+
+# With only 6 samples, a flat top-100-by-rank cutoff can pad the PCA input
+# with probes whose "top" variance is really just noise. Instead, only keep
+# probes in the top 10% by variance across the full XY candidate pool —
+# this can (and does) return fewer than 100 probes.
+variance_floor = xy_variance.quantile(0.90)
+selected_xy = xy_variance[xy_variance >= variance_floor].index
+
+top_xy = xy_genes[selected_xy]
+X6 = StandardScaler().fit_transform(top_xy)
+pcs6 = PCA(n_components=2, random_state=0).fit_transform(X6)
+
+subset_a_xy_pca = pd.DataFrame({"sample": expr6.index, "pc1": pcs6[:, 0], "pc2": pcs6[:, 1]})
+ojs_define(subsetAXyPca=subset_a_xy_pca.to_dict(orient="records"))
 ```
 
 ```{ojs}
-plotStyle = ({ background: "transparent", fontSize: "14px" })
-sexColor = ({ domain: ["male", "female"], range: ["#4c78a8", "#e15759"], legend: true })
-trueSexColor = ({ domain: ["male", "female", "unknown"], range: ["#4c78a8", "#e15759", "#9aa0a6"], legend: true })
-sexCalls = FileAttachment("sex_calls.csv").csv({typed: true})
-sexAnswer = FileAttachment("sex_answer.csv").csv({typed: true})
-pcaData = sexCalls.map(d => {
-  const a = sexAnswer.find(s => s.sample === d.sample)
-  return { ...d, trueSex: a ? a.anthropic : null, agree: a ? a.agree : null }
-})
-```
+subsetASampleDomain = subsetAMarkers.map(d => d.sample).sort((a, b) => a - b)
 
-```{ojs}
-xistPlot = Plot.plot({
-  width: 330,
-  height: 490,
-  style: { ...plotStyle, fontSize: "10px" },
-  x: { label: "XIST expression", grid: true },
-  y: {
-    label: "Sample",
-    domain: sexCalls.map(d => d.sample).sort((a, b) => a - b),
-    padding: 0
-  },
-  color: sexColor,
-  marks: [
-    Plot.barX(sexCalls, {
-      x: "xist",
-      y: "sample",
-      fill: "sex",
-      insetTop: 0,
-      insetBottom: 0,
-      title: d => `${d.sample} · ${d.sex}\nXIST: ${d.xist.toFixed(2)}`
-    }),
-    Plot.ruleX([0])
-  ]
-})
-
-sexPcaPlot = Plot.plot({
-  width: 330,
-  height: 430,
-  style: plotStyle,
-  x: { label: "PC1" },
-  y: { label: "PC2", grid: true },
-  color: sexColor,
-  marks: [
-    Plot.dot(sexCalls, {
-      x: "pc1",
-      y: "pc2",
-      fill: "sex",
-      r: 5,
-      title: d => `${d.sample} · ${d.sex}\nPC1: ${d.pc1.toFixed(2)}, PC2: ${d.pc2.toFixed(2)}, XIST: ${d.xist.toFixed(2)}`
-    }),
-    Plot.ruleX([0]),
-    Plot.ruleY([0])
-  ]
-})
-```
-
-```{ojs}
-function sideBySide(...pairs) {
-  const row = document.createElement("div")
-  row.style.cssText = "display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start;"
-  for (const [caption, fig] of pairs) {
-    const col = document.createElement("div")
-    col.style.cssText = "flex: 1 1 0; min-width: 0;"
-    const c = document.createElement("div")
-    c.style.cssText = "font-weight: 600; margin: 0.5rem 0 0.25rem;"
-    c.textContent = caption
-    col.append(fig, c)
-    row.appendChild(col)
-  }
-  return row
+function subsetABarChart(gene) {
+  return Plot.plot({
+    width: 180,
+    height: 220,
+    style: { background: "transparent", fontSize: "11px" },
+    x: { label: `${gene} expression`, grid: true,  tickSize: 0},
+    y: { label: "Sample", domain: subsetASampleDomain, padding: 0.2,  tickSize: 0},
+    marks: [
+      Plot.barX(subsetAMarkers, {
+        x: gene,
+        y: "sample",
+        fill: "#616161",
+        title: d => `Sample ${d.sample}\n${gene}: ${d[gene].toFixed(2)}`
+      }),
+      Plot.ruleX([0])
+    ]
+  })
 }
-html`${sideBySide(["XIST expression per sample; only expressed in females", xistPlot], ["PCA of the top 100 most variable XY probes, colored by inferred sex", sexPcaPlot])}`
-```
 
-Clearly, samples 1-6 are females, rest are males. But when I looked the answer, I was really surprised to find that my answer was wrong. Here are the same two plots, colored by Anthropic's answer:
-
-```{ojs}
-xistTruePlot = Plot.plot({
-  width: 330,
-  height: 490,
-  style: { ...plotStyle, fontSize: "10px" },
-  x: { label: "XIST expression", grid: true },
-  y: {
-    label: "Sample",
-    domain: sexCalls.map(d => d.sample).sort((a, b) => a - b),
-    padding: 0
-  },
-  color: trueSexColor,
+subsetAPcaScatter = Plot.plot({
+  width: 180,
+  height: 220,
+  style: { background: "transparent", fontSize: "11px" },
+  x: { label: "PC1", tickSize: 0},
+  y: { label: "PC2", tickSize: 0},
   marks: [
-    Plot.barX(pcaData, {
-      x: "xist",
-      y: "sample",
-      fill: "trueSex",
-      insetTop: 0,
-      insetBottom: 0,
-      title: d => `${d.sample} · Anthropic: ${d.trueSex}\nXIST: ${d.xist.toFixed(2)}`
-    }),
-    Plot.ruleX([0])
-  ]
-})
-
-pcaTruePlot = Plot.plot({
-  width: 330,
-  height: 430,
-  style: plotStyle,
-  x: { label: "PC1" },
-  y: { label: "PC2", grid: true },
-  color: trueSexColor,
-  marks: [
-    Plot.dot(pcaData, {
+    Plot.dot(subsetAXyPca, {
       x: "pc1",
       y: "pc2",
-      fill: "trueSex",
       r: 5,
-      title: d => `${d.sample} · Anthropic: ${d.trueSex}\nPC1: ${d.pc1.toFixed(2)}, PC2: ${d.pc2.toFixed(2)}, XIST: ${d.xist.toFixed(2)}`
+      fill: "#616161",
+      title: d => `Sample ${d.sample}\nPC1: ${d.pc1.toFixed(2)}, PC2: ${d.pc2.toFixed(2)}`
     }),
     Plot.ruleX([0]),
     Plot.ruleY([0])
   ]
 })
+
+html`<div style="display:flex; flex-wrap:wrap; justify-content:center; gap:1.5rem; align-items:flex-start;">
+  <div><div style="font-weight:600; margin-bottom:0.25rem;">XIST expression</div>${subsetABarChart("XIST")}</div>
+  <div><div style="font-weight:600; margin-bottom:0.25rem;">RPS4Y1 expression</div>${subsetABarChart("RPS4Y1")}</div>
+  <div><div style="font-weight:600; margin-bottom:0.25rem;">PCA, top 100 variable XY probes</div>${subsetAPcaScatter}</div>
+</div>`
+```
+
+
+Based on XIST and RPS4Y1 expression, samples 2-3 are likely females, and samples 1, 4, 5, 6 are males. However, the PCA on all XY genes do not separate samples 2/3 from the rest. Cancer is an extremely abnormal process, that might be associated with gene expression changes obscuring the expression of sex-specific genes [^cancer-sex].
+
+[^cancer-sex]: In fact, XIST is expressed in 4% of male cancer samples. See [figure 1G, pancreatic cancer expression of XIST in males vs females](https://www.cell.com/cell-systems/fulltext/S2405-4712(22)00403-3?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS2405471222004033%3Fshowall%3Dtrue) [@sadagopan2022xist].
+
+
+::: {.prompt data-model="deepseek-flash"}
+Generate a plot that shows the a density function of Y chromosome transcript expression - 1 density line for each sample, and color samples 2 and 3 a different color from the rest.
+:::
+
+```{python}
+import numpy as np
+from scipy.stats import gaussian_kde
+
+# Density of Y-chromosome transcript expression, one curve per sample.
+y_cols = [c for c in xy[xy["chr"] == "Y"]["REFSEQ"] if c in expr6.columns]
+y_genes = expr6[y_cols].dropna(axis=1)
+
+grid = np.linspace(y_genes.values.min() - 1, y_genes.values.max() + 1, 200)
+density_rows = []
+for sample, row in y_genes.iterrows():
+    kde = gaussian_kde(row.values)
+    for x, d in zip(grid, kde(grid)):
+        density_rows.append({"sample": sample, "x": x, "density": d})
+
+y_density = pd.DataFrame(density_rows)
+ojs_define(subsetAYDensity=y_density.to_dict(orient="records"))
 ```
 
 ```{ojs}
-html`${sideBySide(["XIST expression per sample, colored by Anthropic's answer", xistTruePlot], ["PCA of the top 100 most variable XY probes, colored by Anthropic's answer", pcaTruePlot])}`
+highlightColor = ({ domain: ["Samples 2, 3", "1, 4-6"], range: ["#000000", "#bbbbbb"], legend: true })
+
+subsetAYDensityPlot = Plot.plot({
+  width: 500,
+  height: 280,
+  style: { background: "transparent", fontSize: "11px" },
+  x: { label: "Y-chromosome transcript expression" },
+  y: { label: "Density", grid: true, tickSize: 0},
+  color: highlightColor,
+  marks: [
+    Plot.line(subsetAYDensity, {
+      x: "x",
+      y: "density",
+      stroke: d => [2, 3].includes(d.sample) ? "Samples 2, 3" : "1, 4-6",
+      z: "sample",
+      title: d => `Sample ${d.sample}`
+    }),
+    Plot.ruleY([0])
+  ]
+})
+
+html`<div style="display:flex; justify-content:center;"><div><div style="font-weight:600; margin-bottom:0.25rem;">Y-chromosome transcript density per sample</div>${subsetAYDensityPlot}</div></div>`
 ```
 
 
-Apparently, some 3 males (blue dots in right cluster) express XIST. And a bunch of samples are "unknown". This is clearly a mistake in Anthropic's evaluation. How can the answer involve saying essentially "I don't know" for some samples? How could that be "objective truth".
+::: {.prompt data-model="deepseek-flash"}
 
-## Why I can't trust Anthropic anymore
+Generate a heatmap that shows male/female based on my analysis (platform, tissue, marker analysis), annotate with anthropics answer. Calculate a final accuracy (% correct).
 
-I can only theorize how such a blatantly incorrect answer made it into one of Anthropic's published benchmarks. What's more disturbing is thinking about how this brings serious questions into the level of standards Anthropic imposes on their work:
+:::
 
-1. The questions are written by "domain experts". Who are these domain experts and why are they submitting non-answers? The question itself is also a bit odd, at first I thought extraneous information was provided to intentionally mislead, with the hopes that a model with superior complex reasoning capabilities would be able to push through. But now I wonder if the question was low effot.
+```{python}
+import numpy as np
+import pandas as pd
+
+sample_platform_lookup = sample_platform.set_index("sample")["platform"]
+sex_answer = pd.read_csv("sex_answer.csv")
+platform_to_tissue = {"GPL4133": "pancreatic", "GPL887": "ovarian"}
+
+final_calls = pd.DataFrame({"sample": expr.index})
+final_calls["platform"] = final_calls["sample"].map(sample_platform_lookup)
+final_calls["tissue"] = final_calls["platform"].map(platform_to_tissue)
+final_calls["XIST"] = expr[xist_probe].values  # only measured on GPL4133 (samples 1-6)
+final_calls["RPS4Y1"] = expr[rps4y1_probe].values
+
+# Pancreatic samples: XIST vs RPS4Y1 (both real signal on GPL4133).
+# Ovarian samples: no working sex marker on GPL887 with what's been
+# validated so far (RPS4Y1 is flat noise there, std ~0.27 vs ~4.9 on
+# GPL4133), so fall back on tissue-of-origin — ovarian cancer occurs
+# in genetically female patients.
+final_calls["my_call"] = np.where(
+    final_calls["tissue"] == "ovarian",
+    "female",
+    np.where(final_calls["XIST"] > final_calls["RPS4Y1"], "female", "male"),
+)
+final_calls = final_calls.merge(sex_answer[["sample", "anthropic"]], on="sample")
+final_calls["match"] = np.where(final_calls["my_call"] == final_calls["anthropic"], "match", "no match")
+
+# XIST is genuinely missing (NaN) for all ovarian samples. pandas keeps
+# that as a float NaN, which serializes to a bare, unquoted `NaN` token —
+# invalid JSON that breaks JSON.parse() in the browser. Swap NaN for None
+# (-> JSON null) before handing this to ojs_define.
+final_calls_json = final_calls.astype(object).where(final_calls.notna(), None).to_dict(orient="records")
+ojs_define(subsetAFinalCalls=final_calls_json)
+
+
+def accuracy_row(label, subset):
+    correct = int((subset["match"] == "match").sum())
+    n = len(subset)
+    return {"label": label, "correct": correct, "n": n, "pct": round(100 * correct / n, 1)}
+
+
+accuracy_cards = pd.DataFrame(
+    [
+        accuracy_row("Overall", final_calls),
+        accuracy_row("Pancreatic", final_calls[final_calls["tissue"] == "pancreatic"]),
+        accuracy_row("Ovarian", final_calls[final_calls["tissue"] == "ovarian"]),
+    ]
+)
+ojs_define(subsetAAccuracyCards=accuracy_cards.to_dict(orient="records"))
+```
+
+```{ojs}
+// Platform/tissue/XIST/RPS4Y1 stay monotone gray. My call/Anthropic use a
+// low-saturation pink/blue pair — enough to read at a glance without being
+// loud. Match is plain black/white, high contrast, the one column that
+// should jump out over everything else.
+grayShades = ({
+  platform: { GPL4133: "#dddddd", GPL887: "#f5f5f5" },
+  tissue: { pancreatic: "#dddddd", ovarian: "#f5f5f5" }
+})
+sexColors = ({ male: "#dbe6f2", female: "#f3dde3", unknown: "#eeeeee" })
+matchColors = ({ match: "#000000", "no match": "#ffffff" })
+
+xistScale = d3.scaleSequential(d3.interpolateGreys).domain(d3.extent(subsetAFinalCalls, d => d.XIST))
+rps4y1Scale = d3.scaleSequential(d3.interpolateGreys).domain(d3.extent(subsetAFinalCalls, d => d.RPS4Y1))
+
+function textColorFor(bg) {
+  return d3.lab(bg).l < 55 ? "white" : "black"
+}
+
+function finalCallsHeatmap() {
+  const columns = [
+    { key: "platform", label: "Platform", colors: grayShades.platform, group: "My analysis" },
+    { key: "tissue", label: "Tissue", colors: grayShades.tissue, group: "My analysis" },
+    { key: "XIST", label: "XIST", scale: xistScale, group: "My analysis" },
+    { key: "RPS4Y1", label: "RPS4Y1", scale: rps4y1Scale, group: "My analysis" },
+    { key: "my_call", label: "My call", colors: sexColors, group: "My analysis" },
+    { key: "anthropic", label: "Anthropic", colors: sexColors, group: null },
+    { key: "match", label: "Match", colors: matchColors, group: null }
+  ]
+
+  const table = document.createElement("table")
+  table.style.cssText = "border-collapse: collapse; font-size: 9px;"
+
+  const groupRow = document.createElement("tr")
+  groupRow.appendChild(document.createElement("th"))
+  let i = 0
+  while (i < columns.length) {
+    const group = columns[i].group
+    let span = 1
+    while (i + span < columns.length && columns[i + span].group === group && group != null) span++
+    const th = document.createElement("th")
+    th.textContent = group ?? ""
+    th.colSpan = group ? span : 1
+    // Border only under the actual grouped columns, so the group's real
+    // span is visible instead of one line running under the whole table.
+    const border = group ? "border-bottom:1px solid #999;" : ""
+    th.style.cssText = `padding:1.8px 6px; font-weight:600; text-align:center; ${border}`
+    groupRow.appendChild(th)
+    i += group ? span : 1
+  }
+  table.appendChild(groupRow)
+
+  const headerRow = document.createElement("tr")
+  headerRow.appendChild(document.createElement("th"))
+  for (const col of columns) {
+    const th = document.createElement("th")
+    th.textContent = col.label
+    th.style.cssText = "padding:1.8px 6px; font-weight:600; text-align:center;"
+    headerRow.appendChild(th)
+  }
+  table.appendChild(headerRow)
+
+  for (const d of subsetAFinalCalls) {
+    const tr = document.createElement("tr")
+    const sampleTd = document.createElement("td")
+    sampleTd.textContent = d.sample
+    sampleTd.style.cssText = "padding:0.9px 6px; font-weight:600;"
+    tr.appendChild(sampleTd)
+    for (const col of columns) {
+      const value = d[col.key]
+      const td = document.createElement("td")
+      let bg, text
+      if (col.scale) {
+        bg = value == null || Number.isNaN(value) ? "#f5f5f5" : col.scale(value)
+        text = value == null || Number.isNaN(value) ? "–" : value.toFixed(1)
+      } else {
+        bg = col.colors[String(value)] ?? "#f5f5f5"
+        text = String(value)
+      }
+      td.textContent = text
+      td.title = `Sample ${d.sample} · ${col.label}: ${text}`
+      td.style.cssText = `padding:0.9px 6px; text-align:center; background:${bg}; color:${textColorFor(bg)};`
+      tr.appendChild(td)
+    }
+    table.appendChild(tr)
+  }
+  return table
+}
+
+function accuracyCard(d) {
+  const box = document.createElement("div")
+  box.style.cssText = "border:1px solid black; padding:0.5rem 0.75rem; font-family:monospace; font-size:13.8px; min-width:180px;"
+  const label = document.createElement("div")
+  label.style.cssText = "font-weight:600; margin-bottom:0.25rem;"
+  label.textContent = d.label
+  const value = document.createElement("div")
+  value.textContent = `Accuracy = ${d.correct}/${d.n} (${d.pct}%)`
+  box.append(label, value)
+  return box
+}
+
+html`<div style="display:flex; flex-direction:column; align-items:center;">
+<div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.75rem; margin-bottom:1rem;">
+  ${subsetAAccuracyCards.map(accuracyCard)}
+</div>
+${finalCallsHeatmap()}
+</div>`
+```
+
+
+## Wrong Answers in BioMysteryBench
+
+I can only theorize how such a blatantly incorrect answer made it into one of Anthropic's published benchmarks. Let me be precise about how wrong it is. Of the 43 ovarian cancer samples in this question, Anthropic's published answer key calls 21 of them "female" and 11 of them "male", with 11 "unknown". Ovarian cancer only occurs in people who have (or had) ovaries, which is to say, in genetically female patients. So 22 of those 43 answers, just over half, are either biologically wrong or refuse to commit.
+
+What's more disturbing is thinking about how this brings serious questions into the level of standards Anthropic imposes on their work:
+
+1. The questions are written by "domain experts". Who are these domain experts and why are they submitting non-answers? The question itself is also a bit odd, at first I thought extraneous information was provided to intentionally mislead, with the hopes that a model with superior complex reasoning capabilities would be able to push through. But now I wonder if the question was low effort.
 2. Anthropic claims multiple rounds of quality control, yet this question-answer pair made it through. 
 
 > To minimize inherently unsolvable questions while still leaving room for those that might be AI-solvable, we required each question author to submit a validation notebook demonstrating that the signal does, in fact, exist in the data (even if finding it from scratch might be difficult). 
 
 Anthropic indicates that another round of QC is applied to questions their panel of human experts couldn't solve 
 
-> That left us with a set of questions that could not be solved by our panel of experts. This could mean (1) the question was malformed or broken, (2) the question is inherently unsolvable (e.g.,the signal isn’t in the data), or (3) the question is theoretically solvable but humans lack the knowledge required to solve it. **After QC’ing with benchmarkers and additional experts**, we removed 4 questions that were due to (1), leaving 23 human-difficult questions.
+> That left us with a set of questions that could not be solved by our panel of experts. This could mean (1) the question was malformed or broken, (2) the question is inherently unsolvable (e.g., the signal isn't in the data), or (3) the question is theoretically solvable but humans lack the knowledge required to solve it. **After QC'ing with benchmarkers and additional experts**, we removed 4 questions that were due to (1), leaving 23 human-difficult questions.
 
-To be clear, the problem is unsolvable not because any of the 3 cited conditions above. It's unsolvable becuase the "ground-truth" answer is wrong itself.
+To be clear, the problem is unsolvable not because of any of the 3 cited conditions above. It's unsolvable because the "ground-truth" answer is itself wrong.
 
-# In conclusion, 
+# In conclusion
 
-I think the conclusion here is that, maybe the AI providers should stick to what they're good at, building AI models? Lots of AI companies are trying to hire "LLM trainers" for building these types of models. I'm guessing there's a real lack of quality from this type of system. CompBioBench in contrast, which is built by bioinformaticians by a real life sciences company, a veteran in the space, has thoughtful relevant questions in comparison.  What also struck me with all these questions/prompts, is that the questions themselves require experts to write. The LLM performance is tied to how well the question is constrcuted, how much context is provided, and that part is  definitely better if done by an experienced hand.
+This wasn't a comprehensive systematic dive into these benchmarks. But I did learn a few things:
+
+- LLM Benchmarks, specifically Bioinformatics-specific ones, are really hard to create well. High quality is really hard to get right, and requires huge amount of resources: domain experts need to be involved to conceive and design the tasks. Anthropic hired an independent team of human experts to tackle the prompts alongside their tested models, which is a huge advantage. QC however, they can improve on.
+
+- The level of detail between the two benchmarks are on two ends of the spectrum. CompBioBench provided microscopic levels of information that one could spend weeks dissecting. I know exactly the domains that CBB covers and can find detailed overviews of question/answers. Anthropic's is scant in comparison. The information is highly useful in evaluating the quality of the benchmarks and builds trust in the evaluation numbers. I hope Anthropic will consider more rigorous documentation and publication for future datasets.
+
+- The most difficult questions in each benchmark are not that difficult for an experienced biological data scientist. The performance of state-of-the-art models on the hardest questions suggests to me that we are still a ways from true AGI in bioinformatics. However, their performance does demonstrate an extremely high capability that I wouldn't have believed would be possible just one year ago. I think those that will succeed in this new age will be those that can use LLMs most effectively.
+
+# Appendix
+
+Some other references worth reading
+
+- Overview of variety of LLM benchmarks https://cameronrwolfe.substack.com/p/llm-bench
+- A survey of LLM-as-a-judge review https://arxiv.org/abs/2411.15594
