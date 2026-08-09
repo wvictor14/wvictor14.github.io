@@ -15,7 +15,7 @@ reading-time: true
 
 Every week a new large language model (LLM) is released, and with it comes a battery of numbers to prove its incremental improvement over existing models. These numbers come from "benchmarks" -- a series of evaluations that domain experts carefully create. Recently, two very different companies released bioinformatics-specific benchmarks: Genentech[^genentech], one of the oldest and most successful pharma companies, and Anthropic[^anthropic], a top AI company. The two companies couldn't be more different, and I think it shows in their benchmarks.
 
-In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and why I think these results show that I'm not going to replaced by AI anytime soon. <!--- let's return to this --->
+In this post I looked at some of the questions and evaluations in these benchmarks and share some thoughts about the quality, relevance, and why I think these results show that I'm not going to replaced by AI anytime soon. 
 
 [^genentech]: Genentech, a 50-year-old pharma company with dozens of approved drugs and hundreds of clinical trials, released [CompBioBench](https://www.biorxiv.org/content/10.64898/2026.04.06.716850v1) [@compbiobench] on April 4th, 2026. The reputation of the authors' affiliations sets an expectation on their dataset. This is a benchmark created by some of the most experienced practitioners in the industry.
 
@@ -45,7 +45,7 @@ Genentech published their benchmark on bioRxiv, which is a popular preprint serv
 
 [^journal-vs-blog]: And unlike a blog, which can be taken down or edited without any trace of original content, a preprint server is managed by a third party organization (bioRxiv is managed by Cold Spring Harbour), which includes keeping the original published article accessible and has a system for managing updates.
 
-In contrast, Anthropic announced BioMysteryBench with a blog post. As you can imagine, the difference between a published article and blog post is vast. There is no standard format for a "blog post" like there is for a journal article. There is no in depth section describing how the questions were developed, there are no supplementary figures, and in general it is really hard to dig into details.
+In contrast, Anthropic announced BioMysteryBench with a blog post. As you can imagine, the difference between a published article and blog post is vast. There is no standard format for a blog post like there is for a journal article. There is no in depth section describing how the questions were developed, there are no supplementary figures, and in general it is really hard to dig into details.
 
 The Genentech team, I imagine is likely preparing the article for submission at a peer-reviewed journal. This means transparency is not optional; it's required and enforced to some degree by the journal and the peer reviews. They must describe their methods fully; they must defend their decisions, and they must be comprehensive in their scope as reasonably possible; some journals even enforce reproducibility and open source code[^cbb-github]. CompBioBench showed that all top models performed similarly, including Anthropics but also GPT from OpenAi, and Gemini from Google (might I mention, similar performance at a much lower cost!). Anthropic chose only to evaluate and publish only their own models.
 
@@ -671,7 +671,7 @@ ${finalCallsHeatmap()}
 </div>`
 ```
 
-# Several Wrong Answers in BioMysteryBench
+# Several wrong answers in BioMysteryBench
 
 The overall accuracy of my classification was 46.9%, worst than random guessing. But in this section let me convince you that I'm right, the answer itself is broken:
 
@@ -698,8 +698,10 @@ It's important to note that there is extensive quality control that Anthropic cl
 
 # Conclusions
 
-LLM Benchmarks, specifically Bioinformatics-specific ones, are really hard to create well. High quality is hard to achieve, and requires huge amount of resources: domain experts need to be involved to conceive, design, and crucially review the tasks after benchmarking. In BioMysteryBench, **their QC failed**: >10 of their questions were unsolvable (by anybody or anything, not just humans), 24 modified, despite validation notebooks and multiple review rounds.
+It's difficult to create good benchmarks. There's no standard recipe, and every benchmark has a different approach. The ones described in this post had some commonalities in their goals and approaches: the teams tried to create tasks with verifiable ground truth answers, but the execution had some big differences.
 
-The level of quality and detail between the two benchmarks are on two ends of a spectrum. CompBioBench provided microscopic levels of information that one could spend weeks dissecting. BioMysteryBench is scant in comparison. The information is highly useful in evaluating the quality of the benchmarks and builds trust in the evaluation numbers. After my experience researching both benchmarks, I am left with trust in CompBioBench due to their documentation, reproducibility, and transparency; BioMysteryBench on the other hand, I cannot trust any of their numbers.
+Genentech's CompBioBench is high quality and how they published it was highly transparent and reproducible. BioMysteryBench, unfortunately, feels clumsily put together. There are too many errors. The work feels sloppy. 
 
-I found the most difficult questions in each benchmark are indeed difficult. But definitely not unsolvable. The benchmarks are designed such that tasks have a single ground truth answer. But bioinformatics and science in general is much more common that there isn't a right answer. Instead there are varying approaches, all of which can be reasonable, but can lead to differing reasonable conclusions. The benchmarks here explicitly avoid simulating these types of scenarios, because they are difficult (or impossible) to evaluate. This is good, we need objective evaluations. But it makes me wonder are we really testing LLMs at the tasks scientists face, or are just those that are easy to grade?
+Despite these differences still, I think they converge on the overall message, that LLMs are indeed highly capable at performing advanced bioinformatics tasks. Using LLMs though, is a skill in itself. Look at the prompts in these questions and it's clear that only an experienced domain expert can generate such specific instructions, and also be in a position to review and check a model's output. LLMs are a multiplier, they require a skilled hand to be used effectively.
+
+I think that LLMs are not necessarily replacing us scientists. There's too much contextual information that can make or break an analysis. But LLMs are certainly making bioinformatics more accessible. That's generally a good thing, but there are also new challenges that brings. If LLMs let more people run these analyses without the years of training that used to be a prerequisite, fewer people will be in a position to catch it when the model is wrong.

@@ -50,6 +50,7 @@ readr::read_csv(here('collections', 'blogroll.csv')) |>
 
 # Favorite blogposts
 
+- [Detecting AI slop](https://towardsdatascience.com/is-this-slop-detecting-ai-generated-content-without-a-model-2/)
 - Meren lab's on ["open-access" data in microbome research, or lack thereof](https://merenlab.org/blog/unfalsifiable-by-design/)
 
 - Tommy Tang's grounded take on how AI is actually improving drug development (it's not target discovery): ["Has AI Changed Drug Development 3 years later"](https://divingintogeneticsandgenomics.com/post/has-ai-changed-drug-development-3-years-later/)
