@@ -1,49 +1,89 @@
 ---
+title: "Victor Yuan"
 format:
   html:
     page-layout: full
     toc: false
     from: "markdown+emoji"
+    anchor-sections: false
+    body-classes: home-page
 ---
 
-::: {.hero}
+:::: {.home-intro}
 
-::: {.hero-text}
+::: {.home-identity}
+<h1>About me</h1>
 
-# About me
-
-::: {.colophon}
-BIOINFORMATICS DATA SCIENTIST · BIOTECH · VANCOUVER, BC
+<p class="home-meta">Data scientist · Bioinformatics · Biotech<br>Vancouver, BC</p>
 :::
 
-I'm a data scientist at **Sonoma Biotherapeutics**, a Treg cell therapy company developing treatments for autoimmune disease. I write the pipelines and analysis behind our drug discovery, clinical, and translational work.
-
+::: {.home-portrait}
+![](images/Yuan,%20Victor%20-%20Nov%202018%20Headshots%20(2).jpg){fig-alt="Victor Yuan"}
 :::
 
-::: {.hero-image}
-![](images/Yuan,%20Victor%20-%20Nov%202018%20Headshots%20(2).jpg)
+::: {.home-lead}
+Hello! I'm Victor, a data scientist at Sonoma Biotherapeutics. I help develop T-cell-based therapies for autoimmune diseases like rheumatoid arthritis. My favorite part of the job is working with brilliant colleagues on new drugs that could improve patients' lives.
 :::
 
+::::
+
+::::: {.home-story}
+
+:::: {.home-background}
+
+<div class="home-timeline" role="complementary" aria-label="Career timeline">
+<ol role="list">
+<li><span class="home-dates">2011</span><span class="home-stage">BSc</span></li>
+<li><span class="home-dates">2016</span><span class="home-stage">PhD</span></li>
+<li class="home-ongoing"><span class="home-dates">2022</span><span class="home-stage">Sonoma</span></li>
+<li class="home-present"><span class="home-dates">Present</span></li>
+</ol>
+</div>
+
+::: {.home-copy}
+I first encountered bioinformatics in 2016 as a first-year graduate student in UBC's Genome Sciences and Technology program. My undergrad was in Cell and Molecular Biology (Honours thesis: CRISPR x Yeast), so I was coming in pretty green to computation and statistics. I feel fortunate to have spent the next five years in an incredibly supportive environment, learning about bioinformatics, genomics, and machine learning. My PhD thesis applied machine learning and cellular epigenetics to study placental development.
+
+I graduated with my PhD in 2022, which we can now look back on as a significantly brighter time in biotech's recent history, and then found myself at Jeff Bluestone's Treg company Sonoma, where I still work today. There I worked alongside incredibly talented and kind colleagues on developing a very exciting novel therapy.
 :::
+
+::::
+
+::: {.home-transition}
+Previously, on my homepage, I would list my best technical skills, but nowadays, with AI, I question what value I really bring as a scientist. Here is an attempt at such a list:
+:::
+
+:::: {.home-row .home-strength}
+<div class="home-number" aria-hidden="true">1</div>
+
+::: {.home-copy}
+<h2>I'm a good thinker</h2>
+
+I think I've always been good at thinking things through. I'm the type of person to spend a lot of time planning before taking action. As a scientist, and specifically one that lives in data, I bring value in interpreting what data means, what conclusions can be drawn, what it means for the next steps, and what limitations are crucial to keep in mind.
+:::
+::::
+
+:::: {.home-row .home-strength}
+<div class="home-number" aria-hidden="true">2</div>
+
+::: {.home-copy}
+<h2>I'm good at presenting data</h2>
+
+I don't know why, but there is something innate in me that whenever I see a graph, my mind impulsively lists off criticisms, even small ones: *why is the font size so small? The axis labels are not informative. Pie charts need to die.* I probably spend too much time on my graphics. But the occasional praise is often worth it. I've even won some contests for my visualizations. <!--- link to plotnine / table contest winnings --->
+:::
+::::
+
+:::: {.home-row .home-strength}
+<div class="home-number" aria-hidden="true">3</div>
+
+::: {.home-copy}
+<h2>I respect data integrity</h2>
+
+I'm not sure if this one is going to be that relevant anymore. But ever since undergrad, I've been taught that good science is reproducible. When I became a data scientist, I applied that to everything involving data: documentation, reproducible practices (e.g., Git, Quarto/R Markdown), and these days, "big boy" data engineering tools like dbt, Prefect, GitHub Actions, and CI/CD.
+:::
+::::
 
 ::: {.contact-row}
 [GITHUB](https://www.github.com/wvictor14/){target="_blank"} · [LINKEDIN](https://www.linkedin.com/in/victorwyuan/){target="_blank"} · [EMAIL](mailto:victorwyuan@gmail.com)
 :::
 
-<!--- Professional stack --->
-
-My skills and current technical interests include:
-
-- **Analytics and Visualization**.  R (tidyverse, ggplot2), Python, some JavaScript[^tidyverse]. My preferred reportable format is *html* [^1]. I recently won the [Posit Annual Plotnine and Table contests](posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.qmd).
-- **Data engineering.** Quarto for reproducible reports, GitHub Actions for CI/CD, Prefect, Dagster, and `targets` for pipeline orchestration. I care about reproducibility: knowing where a number came from and being able to rerun it.
-- **Bioinformatics, statistics, and machine learning.** RNA-seq, DNA methylation, single-cell, TCR-seq. Applied mostly to autoimmune tissue/PBMC and placental/pregnancy biology.
-
-[^tidyverse]: I'm a big fan of tidyverse, specifically ggplot2.
-[^1]: Unfortunately, I spend all day in *pptx*.
-
-<!--- Background --->
-I earned my PhD from the **University of British Columbia (2022), Vancouver BC**, studying epigenetics and placental biology in Dr. Wendy Robinson's lab. There I created several machine learning models on placental DNA methylation datasets, and published bioinformatic software packages. Before that, I graduated with a **BSc in Molecular Biology from Concordia University, Montreal QC** and did my Undergraduate Thesis in development of CRISPR protocols in *C. albicans* in Dr. Whiteway's lab.
-
-<!--- Beyond the Data --->
-Outside of work, you can find me at a rock climbing gym, obsessing for the perfect pour-over and espresso, or riding with a tiny human on an electric longtail while constantly bemoaning car culture.
-
+:::::
