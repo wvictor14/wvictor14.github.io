@@ -58,7 +58,7 @@ Previously, on my homepage, I would list my best technical skills, but nowadays,
 ::: {.home-copy}
 <h2>I'm a good thinker</h2>
 
-I think I've always been good at thinking things through. I'm the type of person to spend a lot of time planning before taking action. As a scientist who lives in data, I'm good at interpreting results, figuring out what conclusions they support and what to do next, and keeping their limitations in mind.
+I tend to plan carefully before taking action. As a scientist who lives in data, I'm good at interpreting results, understanding what conclusions they support, and figuring out what to do next while recognizing their limitations.
 :::
 ::::
 
@@ -68,7 +68,7 @@ I think I've always been good at thinking things through. I'm the type of person
 ::: {.home-copy}
 <h2>I'm good at presenting data</h2>
 
-I don't know why, but there is something innate in me that whenever I see a graph, my mind impulsively lists off criticisms, even small ones: *why is the font size so small? The axis labels are not informative. Pie charts need to die.* I probably spend too much time on my graphics. But the occasional praise is often worth it. I've even won some contests for my visualizations ([plotnine](https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/) and [gt](https://posit.co/blog/2025-table-contest-winners/)).
+I don't know why, but there is something innate in me that whenever I see a graph, my mind impulsively lists off criticisms: *why is the font size so small? The axis labels are not informative. Pie charts need to die.* I probably spend too much time on presentation. But the occasional praise is often worth it. I've even won some contests for my visualizations ([plotnine](https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/) and [gt](https://posit.co/blog/2025-table-contest-winners/)).
 :::
 ::::
 
