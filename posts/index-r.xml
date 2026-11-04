@@ -9,7 +9,7 @@
 <link>https://victoryuan.com/posts/#category=R</link>
 <atom:link href="https://victoryuan.com/posts/index-r.xml" rel="self" type="application/rss+xml"/>
 <description>Victor&#39;s website</description>
-<generator>quarto-1.10.18</generator>
+<generator>quarto-1.11.9</generator>
 <lastBuildDate>Fri, 10 Jul 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Large Quarto projects and speed</title>
@@ -86,6 +86,7 @@ font-style: inherit;">unlink</span> page_A.qmd</span></code></pre></div></div>
 <div>
 <p></p><figure class="figure"><p></p>
 <div>
+
 <pre class="mermaid mermaid-js">flowchart TD
     A["Project directory&lt;br/&gt;(_quarto.yml, R/, data/, …)"]
     B["render_in_isolation('page.qmd')"]
@@ -2242,7 +2243,7 @@ font-style: inherit;">naive_plot3</span>(seu, features)</span></code></pre></div
 
 
 
-<div class="callout callout-style-default callout-tip callout-titled" title="Wow! :crown:">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>

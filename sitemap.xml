@@ -1,75 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://victoryuan.com/projects/tidyseurat/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.668Z</lastmod>
-  </url>
-  <url>
     <loc>https://victoryuan.com/projects/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.664Z</lastmod>
+    <lastmod>2026-11-04T04:51:18.145Z</lastmod>
   </url>
   <url>
-    <loc>https://victoryuan.com/projects/placentalmethylomebrowser/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.666Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/projects/lavi-theme/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.666Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2026-08-10-why-i-am-skeptical-of-bioinformatics-llm-benchmarks/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.658Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.572Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2025-03-28-dynamic-navsets/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.572Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.582Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/license.html</loc>
-    <lastmod>2026-08-09T23:43:53.571Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/collections/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.568Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.571Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2026-07-10-large-quarto-websites/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.583Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.575Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/posts/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.661Z</lastmod>
-  </url>
-  <url>
-    <loc>https://victoryuan.com/projects/bcchildcarebot/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.664Z</lastmod>
+    <loc>https://victoryuan.com/projects/tidyseurat/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.149Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/rbiotechsalary/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.668Z</lastmod>
+    <lastmod>2026-11-04T04:51:18.149Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/quarto-graph/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.668Z</lastmod>
+    <lastmod>2026-11-04T04:51:18.149Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.142Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2024-06-12-making-a-twitter-bot-in-the-year-2024/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.045Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2026-07-10-large-quarto-websites/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.057Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2025-10-13-fast-umap-plots-in-r/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.054Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/license.html</loc>
+    <lastmod>2026-11-04T04:51:18.044Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/collections/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.041Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.044Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2025-03-28-dynamic-navsets/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.045Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2026-08-10-why-i-am-skeptical-of-bioinformatics-llm-benchmarks/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.138Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/posts/2025-10-03-2025-posit-plotnine-and-great-tables-contest/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.047Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/projects/bcchildcarebot/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.145Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/projects/lavi-theme/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.147Z</lastmod>
+  </url>
+  <url>
+    <loc>https://victoryuan.com/projects/placentalmethylomebrowser/index.html</loc>
+    <lastmod>2026-11-04T04:51:18.147Z</lastmod>
   </url>
   <url>
     <loc>https://victoryuan.com/projects/planet/index.html</loc>
-    <lastmod>2026-08-09T23:43:53.666Z</lastmod>
+    <lastmod>2026-11-04T04:51:18.147Z</lastmod>
   </url>
 </urlset>
