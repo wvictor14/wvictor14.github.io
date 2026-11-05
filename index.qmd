@@ -58,7 +58,8 @@ Previously, on my homepage, I would list my best technical skills, but nowadays,
 ::: {.home-copy}
 <h2>I'm a good thinker</h2>
 
-I tend to plan carefully before taking action. As a scientist who lives in data, I'm good at interpreting results, understanding what conclusions they support, and figuring out what to do next while recognizing their limitations.
+I think a lot of degree holders will say some version of this. But in my opinion, in the age where anyone can generate something that seems sensible (with help of AI), it's even more important than before to have a shrewd eye towards content. As a scientist who lives in data, I'm good at interpreting patterns, understanding what conclusions they support, and figuring out what to do next while recognizing their limitations.
+
 :::
 ::::
 
@@ -68,7 +69,7 @@ I tend to plan carefully before taking action. As a scientist who lives in data,
 ::: {.home-copy}
 <h2>I'm good at presenting data</h2>
 
-I don't know why, but there is something innate in me that whenever I see a graph, my mind impulsively lists off criticisms: *why is the font size so small? The axis labels are not informative. Pie charts need to die.* I probably spend too much time on presentation. But the occasional praise is often worth it. I've even won some contests for my visualizations ([plotnine](https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/) and [gt](https://posit.co/blog/2025-table-contest-winners/)).
+I don't know why, but whenever I see a graph, my mind impulsively lists off criticisms: *why is the font size so small? The axis labels are not informative. Pie charts need to die.* I probably spend too much time on presentation. I have accumulated a lot of intuition about designing data visualiations. Occasionaly I receive some praise for it - I've won some contests for my visualizations ([plotnine](https://posit.co/blog/winner-of-the-2025-plotnine-plotting-contest/) and [gt](https://posit.co/blog/2025-table-contest-winners/)).
 :::
 ::::
 
